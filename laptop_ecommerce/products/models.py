@@ -12,7 +12,7 @@ class MyProducts(models.Model):
     stock               = models.IntegerField()
     is_available        = models.BooleanField(default=True)
     category            = models.ForeignKey(Category, on_delete=models.CASCADE)
-    create_date         = models.DateTimeField(auto_add_now=True)
+    create_date         = models.DateTimeField(auto_now_add=True)
     modified_date       = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
