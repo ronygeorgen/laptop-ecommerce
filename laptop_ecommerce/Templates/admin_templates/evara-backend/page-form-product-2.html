@@ -179,19 +179,22 @@
             </div>
         </header>
         <section class="content-main">
+            <form method="post">
+                {% csrf_token %}
             <div class="row">
                 <div class="col-6">
                     <div class="content-header">
                         <h2 class="content-title">Add New Product</h2>
                         <div>
                             <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
-                            <button class="btn btn-md rounded font-sm hover-up">Publich</button>
+                            <button class="btn btn-md rounded font-sm hover-up">Publish</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-lg-6">
+                    
                     <div class="card mb-4">
                         <div class="card-body">
                             <div class="row">
@@ -201,43 +204,53 @@
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="form-label">Product title</label>
-                                        <input type="text" placeholder="Type here" class="form-control">
+                                        <input type="text" placeholder="Type here" value=" {{ products.product_name }}" class="form-control" name="product_title">
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Description</label>
-                                        <textarea placeholder="Type here" class="form-control" rows="4"></textarea>
+                                        <textarea placeholder="Type here" value=" {{ products.product_description }} " class="form-control" rows="4" name="product_description"></textarea>
                                     </div>
-                                    <div class="mb-4">
+                                    <!-- <div class="mb-4">
                                         <label class="form-label">Brand name</label>
                                         <select class="form-select">
                                             <option> Adidas </option>
                                             <option> Nike </option>
                                             <option> Puma </option>
                                         </select>
-                                    </div>
+                                    </div> -->
                                 </div> <!-- col.// -->
                             </div> <!-- row.// -->
                             <hr class="mb-4 mt-0">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <h6>2. Pricing</h6>
+                                    <h6>2. Price</h6>
                                 </div>
                                 <div class="col-md-9">
                                     <div class="mb-4">
-                                        <label class="form-label">Cost in USD</label>
-                                        <input type="text" placeholder="$00.0" class="form-control">
+                                        <label class="form-label">Cost in INR</label>
+                                        <input type="text" placeholder="₹00.0" value=" {{ products.product_price }} " class="form-control" name="product_price">
+                                    </div>
+                                </div> <!-- col.// -->
+                            </div> <!-- row.// -->
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h6>3. Stock</h6>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="mb-4">
+                                        <input type="text" placeholder="0" value=" {{ products.product_stock }} " class="form-control" name="product_stock">
                                     </div>
                                 </div> <!-- col.// -->
                             </div> <!-- row.// -->
                             <hr class="mb-4 mt-0">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <h6>3. Category</h6>
+                                    <h6>4. Category</h6>
                                 </div>
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" checked="" name="mycategory" type="radio">
+                                            <input class="form-check-input" checked="" value=" {{ products.category }} " name="mycategory" type="radio">
                                             <span class="form-check-label"> Clothes </span>
                                         </label>
                                         <label class="mb-2 form-check form-check-inline" style="width: 45%;">
@@ -278,20 +291,22 @@
                             <hr class="mb-4 mt-0">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <h6>4. Media</h6>
+                                    <h6>5. Media</h6>
                                 </div>
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="form-label">Images</label>
-                                        <input class="form-control" type="file">
+                                        <input class="form-control" name="product_image" type="file">
                                     </div>
                                 </div> <!-- col.// -->
                             </div> <!-- .row end// -->
                         </div>
                     </div>
+                
                 </div>
             </div>
             </div>
+        </form>
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">
