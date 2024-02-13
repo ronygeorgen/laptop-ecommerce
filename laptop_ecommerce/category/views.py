@@ -28,8 +28,8 @@ class CategoryView(View):
         messages.error(request, 'Enter all fields')
         list_categories = Category.objects.all()
         entered_data = {
-            'product_name'          : form_category,
-            'product_descrption'    : form_description
+            'product_name'           : form_category,
+            'product_description'    : form_description
         }
             
         return render(request,self.template, {'categories':list_categories, 'entered_data':entered_data})
