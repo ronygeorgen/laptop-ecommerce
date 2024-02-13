@@ -4,5 +4,5 @@ from myadmin.views import Dashboard
 
 urlpatterns = [
     path('product/', ProductView.as_view(), name='product'),
-    path('dashboard/',Dashboard.as_view(), name='Dashboard')
+    path('dashboard/',Dashboard.as_view(), name='dashboard')
 ]

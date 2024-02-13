@@ -185,8 +185,15 @@
                 <div class="col-6">
                     <div class="content-header">
                         <h2 class="content-title">Add New Product</h2>
+                        <div class="d-flex justify-content-center text-danger">
+                            {% for message in messages %}
+                                
+                                    {{message}}
+                               
+                            {% endfor %}
+                        </div>
                         <div>
-                            <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button>
+                            <!-- <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button> -->
                             <button class="btn btn-md rounded font-sm hover-up">Publish</button>
                         </div>
                     </div>
@@ -250,41 +257,22 @@
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" checked="" value=" {{ products.category }} " name="mycategory" type="radio">
-                                            <span class="form-check-label"> Clothes </span>
+                                            <input class="form-check-input" checked=""  value="4" name="mycategory" type="radio">
+                                            <span class="form-check-label"> Gaming Laptop </span>
                                         </label>
                                         <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" name="mycategory" type="radio">
-                                            <span class="form-check-label"> Electronics </span>
+                                            <input class="form-check-input" name="mycategory" type="radio" value="5">
+                                            <span class="form-check-label"> Office Laptop </span>
                                         </label>
                                         <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" name="mycategory" type="radio">
-                                            <span class="form-check-label"> Sports </span>
+                                            <input class="form-check-input" name="mycategory" type="radio" value="7">
+                                            <span class="form-check-label"> Premium Laptop </span>
                                         </label>
                                         <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" name="mycategory" type="radio">
-                                            <span class="form-check-label"> Automobiles </span>
+                                            <input class="form-check-input" name="mycategory" type="radio" value="6">
+                                            <span class="form-check-label"> Entry-Level Laptop </span>
                                         </label>
-                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" name="mycategory" type="radio">
-                                            <span class="form-check-label"> Home interior </span>
-                                        </label>
-                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" name="mycategory" type="radio">
-                                            <span class="form-check-label"> Smartphones </span>
-                                        </label>
-                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" name="mycategory" type="radio">
-                                            <span class="form-check-label"> Books </span>
-                                        </label>
-                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" name="mycategory" type="radio">
-                                            <span class="form-check-label"> Kids item </span>
-                                        </label>
-                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" name="mycategory" type="radio">
-                                            <span class="form-check-label"> Others </span>
-                                        </label>
+                                        
                                     </div>
                                 </div> <!-- col.// -->
                             </div> <!-- row.// -->
