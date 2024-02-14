@@ -25,10 +25,11 @@ class ProductView(View):
             # Handle the case when the Category does not exist
             raise Http404("Category does not exist")
         
+        form_isavailable    = request.POST.get('mycheck')=='True'
         form_image          = request.POST.get('product_image')
 
         if form_title and form_description and form_price and form_stock and form_category and form_image:
-            product =  MyProducts(product_name=form_title, description=form_description, price=form_price, stock=form_stock, category=category_instance, images=form_image )
+            product =  MyProducts(product_name=form_title, description=form_description, price=form_price, stock=form_stock, category=category_instance, is_available=form_isavailable, images=form_image )
             product.save()
             return redirect('dashboard')
         messages.error(request,"Enter all fields")
