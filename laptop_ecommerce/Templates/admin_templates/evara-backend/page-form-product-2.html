@@ -179,7 +179,7 @@
             </div>
         </header>
         <section class="content-main">
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
             <div class="row">
                 <div class="col-6">
@@ -256,22 +256,12 @@
                                 </div>
                                 <div class="col-md-9">
                                     <div class="mb-4">
+                                        {% for cat in categorys %}
                                         <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" checked=""  value="4" name="mycategory" type="radio">
-                                            <span class="form-check-label"> Gaming Laptop </span>
+                                            <input class="form-check-input" checked=""  value="{{cat.slug}}" name="mycategory" type="radio">
+                                            <span class="form-check-label">{{cat.category_name}} </span>
                                         </label>
-                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" name="mycategory" type="radio" value="5">
-                                            <span class="form-check-label"> Office Laptop </span>
-                                        </label>
-                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" name="mycategory" type="radio" value="7">
-                                            <span class="form-check-label"> Premium Laptop </span>
-                                        </label>
-                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" name="mycategory" type="radio" value="6">
-                                            <span class="form-check-label"> Entry-Level Laptop </span>
-                                        </label>
+                                        {% endfor %}
                                         
                                     </div>
                                 </div> <!-- col.// -->
