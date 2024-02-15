@@ -8,14 +8,16 @@ from django.http import Http404
 # Create your views here.
 class ProductView(View):
     templates = 'admin_templates\evara-backend\page-form-product-2.html'
-    def get(self,request):
+    def get(self,request,  *args, **kwargs):
+        if kwargs.get('store'):
+            return render(request, 'store/store.html')
         category=Category.objects.all()
         context={
             "categorys":category
         }
         return render (request,self.templates,context)
     
-    def post(self,request):
+    def post(self,request,  *args, **kwargs):
         form_title          = request.POST.get('product_title')
         form_description    = request.POST.get('product_description')
         form_price          = request.POST.get('product_price')
