@@ -18,7 +18,7 @@ class CategoryView(View):
         
         form_category        = request.POST.get('product_name')
         form_description     = request.POST.get('product_description')
-        form_category_image  = request.POST.get('cat_image')
+        form_category_image  = request.FILES['cat_image']
 
         if form_category and form_description and form_category_image:
             category = Category(category_name = form_category, description = form_description, cat_image = form_category_image)
