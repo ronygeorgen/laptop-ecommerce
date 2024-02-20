@@ -191,8 +191,38 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
+                        <!-- Form for Edit category -->
+                        {% if category %}
                         <div class="col-md-3">
-                            <form method="post" enctype="multipart/form-data">
+                            
+                            <form method="post" action="{% url 'edit_category' category.id %}"  enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Name</label>
+                                    <input type="text" placeholder="Type here" class="form-control" value="{{category.category_name}}" name="product_name" id="product_name"   />
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Description</label>
+                                    <textarea name="product_description" placeholder="Type here"  class="form-control">{{category.description}}</textarea>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Current Category Image</label>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Category Image</label>
+                                    <input type="file" name="cat_image"  class="form-control">
+                                </div>
+                                <div class="d-flex justify-content-center text-danger">
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary">Save edits</button>
+                                </div>
+                            </form>
+                        </div>
+                        {% else %}
+                        <!-- Form for add category -->
+                        <div class="col-md-3">
+                            <form method="post" action="{% url 'category' %}" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
@@ -200,12 +230,13 @@
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Description</label>
-                                    <textarea name="product_description" placeholder="Type here" value="{{ entered_data.product_description }}" class="form-control"></textarea>
+                                    <textarea name="product_description" placeholder="Type here"  class="form-control">{{ entered_data.product_description }}</textarea>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Category Image</label>
                                     <input type="file" name="cat_image" class="form-control">
                                 </div>
+                                
                                 <div class="d-flex justify-content-center text-danger">
                                     {% for message in messages %}
                                         
@@ -217,7 +248,10 @@
                                     <button class="btn btn-primary">Create category</button>
                                 </div>
                             </form>
+                            
                         </div>
+                        {% endif %}
+                        
                         <div class="col-md-9">
                             <div class="table-responsive">
                                 <table class="table table-hover">
@@ -232,6 +266,7 @@
                                             <th>Name</th>
                                             <th>Description</th>
                                             <th>Slug</th>
+                                            <th>Image url</th>
                                             <th>Image</th>
                                             <th class="text-end">Action</th>
                                         </tr>
@@ -249,12 +284,13 @@
                                             <td> {{ category.description }} </td>
                                             <td> {{ category.slug }} </td>
                                             <td> {{ category.cat_image.url }} </td>
+                                            <td><img src="{{ category.cat_image.url }}" alt="Current Category Image" style="max-width: 100px; max-height: 100px;"></td>
                                             <td class="text-end">
                                                 <div class="dropdown">
                                                     <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
                                                     <div class="dropdown-menu">
                                                         <a class="dropdown-item" href="#">View detail</a>
-                                                        <a class="dropdown-item" href="#">Edit info</a>
+                                                        <a class="dropdown-item" href=" {% url 'edit_category' category.id %} ">Edit info</a>
                                                         <a class="dropdown-item text-danger" href="#">Delete</a>
                                                     </div>
                                                 </div> <!-- dropdown //end -->

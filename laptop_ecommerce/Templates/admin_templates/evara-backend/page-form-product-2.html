@@ -211,11 +211,11 @@
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="form-label">Product title</label>
-                                        <input type="text" placeholder="Type here" value=" {{ products.product_name }}" class="form-control" name="product_title">
+                                        <input type="text" placeholder="Type here"  class="form-control" name="product_title"  value = "{{ products.product_name }}">
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Description</label>
-                                        <textarea placeholder="Type here" value=" {{ products.product_description }} " class="form-control" rows="4" name="product_description"></textarea>
+                                        <textarea placeholder="Type here" class="form-control" rows="4" name="product_description">{{ products.product_description }}</textarea>
                                     </div>
                                     <!-- <div class="mb-4">
                                         <label class="form-label">Brand name</label>
