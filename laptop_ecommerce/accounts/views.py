@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate,login as auth_login , logout
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.http import HttpResponse
-
+from django.contrib.auth.hashers import check_password
 
 
 #verification email
@@ -54,8 +54,8 @@ class RegisterView(View):
             send_email =  EmailMessage(mail_subject, message, to=[to_email])
             send_email.send()
 
-            messages.success(request,'Registration Successful')
-            return redirect ('login')
+            #messages.success(request,'We have sent a verification email to your email address. Please verify it.')
+            return redirect ('/accounts/login/?command=verification&email='+email)
         context = {
             'form' : form,
         }
@@ -107,3 +107,67 @@ class ActivateView(View):
         else:
             messages.error(request, 'Invalid activation link')
             return redirect ('regiester')
+        
+class ForgotPasswordView(View):
+    def get(self,request):
+        return render (request, 'accounts/forgotPassword.html')
+    def post(self,request):
+        email = request.POST.get('email')
+        if Account.objects.filter(email=email).exists():
+            user = Account.objects.get(email__exact=email)
+            # Reset password email
+            current_site = get_current_site(request)
+            mail_subject = 'Reset your password'
+            message = render_to_string('accounts/reset_password_email.html',{
+                'user':user,
+                'domain': current_site,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': default_token_generator.make_token(user),
+            })
+            to_email = email
+            send_email =  EmailMessage(mail_subject, message, to=[to_email])
+            send_email.send()
+            messages.success(request,'Password reset email has been sent to your email address.')
+            return redirect('login')
+        else:
+            messages.error(request, 'Account does not exist!')
+            return redirect('ForgotPassword')
+
+class Resetpassword_ValidateView(View):
+    def get(self, request, uidb64, token):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = Account._default_manager.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, Account.DoesNotExist):
+            user = None
+        
+        if user is not None and default_token_generator.check_token(user, token):
+            request.session['uid'] = uid
+            messages.success(request, 'Please reset your password')
+            return redirect('resetPassword')
+        else:
+            messages.error(request,'This link has been expired')
+            return redirect('login')
+
+class ResetPasswordView(View):
+    def get(self, request):
+        return render(request,'accounts/resetPassword.html')
+    
+    def post(self,request):
+        new_password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        uid = request.session.get('uid')
+        user = Account.objects.get(pk=uid)
+        if check_password(new_password,user.password):
+            messages.error(request, 'Choose another password')
+            return redirect('resetPassword')
+        elif new_password == confirm_password:
+            user.password=new_password
+            user.set_password(new_password)
+            user.save()
+            messages.success(request,'Password reset successfull')
+            return redirect('login')
+        else:
+            messages.error(request, 'Password do not match')
+            return redirect('resetPassword')
