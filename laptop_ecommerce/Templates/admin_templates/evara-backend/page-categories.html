@@ -191,7 +191,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <!-- Form for Edit category -->
+                        <!--Below Form for Edit category -->
                         {% if category %}
                         <div class="col-md-3">
                             
@@ -207,6 +207,13 @@
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Current Category Image</label>
+                                    {% if category.cat_image %}
+                                    <div class="d-flex justify-content-center">
+                                        <img src="{{category.cat_image.url}}" alt="Current category image" style="max-width: 100px; max-height: 100px;">
+                                    </div>
+                                    {% else %}
+                                    <p>No image available</p>
+                                    {% endif %}
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Category Image</label>
@@ -214,13 +221,28 @@
                                 </div>
                                 <div class="d-flex justify-content-center text-danger">
                                 </div>
+                                {% if my_id.0 == deleted_id.0 %}
+                                <div class="row">
+                                    <div class="col-md-7">
+                                        <h6>make_avaliable?</h6>
+                                    </div>
+                                <div class="col-md-5 form-check">
+                                    <input class="form-check-input" type="checkbox" checked="" value="false" name="mycheck" />
+                                </div>
+                                </div>
+                                {% else %}
+                                <span class="p-5"><p>You can't delete category from here</p></span>
+                                {% endif %}
                                 <div class="d-grid">
                                     <button class="btn btn-primary">Save edits</button>
+                                </div>
+                                <div class="d-grid pt-5">
+                                    <button class="btn " > <a href="{% url 'category' %}">Go to Create category</a></button>
                                 </div>
                             </form>
                         </div>
                         {% else %}
-                        <!-- Form for add category -->
+                        <!--Below Form for add category -->
                         <div class="col-md-3">
                             <form method="post" action="{% url 'category' %}" enctype="multipart/form-data">
                                 {% csrf_token %}
@@ -266,32 +288,64 @@
                                             <th>Name</th>
                                             <th>Description</th>
                                             <th>Slug</th>
-                                            <th>Image url</th>
+                                            <th>Status</th>
                                             <th>Image</th>
                                             <th class="text-end">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for category in categories %}
+                                        <!-- Below loop for display not deleted categories -->
+                                        {% for category in categories_not_deleted %}
                                         <tr>
-                                            <!-- <td class="text-center">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" />
-                                                </div>
-                                            </td> -->
                                             <td> {{ category.id }} </td>
                                             <td><b> {{ category.category_name }} </b></td>
                                             <td> {{ category.description }} </td>
                                             <td> {{ category.slug }} </td>
-                                            <td> {{ category.cat_image.url }} </td>
+                                            {% if category.cat_image %}
+                                            <td> <span class="btn btn-success text-white" >Active</span> </td>
                                             <td><img src="{{ category.cat_image.url }}" alt="Current Category Image" style="max-width: 100px; max-height: 100px;"></td>
+                                            {% else %}
+                                            <td><p>No Image</p></td>
+                                            <td><p>No Image</p></td>
+                                            {% endif %}
                                             <td class="text-end">
                                                 <div class="dropdown">
                                                     <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
                                                     <div class="dropdown-menu">
                                                         <a class="dropdown-item" href="#">View detail</a>
                                                         <a class="dropdown-item" href=" {% url 'edit_category' category.id %} ">Edit info</a>
-                                                        <a class="dropdown-item text-danger" href="#">Delete</a>
+                                                        <a class="dropdown-item text-danger" href="{% url 'soft_delete_category' category.id %}">Delete</a>
+                                                    </div>
+                                                </div> <!-- dropdown //end -->
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+
+                                        <!-- Below loop for display soft deleted categories -->
+                                        {% for category_deleted in categories_deleted %}
+                                        <tr>
+                                            <!-- <td class="text-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" />
+                                                </div>
+                                            </td> -->
+                                            <td> {{ category_deleted.id }} </td>
+                                            <td><b> {{ category_deleted.category_name }} </b></td>
+                                            <td> {{ category_deleted.description }} </td>
+                                            <td> {{ category_deleted.slug }} </td>
+                                            {% if category_deleted.cat_image %}
+                                            <td> <span class="btn btn-danger" >Deleted</span> </td>
+                                            <td><img src="{{ category_deleted.cat_image.url }}" alt="Current Category Image" style="max-width: 100px; max-height: 100px;"></td>
+                                            {% else %}
+                                            <td><p>No Image</p></td>
+                                            <td><p>No Image</p></td>
+                                            {% endif %}
+                                            <td class="text-end">
+                                                <div class="dropdown">
+                                                    <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="#">View detail</a>
+                                                        <a class="dropdown-item" href=" {% url 'edit_category' category_deleted.id %} ">Edit info</a>
                                                     </div>
                                                 </div> <!-- dropdown //end -->
                                             </td>
