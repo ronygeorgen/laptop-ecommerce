@@ -37,11 +37,10 @@
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item ">
                     <a class="menu-link" href="{% url 'category' %}"> <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Categories</span>
                     </a>
-                    
                 </li>
                 <li class="menu-item has-submenu">
                     <a class="menu-link" href="page-orders-1.html"> <i class="icon material-icons md-shopping_cart"></i>
@@ -63,10 +62,15 @@
                         <a href="page-seller-detail.html">Seller profile</a>
                     </div>
                 </li>
-                <li class="menu-item active">
-                    <a class="menu-link" href="{% url 'product' %}"> <i class="icon material-icons md-add_box"></i>
-                        <span class="text">Add product</span>
+                <li class="menu-item has-submenu active">
+                    <a class="menu-link" href="#"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
                     </a>
+                    <div class="submenu">
+                        <a href="{% url 'product' %}" class="active">Add Products</a>
+                        <a href="{% url 'product_list' %}" >Product List</a>
+                        
+                    </div>
                 </li>
                 <li class="menu-item has-submenu">
                     <a class="menu-link" href="page-transactions-1.html"> <i class="icon material-icons md-monetization_on"></i>
@@ -178,13 +182,15 @@
                 </ul>
             </div>
         </header>
-        <section class="content-main">
-            <form method="post" enctype="multipart/form-data">
+        <section class="content-main ">
+            <!-- Below form for edit product -->
+            {% if product_to_edit %}
+            <form method="post" enctype="multipart/form-data" >
                 {% csrf_token %}
-            <div class="row">
-                <div class="col-6">
+            <div class="row ">
+                <div class="col-6 ">
                     <div class="content-header">
-                        <h2 class="content-title">Add New Product</h2>
+                        <h2 class="content-title">Edit Product</h2>
                         <div class="d-flex justify-content-center text-danger">
                             {% for message in messages %}
                                 
@@ -202,7 +208,7 @@
             <div class="row">
                 <div class="col-lg-6">
                     
-                    <div class="card mb-4">
+                    <div class="card mb-4 bg-warning-light">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-3">
@@ -294,6 +300,125 @@
             </div>
             </div>
         </form>
+        {% else %}
+
+        <!-- Below form for Add product -->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+        <div class="row">
+            <div class="col-6">
+                <div class="content-header">
+                    <h2 class="content-title">Add New Product</h2>
+                    <div class="d-flex justify-content-center text-danger">
+                        {% for message in messages %}
+                            
+                                {{message}}
+                           
+                        {% endfor %}
+                    </div>
+                    <div>
+                        <!-- <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button> -->
+                        <button class="btn btn-md rounded font-sm hover-up">Publish</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>1. General info</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <label class="form-label">Product title</label>
+                                    <input type="text" placeholder="Type here"  class="form-control" name="product_title"  value = "{{ products.product_name }}">
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Description</label>
+                                    <textarea placeholder="Type here" class="form-control" rows="4" name="product_description">{{ products.product_description }}</textarea>
+                                </div>
+                                <!-- <div class="mb-4">
+                                    <label class="form-label">Brand name</label>
+                                    <select class="form-select">
+                                        <option> Adidas </option>
+                                        <option> Nike </option>
+                                        <option> Puma </option>
+                                    </select>
+                                </div> -->
+                            </div> <!-- col.// -->
+                        </div> <!-- row.// -->
+                        <hr class="mb-4 mt-0">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>2. Price</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <label class="form-label">Cost in INR</label>
+                                    <input type="text" placeholder="₹00.0" value=" {{ products.product_price }} " class="form-control" name="product_price">
+                                </div>
+                            </div> <!-- col.// -->
+                        </div> <!-- row.// -->
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>3. Stock</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <input type="text" placeholder="0" value=" {{ products.product_stock }} " class="form-control" name="product_stock">
+                                </div>
+                            </div> <!-- col.// -->
+                        </div> <!-- row.// -->
+                        <hr class="mb-4 mt-0">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>4. Category</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    {% for cat in categorys %}
+                                    <label class="mb-2 form-check form-check-inline" style="width: 45%;">
+                                        <input class="form-check-input"  value="{{cat.slug}}" name="mycategory" type="radio">
+                                        <span class="form-check-label">{{cat.category_name}} </span>
+                                    </label>
+                                    {% endfor %}
+                                    
+                                </div>
+                            </div> <!-- col.// -->
+                            
+                        </div> <!-- row.// -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6>5. is_available</h6>
+                            </div>
+                        <div class="col-md-1 form-check">
+                            <input class="form-check-input" type="checkbox" value="True" name="mycheck" />
+                        </div>
+                        </div>
+                        <hr class="mb-4 mt-0">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6>6. Media</h6>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="mb-4">
+                                    <label class="form-label">Images</label>
+                                    <input class="form-control" name="product_image" type="file">
+                                </div>
+                            </div> <!-- col.// -->
+                        </div> <!-- .row end// -->
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+        </div>
+    </form>
+    {% endif %}
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">

@@ -9,9 +9,9 @@ from django.http import Http404
 class ProductView(View):
     templates = 'admin_templates\evara-backend\page-form-product-2.html'
     def get(self,request):
-        category=Category.objects.all()
+        category=Category.objects.filter(is_deleted=False)
         context={
-            "categorys":category
+            "categorys":category,
         }
         return render (request,self.templates,context)
     
@@ -44,7 +44,29 @@ class ProductView(View):
             "product_price"       : form_price,
             "product_stock"       : form_stock,
             "product_category"    : form_category,
-            "product_media"       : form_image 
+            "product_media"       : form_image, 
 
         }
         return render(request,self.templates, {'products' : entered_data})
+    
+class ProductEdit(View):
+    def get(self, request):
+        category=Category.objects.filter(is_deleted=False)
+        list_products_not_deleted   = MyProducts.objects.filter(is_available=True)
+        list_products_deleted       = MyProducts.objects.filter(is_available=False)
+        context={
+            "categorys": category,
+            "list_products_not_deleted" : list_products_not_deleted,
+            "list_products_deleted" : list_products_deleted,
+        }
+        return render(request, 'admin_templates\evara-backend\page-product-list.html', context)
+
+class ProductEditView(View):
+    def get(self, request, pk):
+        product_to_edit = MyProducts.objects.get(pk=pk)
+        # my_id = MyProducts.objects.values('id').filter(pk=pk)
+        context = {
+            'product_to_edit': product_to_edit,
+        }
+
+        return render(request, 'admin_templates\evara-backend\page-form-product-2.html', context)
