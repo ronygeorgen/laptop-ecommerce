@@ -200,7 +200,7 @@
                         </div>
                         <div>
                             <!-- <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button> -->
-                            <button class="btn btn-md rounded font-sm hover-up">Publish</button>
+                            <button class="btn btn-md rounded font-sm hover-up">Save Edits</button>
                         </div>
                     </div>
                 </div>
@@ -217,11 +217,11 @@
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="form-label">Product title</label>
-                                        <input type="text" placeholder="Type here"  class="form-control" name="product_title"  value = "{{ products.product_name }}">
+                                        <input type="text" placeholder="Type here"  class="form-control" name="product_title"  value = "{{ product_to_edit.product_name }}">
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label">Description</label>
-                                        <textarea placeholder="Type here" class="form-control" rows="4" name="product_description">{{ products.product_description }}</textarea>
+                                        <textarea placeholder="Type here" class="form-control" rows="4" name="product_description">{{ product_to_edit.description }}</textarea>
                                     </div>
                                     <!-- <div class="mb-4">
                                         <label class="form-label">Brand name</label>
@@ -241,7 +241,7 @@
                                 <div class="col-md-9">
                                     <div class="mb-4">
                                         <label class="form-label">Cost in INR</label>
-                                        <input type="text" placeholder="₹00.0" value=" {{ products.product_price }} " class="form-control" name="product_price">
+                                        <input type="text" placeholder="₹00.0" value=" {{ product_to_edit.price }} " class="form-control" name="product_price">
                                     </div>
                                 </div> <!-- col.// -->
                             </div> <!-- row.// -->
@@ -251,7 +251,7 @@
                                 </div>
                                 <div class="col-md-9">
                                     <div class="mb-4">
-                                        <input type="text" placeholder="0" value=" {{ products.product_stock }} " class="form-control" name="product_stock">
+                                        <input type="text" placeholder="0" value=" {{ product_to_edit.stock }} " class="form-control" name="product_stock">
                                     </div>
                                 </div> <!-- col.// -->
                             </div> <!-- row.// -->
@@ -264,7 +264,7 @@
                                     <div class="mb-4">
                                         {% for cat in categorys %}
                                         <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input"  value="{{cat.slug}}" name="mycategory" type="radio">
+                                            <input class="form-check-input" {% if cat.slug == product_to_edit.category.slug %}checked{% endif %} value="{{cat.slug}}" name="mycategory" type="radio">
                                             <span class="form-check-label">{{cat.category_name}} </span>
                                         </label>
                                         {% endfor %}
@@ -273,18 +273,35 @@
                                 </div> <!-- col.// -->
                                 
                             </div> <!-- row.// -->
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <h6>5. is_available</h6>
+                            {% if my_id.0 == deleted_id.0 %}
+                            <div class="row"  >
+                                <div class="col-md-4 ">
+                                    <h6>5. Make available?</h6>
                                 </div>
                             <div class="col-md-1 form-check">
                                 <input class="form-check-input" type="checkbox" value="True" name="mycheck" />
                             </div>
                             </div>
+                            {% else %}
+                            <div class="row"  >
+                                <div class="col-md-4 ">
+                                    <h6 class="nav-link disabled" aria-disabled="true">5. is_available</h6>
+                                </div>
+                            <div class="col-md-1 form-check">
+                                <input class="form-check-input  nav-link disabled" aria-disabled="true" type="checkbox" value="True" name="mycheck" />
+                            </div>
+                            </div>
+                            {% endif %}
                             <hr class="mb-4 mt-0">
                             <div class="row">
                                 <div class="col-md-3">
                                     <h6>6. Media</h6>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Current product Image</label>
+                                    <div class="d-flex justify-content-center">
+                                        <img src="{{product_to_edit.images.url}}" alt="Current category image" style="max-width: 100px; max-height: 100px;">
+                                    </div>
                                 </div>
                                 <div class="col-md-9">
                                     <div class="mb-4">
