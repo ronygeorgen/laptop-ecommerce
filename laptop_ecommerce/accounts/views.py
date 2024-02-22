@@ -73,15 +73,28 @@ class LoginView(View):
             myemail = request.POST.get('email')
             mypassword = request.POST.get('password')
             
-            user_details = authenticate(email=myemail, password=mypassword)
-            
-            if user_details:
-                auth_login(request,user_details)
-                # messages.success(request, 'You are now logged in')
-                return redirect('home')
+            #login for admin
+            is_admin = Account.objects.filter(email=myemail, is_admin=True).exists()
+            if is_admin :
+                admin_details = authenticate(email=myemail, password=mypassword)
+                if admin_details:
+                    auth_login(request, admin_details)
+                    return redirect('dashboard')
+                else:
+                    messages.error(request, 'Invalid admin login credentials')
+                    return redirect('login')
+                
+            #login for user    
             else:
-                messages.error(request, 'Invalid login credentials')
-                return redirect('login')
+                user_details = authenticate(email=myemail, password=mypassword)
+                
+                if user_details:
+                    auth_login(request,user_details)
+                    # messages.success(request, 'You are now logged in')
+                    return redirect('home')
+                else:
+                    messages.error(request, 'Invalid login credentials')
+                    return redirect('login')
         
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class LogoutView(View):
