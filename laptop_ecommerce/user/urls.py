@@ -21,4 +21,5 @@ from .views import *
 urlpatterns = [
     path('',Home.as_view(), name='home'),
     path('store/',Store.as_view(), name='store-product-view'),
+    path('store/<slug:category_slug>/',SlugStore.as_view(), name='product_by_category'),
 ]
