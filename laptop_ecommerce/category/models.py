@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.urls import reverse
 # Create your models here.
 class Category(models.Model):
     category_name   = models.CharField(max_length=50, unique=True)
@@ -7,9 +8,13 @@ class Category(models.Model):
     description     = models.CharField(max_length=255)
     cat_image       = models.ImageField(upload_to='static/categories',blank=True, null=True)
     is_deleted      = models.BooleanField(default=False)
+    
     def save(self, *args, **kwargs):
         self.slug   = slugify(self.category_name)
         super().save(*args, **kwargs)
+    
+    def get_url(self):
+        return reverse('product_by_category', args=[self.slug])
 
     def __str__(self):
         return self.category_name

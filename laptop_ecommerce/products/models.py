@@ -1,6 +1,7 @@
 from django.db import models
 from category.models import Category
 from django.utils.text import slugify
+from django.urls import reverse
 
 # Create your models here.
 class MyProducts(models.Model):
@@ -18,6 +19,9 @@ class MyProducts(models.Model):
     def save(self, *args, **kwargs):
         self.slug       = slugify(self.product_name)
         super().save(*args, **kwargs)
+    
+    def get_url(self):
+        return reverse('product_detail', args=[self.category.slug, self.slug])
     
     def __str__(self):
         return self.product_name 
