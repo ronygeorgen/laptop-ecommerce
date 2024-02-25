@@ -4,6 +4,8 @@ from products.models import MyProducts
 from category.models import Category
 from carts.models import Cart, CartItem
 from carts.views import _CartId
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http import HttpResponse
 # Create your views here.
 class Home(View):
     def get(self,request):
@@ -15,11 +17,14 @@ class Home(View):
         return render(request,'home.html', context)
 class Store(View):
     def get(self,request):
-        products = MyProducts.objects.all().filter(is_available=True)
+        products = MyProducts.objects.all().filter(is_available=True).order_by('id')
+        paginator = Paginator(products, 6)
+        page = request.GET.get('page')
+        paged_products = paginator.get_page(page)
         category_list = Category.objects.filter(is_deleted=False)
         product_count = products.count()
         context = {
-            'products' : products,
+            'products' : paged_products,
             'product_count' : product_count,
             'category_list' : category_list,
         }
@@ -32,19 +37,25 @@ class SlugStore(View):
         if category_slug != None:
             categories = get_object_or_404(Category, slug=category_slug)
             products = MyProducts.objects.filter(category=categories, is_available=True)
+            paginator = Paginator(products, 6)
+            page = request.GET.get('page')
+            paged_products = paginator.get_page(page)
             category_list = Category.objects.filter(is_deleted=False)
             product_count = products.count()
             context = {
-                'products' : products,
+                'products' : paged_products,
                 'product_count' : product_count,
                 'category_list' : category_list,
             }
         else: 
             products = MyProducts.objects.all().filter(is_available=True)
+            paginator = Paginator(products, 6)
+            page = request.GET.get('page')
+            paged_products = paginator.get_page(page)
             category_list = Category.objects.filter(is_deleted=False)
             product_count = products.count()
             context = {
-                'products' : products,
+                'products' : paged_products,
                 'product_count' : product_count,
                 'category_list' : category_list,
             }
@@ -64,3 +75,7 @@ class ProductDetailView(View):
             'in_cart'        : in_cart,
         }
         return render(request, 'store/product_detail.html', context)
+    
+class SearchView(View):
+    def get(self, request):
+        return  render(request, 'store/store.html')
