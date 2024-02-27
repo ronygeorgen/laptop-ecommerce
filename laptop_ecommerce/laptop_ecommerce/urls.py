@@ -30,4 +30,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('', include('accounts.urls')),
     path('cart/', include('carts.urls')),
+
+    #OREDERS
+    path('orders/', include('orders.urls')),
 ]
