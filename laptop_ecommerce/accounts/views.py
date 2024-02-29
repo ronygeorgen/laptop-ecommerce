@@ -12,7 +12,7 @@ from carts.views import _CartId
 from carts.models import Cart, CartItem
 
 #below library is installed in the myenv using pip install requests
-import pip._vendor.requests as requests
+import requests
 
 
 #verification email

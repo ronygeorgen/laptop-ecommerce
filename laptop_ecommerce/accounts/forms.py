@@ -1,36 +1,125 @@
 from django import forms
 from .models import Account
 from phonenumber_field.formfields import PhoneNumberField
+import phonenumbers
 import re
 
 class RegistrationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput(attrs={
-        'placeholder':'Enter Password',
-        # 'class': 'form-control'
-    }))
-    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={
-        'placeholder':'Confirm Password'
-    }))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter Password'}))
+    confirmpassword = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Confirm Password'}))
+    phone_number = PhoneNumberField(widget=forms.TextInput(attrs={'placeholder': 'Enter Phone Number'}))
+
     class Meta:
         model = Account
         fields = ['first_name', 'last_name', 'phone_number', 'email', 'password']
-        
-    def clean(self):
-        cleaned_data = super(RegistrationForm, self).clean()
-        password = cleaned_data.get('password')
-        confirm_password = cleaned_data.get('confirm_password')
 
-        if password != confirm_password:
-            raise forms.ValidationError(
-                "Password does not match."
-            )
-    
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+
+        # Ensure that after "+91" there are at most 5 consecutive zeros
+        national_number = phonenumbers.parse(str(phone_number), None).national_number
+        if (national_number // 10) % 10**5 == 0:
+            raise forms.ValidationError("After '+91', there can be at most 5 consecutive zeros.")
+
+        return phone_number
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if Account.objects.filter(email=email).exists():
+            raise forms.ValidationError("This email is already in use.")
+        return email
+
+    def clean_first_name(self):
+
+        first_name = self.cleaned_data.get('first_name')
+
+        # Check for consecutive three same letters
+        if any(first_name[i] == first_name[i+1] == first_name[i+2] for i in range(len(first_name)-2)):
+            raise forms.ValidationError("First name cannot contain consecutive three same letters.")
+
+        if any(char.isdigit() for char in first_name):
+            raise forms.ValidationError("First name cannot contain digits.")
+        if '.' in first_name:
+            raise forms.ValidationError("First name cannot contain dots.")
+        if len(first_name) <= 2:
+            raise forms.ValidationError("First name must be longer than 2 characters.")
+
+        return first_name
+    def clean_last_name(self):
+
+        last_name = self.cleaned_data.get('last_name')
+
+        # Check for consecutive three same letters
+        if any(last_name[i] == last_name[i+1] == last_name[i+2] for i in range(len(last_name)-2)):
+            raise forms.ValidationError("Last name cannot contain consecutive three same letters.")
+
+        if any(char.isdigit() for char in last_name):
+            raise forms.ValidationError("Last name cannot contain digits.")
+        if '.' in last_name:
+            raise forms.ValidationError("Last name cannot contain dots.")
+        if len(last_name) <= 2:
+            raise forms.ValidationError("Last name must be longer than 2 characters.")
+
+        return last_name
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+
+        if not password:
+            raise forms.ValidationError("Password requires minimum 8 characters")
+        
+
+        if len(password) < 8:
+            raise forms.ValidationError("Password must be at least 8 characters long.")
+        
+        # Check if password contains at least one digit
+        if not any(char.isdigit() for char in password):
+            raise forms.ValidationError("Password must contain at least one numeric character.")
+
+        # Check if password contains at least one uppercase letter
+        if not any(char.isupper() for char in password):
+            raise forms.ValidationError("Password must contain at least one uppercase letter.")
+
+        # Check if password contains at least one lowercase letter
+        if not any(char.islower() for char in password):
+            raise forms.ValidationError("Password must contain at least one lowercase letter.")
+
+        # Check if password contains at least one special character
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+            raise forms.ValidationError("Password must contain at least one special character.")
+
+        # Check for whitespaces in the password
+        if ' ' in password:
+            raise forms.ValidationError("Password cannot contain whitespaces.")
+        
+        # Check the length of the password
+        
+        
+        return password
+        
+    def clean_confirmpassword(self):
+        password = self.cleaned_data.get('password')
+        print(password)
+        confirmpassword = self.cleaned_data.get('confirmpassword')
+        print(confirmpassword)
+
+        if password is None:
+        # Password did not pass the previous validation, no need to compare
+            return confirmpassword
+
+        # Check if passwords match
+        if password != confirmpassword:
+            raise forms.ValidationError("Passwords do not match.")
+        
+        return confirmpassword
+
+
+
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
         self.fields['first_name'].widget.attrs['placeholder'] = 'Enter First Name'
         self.fields['last_name'].widget.attrs['placeholder'] = 'Enter Last Name'
-        self.fields['phone_number'].widget.attrs['placeholder'] = 'Enter phone Number'
-        self.fields['email'].widget.attrs['placeholder'] = 'Enter email Address'
+        self.fields['phone_number'].widget.attrs['placeholder'] = 'Enter Phone Number'
+        self.fields['email'].widget.attrs['placeholder'] = 'Enter Email Address'
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
-    
