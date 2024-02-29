@@ -1,5 +1,7 @@
 from django import forms
 from .models import Account
+from phonenumber_field.formfields import PhoneNumberField
+import re
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={
