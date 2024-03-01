@@ -28,12 +28,7 @@
                   {% endif %}
                 </div>
               </div>
-              <div class="card">
-                <h5 class="card-header">Choose Payment Method</h5>
-              <div class="card-body">
-                <!-- Here I need to provide the user to select Cash On Delivery or paypal -->
-              </div>
-            </div>
+              
             <div class="card">
                 <h5 class="card-header">Review Products</h5>
               <div class="card-body">
@@ -79,6 +74,19 @@
                     </table>
               </div>
             </div>
+            <div class="card">
+                <h5 class="card-header">Choose Payment Method</h5>
+                <div class="card-body">
+                    <label class="btn btn-primary">
+                        <input type="radio" name="payment_method" value="paypal" >
+                        PayPal
+                    </label>
+                    <label class="btn btn-secondary">
+                        <input type="radio" name="payment_method" value="cod">
+                        Cash On Delivery
+                    </label>
+                </div>
+            </div>
     
         </aside> <!-- col.// -->
         <aside class="col-lg-4">
@@ -101,8 +109,28 @@
                 <p class="text-center mb-3">
                     <img src="{% static './images/misc/payments.png' %}" height="26">
                 </p>
-                <div id="paypal-button-container">
-                    <!-- PayPal button will load -->
+                <div id="paypal-container" class="card">
+                    <h5 class="card-header">PayPal Payment</h5>
+                    <div class="card-body">
+                        <!-- PayPal button will load here -->
+                        <div id="paypal-button-container"></div>
+                    </div>
+                </div>
+                
+                <div id="cod-container" class="card">
+                    <h5 class="card-header">Cash On Delivery</h5>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center">
+                            <form method="POST" action="{% url 'payments' %}">
+                                {% csrf_token %}
+                                <button class="btn btn-warning">Place Order</button>
+                            </form>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <p>Please keep the exact amount ready for the delivery.</p>
+                        </div>
+                        
+                    </div>
                 </div>
             </div> <!-- card-body.// -->
             </div> <!-- card.// -->
@@ -115,39 +143,67 @@
     </div> <!-- container .//  -->
     </section>
     <script>
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initially hide both payment containers
+            document.getElementById('paypal-container').style.display = 'none';
+            document.getElementById('cod-container').style.display = 'none';
+    
+            // Add an event listener to the payment method radio buttons
+            var paymentMethodRadios = document.getElementsByName('payment_method');
+            for (var i = 0; i < paymentMethodRadios.length; i++) {
+                paymentMethodRadios[i].addEventListener('change', handlePaymentMethodChange);
             }
-            return cookieValue;
+        });
+    
+        function handlePaymentMethodChange(event) {
+            var selectedValue = event.target.value;
+            
+            // Set the payment method based on the selected option
+            if (selectedValue === 'paypal') {
+                payment_method = 'PayPal';
+            } else if (selectedValue === 'cod') {
+                payment_method = 'Cash on Delivery';
+                // Add logic for Cash On Delivery button if needed
+            }
+            // Hide both payment containers
+            document.getElementById('paypal-container').style.display = 'none';
+            document.getElementById('cod-container').style.display = 'none';
+    
+            // Show the selected payment container
+            if (selectedValue === 'paypal') {
+                document.getElementById('paypal-container').style.display = 'block';
+            } else if (selectedValue === 'cod') {
+                document.getElementById('cod-container').style.display = 'block';
+                // Add logic for Cash On Delivery button if needed
+            }
+            
+            // Remove any existing PayPal buttons
+            document.getElementById('paypal-container').innerHTML = '';
+    
+            // Render the PayPal button if the selected option is PayPal
+            if (selectedValue === 'paypal') {
+                renderPayPalButton();
+            }
         }
-            var amount = "{{ grand_total }}"
-            var url = "{% url 'payments' %}"
+    
+        function renderPayPalButton() {
+            var amount = "{{ grand_total }}";
+            var url = "{% url 'payments' %}";
             var csrftoken = getCookie('csrftoken');
-            var orderID = "{{order.order_number}}"
-            var payment_method = 'PayPal'
-            var redirect_url = "{% url 'order_complete' %}"
-            // Render the PayPal button into #paypal-button-container
+            var orderID = "{{ order.order_number }}";
+            // var payment_method = 'PayPal';
+            var redirect_url = "{% url 'order_complete' %}";
+    
             paypal.Buttons({
-
                 style: {
                     color: 'blue',
                     shape: 'rect',
                     label: 'pay',
                     height: 40
                 },
-
+    
                 // Set up the transaction
-                createOrder: function(data, actions) {
+                createOrder: function (data, actions) {
                     return actions.order.create({
                         purchase_units: [{
                             amount: {
@@ -156,40 +212,59 @@
                         }]
                     });
                 },
-
+    
                 // Finalize the transaction
-                onApprove: function(data, actions) {
-                    return actions.order.capture().then(function(details) {
-                        // Show a success message to the buyer
+                onApprove: function (data, actions) {
+                    return actions.order.capture().then(function (details) {
                         console.log(details);
                         sendData();
-                        function sendData(){
+    
+                        function sendData() {
+                            var requestBody = {
+                                orderID: orderID,
+                                payment_method: payment_method,
+                                status: details.status,
+                            };
+                            if (details.id) {
+                                requestBody.transID = details.id;
+                            }
                             fetch(url, {
-                                method : "POST",
+                                method: "POST",
                                 headers: {
-                                    "content-type" : "application/json",
-                                    "X-CSRFToken" : csrftoken,
+                                    "content-type": "application/json",
+                                    "X-CSRFToken": csrftoken,
                                 },
-                                body: JSON.stringify({
-                                    orderID: orderID,
-                                    transID: details.id,
-                                    payment_method: payment_method,
-                                    status: details.status,
-                                }),
+                                body: JSON.stringify(requestBody),
                             })
-                            .then(response => response.json())
-                            .then(data => {
-                                window.location.href = redirect_url + '?order_number='+data.order_number+'&payment_id='+data.transID;
-
-                            });
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (payment_method ==='paypal'){
+                                        window.location.href = redirect_url + '?order_number=' + data.order_number + '&payment_id=' + data.transID;
+                                    } else if (payment_method ==='cod'){
+                                        window.location.href = '/invoice/' + order.order_number;
+                                    }
+                                });
                         }
                     });
                 }
-
-
-            }).render('#paypal-button-container');
-        </script>
+            }).render('#paypal-container');
+        }
     
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+        
 
 {% endblock %}
-
