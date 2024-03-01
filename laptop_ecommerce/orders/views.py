@@ -3,7 +3,7 @@ from django.views import View
 from django.http import HttpResponse, JsonResponse
 from carts.models  import CartItem, Cart
 from .forms import OrderForm
-from orders.models import Order, Payment, OrderProduct
+from orders.models import Order, Payment, OrderProduct, Addresses
 import datetime
 import json
 from products.models import MyProducts, Variations
@@ -75,22 +75,7 @@ class PaymentsView(View):
 
 class PlaceOrderView(View):
     def get(self, request, total=0, quantity=0):
-        current_user = request.user
-
-        #if the cart count is less than or equal to zero, then redirect back to shop
-        cart_items = CartItem.objects.filter(user=current_user)
-        cart_count = cart_items.count()
-        if cart_count <= 0 :
-            return redirect('store')
-
-        grand_total = 0
-        tax = 0
-        for cart_item in cart_items:
-            total += (cart_item.product.price * cart_item.quantity)
-            quantity = cart_item.quantity
-        tax = (2 * total)/100
-        grand_total = total + tax
-        return HttpResponse('Currently working code in orders/views.py. PlaceOrderView class get function')
+        pass
     
     def post(self, request, total=0, quantity=0):
         current_user = request.user
@@ -133,6 +118,35 @@ class PlaceOrderView(View):
         order_number = current_date + str(data.id)
         data.order_number = order_number
         data.save()
+
+        #Check if the user wants to save the address 
+        save_address = request.POST.get('save_address')
+
+        if save_address == 'yes':
+            
+            address_type = request.POST.get('address_type', 'Home') #Default to home if not provided
+            #save address to the address model
+            address_data ={
+                'user': current_user,
+                'address_type': address_type,
+                'first_name': data.first_name,
+                'last_name': data.last_name,
+                'phone': data.email,
+                'email': data.email,
+                'address_line_1': data.address_line_1,
+                'address_line_2':data.address_line_2,
+                'pincode': data.pincode,
+                'country':data.country,
+                'state':data.state,
+                'city':data.city,
+                'is_default':False,
+            }
+
+            address = Addresses.objects.create(**address_data)
+
+            #now link the address to the order model
+            data.address = address
+            data.save()
 
         order = Order.objects.get(user=current_user, is_ordered=False, order_number=order_number)
         context = {
