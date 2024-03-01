@@ -21,6 +21,7 @@ class PaymentsView(View):
 
             #check payment method
             payment_method = body['payment_method']
+            print(payment_method)
             
             if payment_method == 'paypal':
                 payment = Payment(
@@ -30,8 +31,8 @@ class PaymentsView(View):
                     amount_paid = order.order_total,
                     status = body['status'],
                 )
-
                 payment.save()
+
             elif payment_method == 'cod':
                 payment = Payment(
                     user= request.user,
@@ -41,6 +42,7 @@ class PaymentsView(View):
                     status='Pending'
                 )
                 payment.save()
+                
             order.payment = payment
             order.is_ordered = True
             order.save()
