@@ -160,7 +160,7 @@
             
             // Set the payment method based on the selected option
             if (selectedValue === 'paypal') {
-                payment_method = 'PayPal';
+                payment_method = 'paypal';
             } else if (selectedValue === 'cod') {
                 payment_method = 'Cash on Delivery';
                 // Add logic for Cash On Delivery button if needed
@@ -182,6 +182,8 @@
     
             // Render the PayPal button if the selected option is PayPal
             if (selectedValue === 'paypal') {
+                renderPayPalButton();
+            }else if(selectedValue==='cod') {
                 renderPayPalButton();
             }
         }
@@ -220,28 +222,33 @@
                         sendData();
     
                         function sendData() {
-                            var requestBody = {
-                                orderID: orderID,
-                                payment_method: payment_method,
-                                status: details.status,
-                            };
-                            if (details.id) {
-                                requestBody.transID = details.id;
-                            }
+                            // var requestBody = {
+                            //     orderID: orderID,
+                            //     payment_method: payment_method,
+                            //     status: details.status,
+                            // };
+                            // if (details.id) {
+                            //     requestBody.transID = details.id;
+                            // }
                             fetch(url, {
                                 method: "POST",
                                 headers: {
                                     "content-type": "application/json",
                                     "X-CSRFToken": csrftoken,
                                 },
-                                body: JSON.stringify(requestBody),
+                                body: JSON.stringify({
+                                    orderID: orderID,
+                                    payment_method: payment_method,
+                                    transID : details.id,
+                                    status: details.status,
+                            }),
                             })
                                 .then(response => response.json())
                                 .then(data => {
                                     if (payment_method ==='paypal'){
                                         window.location.href = redirect_url + '?order_number=' + data.order_number + '&payment_id=' + data.transID;
                                     } else if (payment_method ==='cod'){
-                                        window.location.href = '/invoice/' + order.order_number;
+                                        window.location.href = redirect_url + '?order_number=' + data.order_number;
                                     }
                                 });
                         }
