@@ -11,6 +11,75 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
 # Create your views here.
+class CashOnDeliveryView(View):
+    def post(self,request, order_number):
+        current_user = request.user
+        order = Order.objects.get(user=current_user, is_ordered=False, order_number=order_number)
+        payment_method = 'cod'
+        payment = Payment(
+            user= request.user,
+            payment_id = order.order_number,
+            payment_method=payment_method,
+            amount_paid=order.order_total,
+            status='Pending'
+        )
+        payment.save()
+        order.payment = payment
+        order.is_ordered = True
+        order.save()
+
+        #Move the cart items to order product table
+        cart_items = CartItem.objects.filter(user=request.user)
+
+        for item in cart_items:
+            orderproduct = OrderProduct()
+            orderproduct.order_id = order.id
+            orderproduct.payment = payment
+            orderproduct.user_id = request.user.id
+            orderproduct.product_id = item.product_id
+            orderproduct.quantity = item.quantity
+            orderproduct.product_price = item.product.price
+            orderproduct.ordered = True
+            orderproduct.save()
+
+            cart_item = CartItem.objects.get(id=item.id)
+            product_variation = cart_item.variations.all()
+            orderproduct = OrderProduct.objects.get(id=orderproduct.id)
+            orderproduct.variations.set(product_variation)
+            orderproduct.save()
+        #Reduce the quantity of the sold products
+            product = MyProducts.objects.get(id=item.product_id)
+            product.stock -= item.quantity
+            product.save()
+        #clear cart
+        CartItem.objects.filter(user=request.user).delete()
+        #send order received email to customer
+        mail_subject = 'Thank you for your order!'
+        message = render_to_string('orders/order_recieved_email.html',{
+            'user': request.user,
+            'order': order,
+        })
+        to_email = request.user.email
+        send_email =  EmailMessage(mail_subject, message, to=[to_email])
+        send_email.send()
+        try:
+            order = Order.objects.get(order_number=order_number, is_ordered=True)
+            ordered_products = OrderProduct.objects.filter(order_id=order.id)
+            subtotal = 0
+            for i in ordered_products:
+                subtotal += i.product_price * i.quantity
+            
+            context = {
+                'order': order,
+                'ordered_products' : ordered_products,
+                'order_number': order.order_number,
+                'transID': payment.payment_id,
+                'payment': payment,
+                'subtotal': subtotal,
+            }
+            return render(request, 'orders/order_complete.html', context)
+        except (Payment.DoesNotExist, Order.DoesNotExist):
+            return redirect('home')
 
 class PaymentsView(View):
     def post(self, request):
@@ -21,7 +90,6 @@ class PaymentsView(View):
 
             #check payment method
             payment_method = body['payment_method']
-            print(payment_method)
             
             if payment_method == 'paypal':
                 payment = Payment(
@@ -33,16 +101,6 @@ class PaymentsView(View):
                 )
                 payment.save()
 
-            elif payment_method == 'cod':
-                payment = Payment(
-                    user= request.user,
-                    payment_id = 'COD',
-                    payment_method=payment_method,
-                    amount_paid=order.order_total,
-                    status='Pending'
-                )
-                payment.save()
-                
             order.payment = payment
             order.is_ordered = True
             order.save()
@@ -188,8 +246,6 @@ class OrderCompleteView(View):
             #check if it's a paypal transaction
             if transID:
                 payment = Payment.objects.get(payment_id=transID)
-            else:
-                payment = Payment.objects.get(payment_id='COD')
             context = {
                 'order': order,
                 'ordered_products' : ordered_products,
@@ -201,3 +257,4 @@ class OrderCompleteView(View):
             return render(request, 'orders/order_complete.html', context)
         except (Payment.DoesNotExist, Order.DoesNotExist):
             return redirect('home')
+

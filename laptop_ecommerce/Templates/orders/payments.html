@@ -121,7 +121,7 @@
                     <h5 class="card-header">Cash On Delivery</h5>
                     <div class="card-body">
                         <div class="d-flex justify-content-center">
-                            <form method="POST" action="{% url 'payments' %}">
+                            <form method="POST" action="{% url 'cashondelivery' order.order_number %}">
                                 {% csrf_token %}
                                 <button class="btn btn-warning">Place Order</button>
                             </form>
@@ -222,26 +222,21 @@
                         sendData();
     
                         function sendData() {
-                            // var requestBody = {
-                            //     orderID: orderID,
-                            //     payment_method: payment_method,
-                            //     status: details.status,
-                            // };
-                            // if (details.id) {
-                            //     requestBody.transID = details.id;
-                            // }
+                            var requestBody = {
+                                orderID: orderID,
+                                payment_method: payment_method,
+                                status: details.status,
+                            };
+                            if (details.id) {
+                                requestBody.transID = details.id;
+                            }
                             fetch(url, {
                                 method: "POST",
                                 headers: {
                                     "content-type": "application/json",
                                     "X-CSRFToken": csrftoken,
                                 },
-                                body: JSON.stringify({
-                                    orderID: orderID,
-                                    payment_method: payment_method,
-                                    transID : details.id,
-                                    status: details.status,
-                            }),
+                                body: JSON.stringify(requestBody),
                             })
                                 .then(response => response.json())
                                 .then(data => {
