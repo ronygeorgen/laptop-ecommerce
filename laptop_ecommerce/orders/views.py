@@ -14,64 +14,79 @@ from django.template.loader import render_to_string
 
 class PaymentsView(View):
     def post(self, request):
-        body = json.loads(request.body)
-        # Store transaction detail inside Payment model
-        order = Order.objects.get(user=request.user, is_ordered=False, order_number=body['orderID'])
-        payment = Payment(
-            user = request.user,
-            payment_id = body['transID'],
-            payment_method = body['payment_method'],
-            amount_paid = order.order_total,
-            status = body['status'],
-        )
+        try:
+            body = json.loads(request.body)
+            # Store transaction detail inside Payment model
+            order = Order.objects.get(user=request.user, is_ordered=False, order_number=body['orderID'])
 
-        payment.save()
+            #check payment method
+            payment_method = body['payment_method']
+            
+            if payment_method == 'paypal':
+                payment = Payment(
+                    user = request.user,
+                    payment_id = body['transID'],
+                    payment_method = body['payment_method'],
+                    amount_paid = order.order_total,
+                    status = body['status'],
+                )
 
-        order.payment = payment
-        order.is_ordered = True
-        order.save()
-        
-        #Move the cart items to order product table
-        cart_items = CartItem.objects.filter(user=request.user)
+                payment.save()
+            elif payment_method == 'cod':
+                payment = Payment(
+                    user= request.user,
+                    payment_id = 'COD',
+                    payment_method=payment_method,
+                    amount_paid=order.order_total,
+                    status='Pending'
+                )
+                payment.save()
+            order.payment = payment
+            order.is_ordered = True
+            order.save()
+            
+            #Move the cart items to order product table
+            cart_items = CartItem.objects.filter(user=request.user)
 
-        for item in cart_items:
-            orderproduct = OrderProduct()
-            orderproduct.order_id = order.id
-            orderproduct.payment = payment
-            orderproduct.user_id = request.user.id
-            orderproduct.product_id = item.product_id
-            orderproduct.quantity = item.quantity
-            orderproduct.product_price = item.product.price
-            orderproduct.ordered = True
-            orderproduct.save()
+            for item in cart_items:
+                orderproduct = OrderProduct()
+                orderproduct.order_id = order.id
+                orderproduct.payment = payment
+                orderproduct.user_id = request.user.id
+                orderproduct.product_id = item.product_id
+                orderproduct.quantity = item.quantity
+                orderproduct.product_price = item.product.price
+                orderproduct.ordered = True
+                orderproduct.save()
 
-            cart_item = CartItem.objects.get(id=item.id)
-            product_variation = cart_item.variations.all()
-            orderproduct = OrderProduct.objects.get(id=orderproduct.id)
-            orderproduct.variations.set(product_variation)
-            orderproduct.save()
-        #Reduce the quantity of the sold products
-            product = MyProducts.objects.get(id=item.product_id)
-            product.stock -= item.quantity
-            product.save()
-        #clear cart
-        CartItem.objects.filter(user=request.user).delete()
-        #send order received email to customer
-        mail_subject = 'Thank you for your order!'
-        message = render_to_string('orders/order_recieved_email.html',{
-            'user': request.user,
-            'order': order,
-        })
-        to_email = request.user.email
-        send_email =  EmailMessage(mail_subject, message, to=[to_email])
-        send_email.send()
-        #send order number and transaction id back to sendData method bia JsonResponse
-        data = {
-            'order_number' : order.order_number,
-            'transID': payment.payment_id
-        }
-        return JsonResponse(data)
-
+                cart_item = CartItem.objects.get(id=item.id)
+                product_variation = cart_item.variations.all()
+                orderproduct = OrderProduct.objects.get(id=orderproduct.id)
+                orderproduct.variations.set(product_variation)
+                orderproduct.save()
+            #Reduce the quantity of the sold products
+                product = MyProducts.objects.get(id=item.product_id)
+                product.stock -= item.quantity
+                product.save()
+            #clear cart
+            CartItem.objects.filter(user=request.user).delete()
+            #send order received email to customer
+            mail_subject = 'Thank you for your order!'
+            message = render_to_string('orders/order_recieved_email.html',{
+                'user': request.user,
+                'order': order,
+            })
+            to_email = request.user.email
+            send_email =  EmailMessage(mail_subject, message, to=[to_email])
+            send_email.send()
+            #send order number and transaction id back to sendData method bia JsonResponse
+            data = {
+                'order_number' : order.order_number,
+                'transID': payment.payment_id
+            }
+            return JsonResponse(data)
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
 
 class PlaceOrderView(View):
     def get(self, request, total=0, quantity=0):
@@ -167,7 +182,12 @@ class OrderCompleteView(View):
             subtotal = 0
             for i in ordered_products:
                 subtotal += i.product_price * i.quantity
-            payment = Payment.objects.get(payment_id=transID)
+            
+            #check if it's a paypal transaction
+            if transID:
+                payment = Payment.objects.get(payment_id=transID)
+            else:
+                payment = Payment.objects.get(payment_id='COD')
             context = {
                 'order': order,
                 'ordered_products' : ordered_products,
