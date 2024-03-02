@@ -7,10 +7,6 @@ from django.urls import reverse
 class MyProducts(models.Model):
     product_name        = models.CharField(max_length=200, unique=True)
     slug                = models.SlugField(max_length=200, unique=True)
-    description         = models.TextField(max_length=500, blank=True)
-    price               = models.IntegerField()
-    images              = models.ImageField(upload_to='static/products')
-    stock               = models.IntegerField()
     is_available        = models.BooleanField(default=False)
     category            = models.ForeignKey(Category, on_delete=models.CASCADE)
     create_date         = models.DateTimeField(auto_now_add=True)
@@ -45,16 +41,39 @@ variation_category_choice = (
     ('storage', 'storage'),
 )
 class Variations(models.Model):
-    product = models.ForeignKey(MyProducts, on_delete=models.CASCADE)
-    variation_category = models.CharField(max_length=100, choices=variation_category_choice)
-    variation_values = models.CharField(max_length=100)
-    is_active = models.BooleanField(default=True)
-    create_date = models.DateTimeField(auto_now_add=True)
+    product             = models.ForeignKey(MyProducts, on_delete=models.CASCADE)
+    variation_category  = models.CharField(max_length=100, choices=variation_category_choice)
+    variation_values    = models.CharField(max_length=100)
+    description         = models.TextField(max_length=500, blank=True)
+    price               = models.IntegerField(default=0)
+    images              = models.ManyToManyField('Image', blank=True)
+    stock               = models.IntegerField(default=0)
+    is_active           = models.BooleanField(default=True)
+    create_date         = models.DateTimeField(auto_now_add=True)
 
     objects = VariationsManager()
 
     def __str__(self):
         return self.variation_values
+    
+    
+class Image(models.Model):
+    variation = models.ForeignKey(Variations, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='static/variations')    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     # March 2nd I am going to edit MyProducts and Variations
     # Variations model reworking start
