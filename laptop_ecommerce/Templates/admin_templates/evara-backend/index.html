@@ -62,13 +62,15 @@
                         <a href="page-seller-detail.html">Seller profile</a>
                     </div>
                 </li>
-                <li class="menu-item has-submenu">
+                <li class="menu-item has-submenu ">
                     <a class="menu-link" href="#"> <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Products</span>
                     </a>
                     <div class="submenu">
                         <a href="{% url 'product' %}" >Add Products</a>
                         <a href="{% url 'product_list' %}" >Product List</a>
+                        <a href="{% url 'variations_add' %}" >Add Variations</a>
+                        <a href="{% url 'variations_list' %}" >Variations List</a>
                         
                     </div>
                 </li>

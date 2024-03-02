@@ -68,7 +68,9 @@
                     </a>
                     <div class="submenu">
                         <a href="{% url 'product' %}" >Add Products</a>
-                        <a href="{% url 'product_list' %}" class="active" >Product List</a>
+                        <a href="{% url 'product_list' %}" class="active">Product List</a>
+                        <a href="{% url 'variations_add' %}" >Add Variations</a>
+                        <a href="{% url 'variations_list' %}" >Variations List</a>
                         
                     </div>
                 </li>
@@ -225,19 +227,19 @@
                         <div class="row align-items-center">
                             <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
                                 <a class="itemside" href="#">
-                                    <div class="left">
+                                    <!-- <div class="left">
                                         <img src="{{ not_deleted_product.images.url }}" class="img-sm img-thumbnail" alt="Item">
-                                    </div>
+                                    </div> -->
                                     <div class="info col-4">
                                         <h6 class="mb-0">{{ not_deleted_product.product_name }}</h6>
                                     </div>
-                                    <div class="info col-8">
+                                    <!-- <div class="info col-8">
                                         <h6 class="mb-0">{{ not_deleted_product.description }}</h6>
-                                    </div>
+                                    </div> -->
                                 </a>
                             </div>
                             
-                            <div class="col-lg-2 col-sm-2 col-4 col-price justify-content-center d-flex"> <span>₹{{ not_deleted_product.price }} </span> </div>
+                            <!-- <div class="col-lg-2 col-sm-2 col-4 col-price justify-content-center d-flex"> <span>₹{{ not_deleted_product.price }} </span> </div> -->
                             <div class="col-lg-2 col-sm-2 col-4 col-status">
                                 <span class="badge rounded-pill alert-success">Active</span>
                             </div>
@@ -264,18 +266,18 @@
                         <div class="row align-items-center">
                             <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
                                 <a class="itemside" href="#">
-                                    <div class="left">
+                                    <!-- <div class="left">
                                         <img src="{{ deleted_product.images.url }}" class="img-sm img-thumbnail" alt="Item">
-                                    </div>
+                                    </div> -->
                                     <div class="info col-4">
                                         <h6 class="mb-0">{{ deleted_product.product_name }}</h6>
                                     </div>
-                                    <div class="info col-8">
+                                    <!-- <div class="info col-8">
                                         <h6 class="mb-0">{{ deleted_product.description }}</h6>
-                                    </div>
+                                    </div> -->
                                 </a>
                             </div>
-                            <div class="col-lg-2 col-sm-2 col-4 col-price justify-content-center d-flex"> <span>₹{{ deleted_product.price }} </span> </div>
+                            <!-- <div class="col-lg-2 col-sm-2 col-4 col-price justify-content-center d-flex"> <span>₹{{ deleted_product.price }} </span> </div> -->
                             <div class="col-lg-2 col-sm-2 col-4 col-status">
                                 <span class="badge rounded-pill alert-danger">Disabled</span>
                             </div>
