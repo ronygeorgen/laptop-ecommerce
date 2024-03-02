@@ -55,3 +55,5 @@ class Variations(models.Model):
 
     def __str__(self):
         return self.variation_values
+    
+    # March 2nd I am going to edit MyProducts and Variations
