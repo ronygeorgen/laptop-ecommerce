@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import View
-from products.models import MyProducts
+from products.models import MyProducts, Variations, Image
 from category.models import Category
 from carts.models import Cart, CartItem
 from carts.views import _CartId
@@ -11,9 +11,9 @@ from django.db.models import Q
 class Home(View):
     def get(self,request):
     
-        products = MyProducts.objects.all().filter(is_available=True)
+        variations = Variations.objects.filter(is_active=True)
         context = {
-            'products' : products
+            'variations' : variations
         }
         return render(request,'home.html', context)
 class Store(View):
@@ -63,9 +63,10 @@ class SlugStore(View):
         return render(request, 'store/store.html',context)
 
 class ProductDetailView(View):
-    def get(self, request, category_slug, product_slug):
+    def get(self, request, category_slug, product_slug, variation_id):
         try:
             single_product = MyProducts.objects.get(category__slug=category_slug, slug=product_slug)
+            selected_variant = Variations.objects.get(id=variation_id)
             cart_id_instance = _CartId()
             in_cart = CartItem.objects.filter(cart__cart_id=cart_id_instance.get(request), product=single_product).exists()
             
@@ -74,6 +75,7 @@ class ProductDetailView(View):
         context = {
             'single_product' : single_product,
             'in_cart'        : in_cart,
+            'selected_variant': selected_variant,
         }
         return render(request, 'store/product_detail.html', context)
     
