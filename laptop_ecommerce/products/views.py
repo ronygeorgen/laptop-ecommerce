@@ -1,9 +1,11 @@
 from django.shortcuts import render,redirect
 from django.views import View
-from .models import MyProducts
+from .models import MyProducts, Variations, Image
 from category.models import Category
 from django.contrib import messages
 from django.http import Http404 
+from .forms import VariationsForm, ImageFormSet
+from django.urls import reverse
 
 # Create your views here.
 class ProductView(View):
@@ -17,9 +19,6 @@ class ProductView(View):
     
     def post(self,request):
         form_title          = request.POST.get('product_title')
-        form_description    = request.POST.get('product_description')
-        form_price          = request.POST.get('product_price')
-        form_stock          = request.POST.get('product_stock')
         form_category       = request.POST.get('mycategory')
         # print(form_category)
         try:
@@ -29,21 +28,16 @@ class ProductView(View):
             # Handle the case when the Category does not exist
             raise Http404("Category does not exist")
         
-        form_isavailable    = request.POST.get('mycheck')=='True'
-        form_image=request.FILES['product_image']  
+        form_isavailable    = request.POST.get('mycheck')=='True' 
 
-        if form_title and form_description and form_price and form_stock and form_category and form_image:
-            product =  MyProducts(product_name=form_title, description=form_description, price=form_price, stock=form_stock, category=category_instance, is_available=form_isavailable, images=form_image )
+        if form_title   and form_category:
+            product =  MyProducts(product_name=form_title,  category=category_instance, is_available=form_isavailable)
             product.save()
             return redirect('dashboard')
         messages.error(request,"Enter all fields")
         entered_data = {
             "product_name"        : form_title,
-            "product_description" : form_description,
-            "product_price"       : form_price,
-            "product_stock"       : form_stock,
             "product_category"    : form_category,
-            "product_media"       : form_image, 
 
         }
         return render(request,self.templates, {'products' : entered_data})
@@ -103,3 +97,87 @@ class SoftDeleteProductView(View):
         product_to_delete.is_available = False
         product_to_delete.save()
         return redirect ('product_list')
+    
+#Below classes for variations 
+
+class CreateVariationFormView(View):
+    template = 'admin_templates/evara-backend/variations-product-add.html'
+
+    def get(self, request):
+        variation_form = VariationsForm()
+        formset = ImageFormSet()
+        return render(request, self.template, {'variation_form': variation_form, 'formset': formset})
+
+    def post(self, request):
+        variation_form = VariationsForm(request.POST)
+        formset = ImageFormSet(request.POST, request.FILES)
+
+        if variation_form.is_valid() and formset.is_valid():
+            variation_instance = variation_form.save()
+            formset.save(commit=False)
+            for form in formset:
+                image_instance = form.save(commit=False)
+                image_instance.variation = variation_instance
+                image_instance.save()
+            variation_instance.save()
+
+            return redirect('variations_list')  
+        else:
+            return render(request, self.template, {'variation_form': variation_form, 'formset': formset})
+    
+class VariationsListView(View):
+    def get(self, request):
+        category=Category.objects.filter(is_deleted=False)
+        list_variations_not_deleted   = Variations.objects.filter(is_active=True).prefetch_related('images')
+        list_variations_deleted       = Variations.objects.filter(is_active=False).prefetch_related('images')
+        
+        context={
+            "categorys": category,
+            "list_variations_not_deleted" : list_variations_not_deleted,
+            "list_variations_deleted" : list_variations_deleted,
+        }
+        return render(request,'admin_templates\\evara-backend\\variations-product-list.html', context)
+
+class VariationsListEditView(View):
+    def get(self,request,pk):
+        variant_to_edit = Variations.objects.get(pk=pk)
+        variation_form = VariationsForm(instance=variant_to_edit)
+        
+        existing_images = variant_to_edit.images.all()
+        
+        # Pass the instance and queryset to ImageFormSet
+        formset = ImageFormSet(instance=variant_to_edit, queryset=existing_images)
+        
+        # Determine the number of empty forms to display
+        num_empty_forms = formset.total_form_count() - len(existing_images)
+        
+        # Add extra empty forms to the formset if needed
+        if num_empty_forms > 0:
+            formset.extra = num_empty_forms
+        context = {
+            'variant_to_edit': variant_to_edit,
+            'variation_form': variation_form,
+            'formset':formset,
+        }
+        return render(request, 'admin_templates/evara-backend/variations-product-add.html' ,context)
+    def post(self, request, pk):
+        variant_to_edit = Variations.objects.get(pk=pk)
+        variation_form = VariationsForm(request.POST, instance=variant_to_edit)
+        formset = ImageFormSet(request.POST, request.FILES, instance=variant_to_edit)
+        if variation_form.is_valid() and formset.is_valid():
+            variation_form.save()
+            formset.save()
+            return redirect('variations_list')
+        context = {
+            'variant_to_edit': variant_to_edit,
+            'variation_form': variation_form,
+            'formset': formset,
+        }
+        return render(request, 'admin_templates/evara-backend/variations-product-add.html', context)
+
+class SoftDeleteVariant(View):
+    def get(self,request,pk):
+        variant_to_delete = Variations.objects.get(pk=pk)
+        variant_to_delete.is_active = False
+        variant_to_delete.save()
+        return redirect('variations_list')

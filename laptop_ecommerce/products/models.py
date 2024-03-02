@@ -46,7 +46,6 @@ class Variations(models.Model):
     variation_values    = models.CharField(max_length=100)
     description         = models.TextField(max_length=500, blank=True)
     price               = models.IntegerField(default=0)
-    images              = models.ManyToManyField('Image', blank=True)
     stock               = models.IntegerField(default=0)
     is_active           = models.BooleanField(default=True)
     create_date         = models.DateTimeField(auto_now_add=True)
@@ -58,7 +57,7 @@ class Variations(models.Model):
     
     
 class Image(models.Model):
-    variation = models.ForeignKey(Variations, on_delete=models.CASCADE)
+    variation = models.ForeignKey(Variations, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='static/variations')    
     
     

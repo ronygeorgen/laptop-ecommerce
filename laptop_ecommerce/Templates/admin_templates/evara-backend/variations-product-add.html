@@ -3,7 +3,7 @@
 <html lang="en">
 
 
-<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-categories.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-form-product-2.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:32 GMT -->
 <head>
     <meta charset="utf-8">
     <title>Laptops</title>
@@ -17,7 +17,9 @@
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href=" {% static 'adminstyles/assets/imgs/theme/favicon.svg' %} ">
     <!-- Template CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="{% static 'adminstyles/assets/css/main.css' %}" rel="stylesheet" type="text/css" />
+    
 </head>
 <body>
     <div class="screen-overlay"></div>
@@ -62,14 +64,14 @@
                         <a href="page-seller-detail.html">Seller profile</a>
                     </div>
                 </li>
-                <li class="menu-item has-submenu ">
+                <li class="menu-item has-submenu active">
                     <a class="menu-link" href="#"> <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Products</span>
                     </a>
                     <div class="submenu">
                         <a href="{% url 'product' %}" >Add Products</a>
                         <a href="{% url 'product_list' %}" >Product List</a>
-                        <a href="{% url 'variations_add' %}" >Add Variations</a>
+                        <a href="{% url 'variations_add' %}" class="active">Add Variations</a>
                         <a href="{% url 'variations_list' %}" >Variations List</a>
                         
                     </div>
@@ -83,7 +85,7 @@
                         <a href="page-transactions-2.html">Transaction 2</a>
                     </div>
                 </li>
-                <li class="menu-item active">
+                <li class="menu-item">
                     <a class="menu-link" href="{% url 'user_list' %}"> <i class="icon material-icons md-person"></i>
                         <span class="text">User Management</span>
                     </a>
@@ -184,154 +186,56 @@
                 </ul>
             </div>
         </header>
-        <section class="content-main">
-            <div class="content-header">
-                <div>
-                    <h2 class="content-title card-title">Users List</h2>
-                    <p>Lorem ipsum dolor sit amet.</p>
-                </div>
-                <!-- <div>
-                    <a href="#" class="btn btn-light rounded font-md">Export</a>
-                    <a href="#" class="btn btn-light rounded  font-md">Import</a>
-                    <a href="{% url 'product' %}" class="btn btn-primary btn-sm rounded">Create new</a>
-                </div> -->
-            </div>
-            <div class="card mb-4">
-                <header class="card-header">
-                    <div class="row align-items-center">
-                        <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
-                            <!-- <select class="form-select">
-                                <option selected>All category</option>
-                                <option> all categories </option>
-                            </select> -->
-                        </div>
-                        <div class="col-md-2 col-6">
-                            <input type="date" value="02.05.2021" class="form-control">
-                        </div>
-                        <div class="col-md-2 col-6">
-                            <select class="form-select">
-                                <option selected>Status</option>
-                                <option>Active</option>
-                                <option>Disabled</option>
-                                <option>Show all</option>
-                            </select>
-                        </div>
-                    </div>
-                </header> 
-                <!-- Below loop for display not blocked users -->
-                {% for active_users in active_users_list %}
-                <form method="get" action="{% url 'user_block' active_users.id %}">
-                {% csrf_token %}
-                <div class="card-body">
-                    <article class="itemlist">
-                        <div class="row align-items-center">
-                            <div class="col-lg-1 col-sm-2 col-4 col-date">
-                                <span> {{active_users.id}} </span>
-                            </div>
-                            <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
-                                <a class="itemside" href="#">
-                                    <div class="info col-4">
-                                        <h6 class="mb-0"> {{active_users.first_name}}  {{active_users.last_name}} </h6>
-                                    </div>
-                                    <div class="info col-8">
-                                        <h6 class="mb-0"> {{active_users.date_joined}} </h6>
-                                    </div>
-                                </a>
-                            </div>
-                            
-                            <div class="col-lg-2 col-sm-2 col-4 col-price justify-content-center d-flex"> <span> {{active_users.email}} </span> </div>
-                            <div class="col-lg-2 col-sm-2 col-4 col-status d-flex justify-content-center">
-                                <span class="badge rounded-pill alert-success">Active</span>
-                            </div>
-                            <!-- <div class="col-lg-1 col-sm-2 col-4 col-date">
-                                <span> statuc Block/Unblock </span>
-                            </div> -->
-                            
-                                <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                                    <a href=" {% url 'user_block' active_users.id %}  " class="btn btn-sm font-sm rounded btn-brand">
-                                        <i class="material-icons md-edit"></i> Block
-                                    </a>
-                                    <!-- <a href="  " class="btn btn-sm font-sm btn-light rounded">
-                                        <i class="material-icons md-delete_forever"></i> UnBlock
-                                    </a> -->
+        <section>
+            <div class="container mt-5">
+                {% if variant_to_edit %}
+                <h2>Edit Variation with Images</h2>
+                <form method="post" action="{% url 'variations_list_edit' variant_to_edit.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ variation_form.as_p }}
+                    
+                    
+                    
+                    <div class="card mt-3">
+                        {{ formset.management_form }}
+                        {% for form in formset.forms %}
+                            {% if form.instance.image %}  {# Check if the form has an associated image #}
+                                <div class="card-body">
+                                    {{ form.as_table }}
                                 </div>
-                            
-                        </div> <!-- row .// -->
-                    </article> <!-- itemlist  .// -->
-                </div> <!-- card-body end// -->
-            </form>
-            {% endfor %}
-
-                <!-- Below loop for display blocked users -->
-                {% for blocked_users in blocked_users_list %}
-                <form method="get" action="{% url 'user_unblock' blocked_users.id %}">
-                <div class="card-body">
-                    <article class="itemlist">
-                        <div class="row align-items-center">
-                            <div class="col-lg-1 col-sm-2 col-4 col-date">
-                                <span> {{blocked_users.id}} </span>
-                            </div>
-                            <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
-                                <a class="itemside" href="#">
-                                    <div class="info col-4">
-                                        <h6 class="mb-0"> {{blocked_users.first_name}} {{blocked_users.last_name}} </h6>
-                                    </div>
-                                    <div class="info col-8">
-                                        <h6 class="mb-0"> {{ blocked_users.date_joined }} </h6>
-                                    </div>
-                                </a>
-                            </div>
-                            
-                            <div class="col-lg-2 col-sm-2 col-4 col-price justify-content-center d-flex"> <span> {{blocked_users.email}} </span> </div>
-                            <div class="col-lg-2 col-sm-2 col-4 col-status d-flex justify-content-center">
-                                <span class="badge rounded-pill alert-danger">Disabled</span>
-                            </div>
-                            <!-- <div class="col-lg-1 col-sm-2 col-4 col-date">
-                                <span> statuc Block/Unblock </span>
-                            </div> -->
-                            <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                                <!-- <a href="  " class="btn btn-sm font-sm rounded btn-brand">
-                                    <i class="material-icons md-edit"></i> Block
-                                </a> -->
-                                <a href=" {% url 'user_unblock' blocked_users.id %} " class="btn btn-sm font-sm btn-light rounded">
-                                    <i class="material-icons md-delete_forever"></i> UnBlock
-                                </a>
-                            </div>
-                        </div> <!-- row .// -->
-                    </article> <!-- itemlist  .// -->
-                </div> <!-- card-body end// -->
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    
+                    
+                    <button type="submit" class="btn btn-primary " >Save Edits</button>
                 </form>
-                {% endfor %}
-
-            </div> <!-- card end// -->
-            <div class="pagination-area mt-30 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                    </ul>
-                </nav>
+                {% else %}
+                <h2>Add Variation with Images</h2>
+                <form method="post" action="{% url 'variations_add' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ variation_form.as_p }}
+                    
+                    
+                    
+                        <div class="card mt-3">
+                            {{ formset.management_form }}
+                            {% for form in formset.forms %}
+                            <div class="card-body">
+                                {{ form.as_table }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    
+                    
+                    <button type="submit" class="btn btn-primary " >Save</button>
+                </form>
+                {% endif %}
             </div>
         </section> <!-- content-main end// -->
-        <footer class="main-footer font-xs">
-            <div class="row pb-30 pt-15">
-                <div class="col-sm-6">
-                    <script>
-                    document.write(new Date().getFullYear())
-                    </script> ©, Evara - HTML Ecommerce Template .
-                </div>
-                <div class="col-sm-6">
-                    <div class="text-sm-end">
-                        All rights reserved
-                    </div>
-                </div>
-            </div>
-        </footer>
+        
     </main>
+    
     <script src="{% static 'adminstyles/assets/js/vendors/jquery-3.6.0.min.js' %}"></script>
     <script src="{% static 'adminstyles/assets/js/vendors/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'adminstyles/assets/js/vendors/select2.min.js' %}"></script>
@@ -339,8 +243,11 @@
     <script src="{% static 'adminstyles/assets/js/vendors/jquery.fullscreen.min.js' %}"></script>
     <!-- Main Script -->
     <script src="{% static 'adminstyles/assets/js/main.js' %}" type="text/javascript"></script>
+    <!-- Below for form -->
+
+    
 </body>
 
 
-<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-products-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:12 GMT -->
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-form-product-2.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:32 GMT -->
 </html>

@@ -62,7 +62,7 @@
                         <a href="page-seller-detail.html">Seller profile</a>
                     </div>
                 </li>
-                <li class="menu-item has-submenu ">
+                <li class="menu-item has-submenu active">
                     <a class="menu-link" href="#"> <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Products</span>
                     </a>
@@ -70,7 +70,7 @@
                         <a href="{% url 'product' %}" >Add Products</a>
                         <a href="{% url 'product_list' %}" >Product List</a>
                         <a href="{% url 'variations_add' %}" >Add Variations</a>
-                        <a href="{% url 'variations_list' %}" >Variations List</a>
+                        <a href="{% url 'variations_list' %}" class="active">Variations List</a>
                         
                     </div>
                 </li>
@@ -83,7 +83,7 @@
                         <a href="page-transactions-2.html">Transaction 2</a>
                     </div>
                 </li>
-                <li class="menu-item active">
+                <li class="menu-item">
                     <a class="menu-link" href="{% url 'user_list' %}"> <i class="icon material-icons md-person"></i>
                         <span class="text">User Management</span>
                     </a>
@@ -187,23 +187,23 @@
         <section class="content-main">
             <div class="content-header">
                 <div>
-                    <h2 class="content-title card-title">Users List</h2>
+                    <h2 class="content-title card-title">Variation List</h2>
                     <p>Lorem ipsum dolor sit amet.</p>
                 </div>
-                <!-- <div>
-                    <a href="#" class="btn btn-light rounded font-md">Export</a>
-                    <a href="#" class="btn btn-light rounded  font-md">Import</a>
-                    <a href="{% url 'product' %}" class="btn btn-primary btn-sm rounded">Create new</a>
-                </div> -->
+                <div>
+                    <a href="{% url 'variations_add' %}" class="btn btn-primary btn-sm rounded">Create new</a>
+                </div>
             </div>
             <div class="card mb-4">
                 <header class="card-header">
                     <div class="row align-items-center">
                         <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
-                            <!-- <select class="form-select">
+                            <select class="form-select">
                                 <option selected>All category</option>
-                                <option> all categories </option>
-                            </select> -->
+                                {% for category in categorys %}
+                                <option> {{category.category_name}} </option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="col-md-2 col-6">
                             <input type="date" value="02.05.2021" class="form-control">
@@ -217,90 +217,99 @@
                             </select>
                         </div>
                     </div>
-                </header> 
-                <!-- Below loop for display not blocked users -->
-                {% for active_users in active_users_list %}
-                <form method="get" action="{% url 'user_block' active_users.id %}">
-                {% csrf_token %}
+                    
+                    
+                </header> <!-- card-header end// -->
+                </div>
+                <!-- Below loop for display not deleted products -->
+                {% for not_deleted_variations in list_variations_not_deleted %}
                 <div class="card-body">
                     <article class="itemlist">
                         <div class="row align-items-center">
-                            <div class="col-lg-1 col-sm-2 col-4 col-date">
-                                <span> {{active_users.id}} </span>
-                            </div>
                             <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
                                 <a class="itemside" href="#">
+                                    <div class="left">
+                                        {% for image in not_deleted_variations.images.all %}
+                                            <img src="{{ image.image.url }}" class="img-sm img-thumbnail" alt="Item">
+                                        {% endfor %}
+                                    </div>
                                     <div class="info col-4">
-                                        <h6 class="mb-0"> {{active_users.first_name}}  {{active_users.last_name}} </h6>
+                                        <h6 class="mb-0">{{ not_deleted_variations.product.product_name }}</h6>
                                     </div>
-                                    <div class="info col-8">
-                                        <h6 class="mb-0"> {{active_users.date_joined}} </h6>
+                                    
+                                    <div class="info col-4">
+                                        <h6 class="mb-0">{{ not_deleted_variations.description }}</h6>
                                     </div>
+                                    
                                 </a>
+                                
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-4 col-price justify-content-center d-flex">
+                                <h6 class="mb-0">{{ not_deleted_variations.stock }} nos</h6>
                             </div>
                             
-                            <div class="col-lg-2 col-sm-2 col-4 col-price justify-content-center d-flex"> <span> {{active_users.email}} </span> </div>
-                            <div class="col-lg-2 col-sm-2 col-4 col-status d-flex justify-content-center">
+                            <div class="col-lg-2 col-sm-2 col-4 col-price justify-content-center d-flex"> <span>₹{{ not_deleted_variations.price }} </span> </div>
+                            <div class="col-lg-2 col-sm-2 col-4 col-status">
                                 <span class="badge rounded-pill alert-success">Active</span>
                             </div>
-                            <!-- <div class="col-lg-1 col-sm-2 col-4 col-date">
-                                <span> statuc Block/Unblock </span>
-                            </div> -->
-                            
-                                <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                                    <a href=" {% url 'user_block' active_users.id %}  " class="btn btn-sm font-sm rounded btn-brand">
-                                        <i class="material-icons md-edit"></i> Block
-                                    </a>
-                                    <!-- <a href="  " class="btn btn-sm font-sm btn-light rounded">
-                                        <i class="material-icons md-delete_forever"></i> UnBlock
-                                    </a> -->
-                                </div>
-                            
+                            <div class="col-lg-1 col-sm-2 col-4 col-date">
+                                <span> {{ not_deleted_variations.create_date }} </span>
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-4 col-action text-end d-flex justify-content-center">
+                                <a href=" {% url 'variations_list_edit' not_deleted_variations.id  %} " class="btn btn-sm font-sm rounded btn-brand">
+                                    <i class="material-icons md-edit"></i> Edit
+                                </a>
+                                <a href="  {% url 'variations_list_delete' not_deleted_variations.id  %} " class="btn btn-sm font-sm btn-light rounded">
+                                    <i class="material-icons md-delete_forever"></i> Delete
+                                </a>
+                            </div>
                         </div> <!-- row .// -->
                     </article> <!-- itemlist  .// -->
                 </div> <!-- card-body end// -->
-            </form>
-            {% endfor %}
+                {% endfor %}
 
-                <!-- Below loop for display blocked users -->
-                {% for blocked_users in blocked_users_list %}
-                <form method="get" action="{% url 'user_unblock' blocked_users.id %}">
+                <!-- Below loop for display soft deleted products -->
+                {% for deleted_variant in list_variations_deleted %}
                 <div class="card-body">
                     <article class="itemlist">
                         <div class="row align-items-center">
-                            <div class="col-lg-1 col-sm-2 col-4 col-date">
-                                <span> {{blocked_users.id}} </span>
-                            </div>
                             <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
                                 <a class="itemside" href="#">
+                                    <div class="left">
+                                        {% for image in deleted_variant.images.all %}
+                                            <img src="{{ image.image.url }}" class="img-sm img-thumbnail" alt="Item">
+                                        {% endfor %}
+                                    </div>
                                     <div class="info col-4">
-                                        <h6 class="mb-0"> {{blocked_users.first_name}} {{blocked_users.last_name}} </h6>
+                                        <h6 class="mb-0">{{ deleted_variant.product.product_name }}</h6>
                                     </div>
+                                    
                                     <div class="info col-8">
-                                        <h6 class="mb-0"> {{ blocked_users.date_joined }} </h6>
+                                        <h6 class="mb-0">{{ deleted_variant.description }}</h6>
                                     </div>
+                                    
                                 </a>
+                                
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-4 col-price justify-content-center d-flex">
+                                <h6 class="mb-0">{{ deleted_variant.stock }} nos</h6>
                             </div>
                             
-                            <div class="col-lg-2 col-sm-2 col-4 col-price justify-content-center d-flex"> <span> {{blocked_users.email}} </span> </div>
-                            <div class="col-lg-2 col-sm-2 col-4 col-status d-flex justify-content-center">
-                                <span class="badge rounded-pill alert-danger">Disabled</span>
+                            <div class="col-lg-2 col-sm-2 col-4 col-price justify-content-center d-flex"> <span>₹{{ deleted_variant.price }} </span> </div>
+                            <div class="col-lg-2 col-sm-2 col-4 col-status">
+                                <span class="badge rounded-pill alert-danger">Deleted</span>
                             </div>
-                            <!-- <div class="col-lg-1 col-sm-2 col-4 col-date">
-                                <span> statuc Block/Unblock </span>
-                            </div> -->
-                            <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
-                                <!-- <a href="  " class="btn btn-sm font-sm rounded btn-brand">
-                                    <i class="material-icons md-edit"></i> Block
-                                </a> -->
-                                <a href=" {% url 'user_unblock' blocked_users.id %} " class="btn btn-sm font-sm btn-light rounded">
-                                    <i class="material-icons md-delete_forever"></i> UnBlock
+                            <div class="col-lg-1 col-sm-2 col-4 col-date">
+                                <span> {{ deleted_variant.create_date }} </span>
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-4 col-action text-end d-flex justify-content-center">
+                                <a href=" {% url 'variations_list_edit' deleted_variant.id  %} " class="btn btn-sm font-sm rounded btn-brand">
+                                    <i class="material-icons md-edit"></i> Edit
                                 </a>
                             </div>
                         </div> <!-- row .// -->
                     </article> <!-- itemlist  .// -->
                 </div> <!-- card-body end// -->
-                </form>
                 {% endfor %}
 
             </div> <!-- card end// -->
