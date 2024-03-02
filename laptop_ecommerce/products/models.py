@@ -57,3 +57,4 @@ class Variations(models.Model):
         return self.variation_values
     
     # March 2nd I am going to edit MyProducts and Variations
+    # Variations model reworking start
