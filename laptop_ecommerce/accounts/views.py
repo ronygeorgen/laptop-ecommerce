@@ -1,7 +1,7 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_object_or_404
 from django.views import View
-from .forms import RegistrationForm
-from .models import Account
+from .forms import RegistrationForm, UserForm, UserProfileForm
+from .models import Account, UserProfile
 from orders .models import Order
 from django.contrib import messages
 from django.contrib.auth import authenticate,login as auth_login , logout
@@ -46,6 +46,12 @@ class RegisterView(View):
             user = Account.objects.create_user(first_name=first_name, last_name=last_name, email=email, username=username, password=password)
             user.phone_number = phone_number
             user.save()
+
+            #Create user profile
+            profile = UserProfile()
+            profile.user_id = user.id
+            profile.profile_picture = 'static/default/avatar.png'
+            profile.save()
 
             #user activation
             current_site = get_current_site(request)
@@ -250,3 +256,54 @@ class UserDashboardView(View):
             'orders_count':orders_count,
         }
         return render(request, 'accounts/userdashboard.html', context)
+    
+class MyOrdersView(View):
+    def get(self, request):
+        orders = Order.objects.filter(user=request.user, is_ordered=True).order_by('-created_at')
+        context = {
+            'orders' : orders,
+        }
+        return render(request, 'accounts/my_orders.html', context)
+    
+class EditProfileView(View):
+    def get(self, request):
+        userprofile = get_object_or_404(UserProfile, user=request.user)
+        user_form = UserForm(instance=request.user)
+        profile_form = UserProfileForm(instance=userprofile)
+        context = {
+            'user_form': user_form,
+            'profile_form': profile_form,
+            'userprofile': userprofile,
+        }
+        return render(request, 'accounts/edit_profile.html', context)
+    
+    def post(self, request):
+        userprofile = get_object_or_404(UserProfile, user=request.user)
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Your profile has been updated')
+        return redirect('edit_profile')
+
+class ChangePasswordView(View):
+    def get(self, request):
+        return render(request, 'accounts/userprofile_change_password.html')
+    
+    def post(self, request):
+        current_password = request.POST['current_password']
+        new_password = request.POST['new_password']
+        confirm_password = request.POST['confirm_password']
+        user = Account.objects.get(username__exact =request.user.username)
+        if new_password == confirm_password:
+            success = user.check_password(current_password)
+            if success:
+                user.set_password(new_password)
+                user.save()
+                messages.success(request, 'Password updated successsfully. Please login again')
+                logout(request)
+                return redirect('login')
+        return render(request, 'accounts/userprofile_change_password.html')
+
+        
