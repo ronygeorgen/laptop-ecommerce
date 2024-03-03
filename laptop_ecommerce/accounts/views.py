@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from django.views import View
 from .forms import RegistrationForm
 from .models import Account
+from orders .models import Order
 from django.contrib import messages
 from django.contrib.auth import authenticate,login as auth_login , logout
 from django.contrib.auth.decorators import login_required
@@ -238,3 +239,14 @@ class ResetPasswordView(View):
         else:
             messages.error(request, 'Password do not match')
             return redirect('resetPassword')
+        
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class UserDashboardView(View):
+    def get(self, request):
+        orders = Order.objects.order_by('-created_at').filter(user_id=request.user.id, is_ordered=True)
+        orders_count = orders.count()
+        context = {
+            'orders_count':orders_count,
+        }
+        return render(request, 'accounts/userdashboard.html', context)
