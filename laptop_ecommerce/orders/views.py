@@ -38,9 +38,14 @@ class CashOnDeliveryView(View):
             orderproduct.user_id = request.user.id
             orderproduct.product_id = item.product_id
             orderproduct.quantity = item.quantity
-            orderproduct.product_price = item.product.price
+            orderproduct.product_price = 0
+            # Iterate over variations and get the price for each variation
+            for variation in item.variations.all():
+                orderproduct.product_price += variation.price
+            
             orderproduct.ordered = True
             orderproduct.save()
+
 
             cart_item = CartItem.objects.get(id=item.id)
             product_variation = cart_item.variations.all()
@@ -48,7 +53,7 @@ class CashOnDeliveryView(View):
             orderproduct.variations.set(product_variation)
             orderproduct.save()
         #Reduce the quantity of the sold products
-            product = MyProducts.objects.get(id=item.product_id)
+            product = Variations.objects.get(id=item.product_id)
             product.stock -= item.quantity
             product.save()
         #clear cart
@@ -115,19 +120,21 @@ class PaymentsView(View):
                 orderproduct.user_id = request.user.id
                 orderproduct.product_id = item.product_id
                 orderproduct.quantity = item.quantity
-                orderproduct.product_price = item.product.price
+                orderproduct.product_price = 0
+                # Iterate over variations and get the price for each variation
+                for variation in item.variations.all():
+                    orderproduct.product_price += variation.price
+                
                 orderproduct.ordered = True
                 orderproduct.save()
+
 
                 cart_item = CartItem.objects.get(id=item.id)
                 product_variation = cart_item.variations.all()
                 orderproduct = OrderProduct.objects.get(id=orderproduct.id)
                 orderproduct.variations.set(product_variation)
                 orderproduct.save()
-            #Reduce the quantity of the sold products
-                product = MyProducts.objects.get(id=item.product_id)
-                product.stock -= item.quantity
-                product.save()
+            
             #clear cart
             CartItem.objects.filter(user=request.user).delete()
             #send order received email to customer
@@ -161,7 +168,7 @@ class PlaceOrderView(View):
         grand_total = 0
         tax = 0
         for cart_item in cart_items:
-            total += (cart_item.product.price * cart_item.quantity)
+            total += (cart_item.variations.first().price * cart_item.quantity)
             quantity = cart_item.quantity
         tax = (2 * total)/100
         grand_total = total + tax

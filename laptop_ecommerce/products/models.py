@@ -60,19 +60,3 @@ class Image(models.Model):
     variation = models.ForeignKey(Variations, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='static/variations')    
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    # March 2nd I am going to edit MyProducts and Variations
-    # Variations model reworking start

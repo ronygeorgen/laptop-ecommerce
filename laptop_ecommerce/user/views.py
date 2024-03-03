@@ -18,15 +18,15 @@ class Home(View):
         return render(request,'home.html', context)
 class Store(View):
     def get(self,request):
-        products = MyProducts.objects.all().filter(is_available=True).order_by('id')
-        paginator = Paginator(products, 6)
+        variations = Variations.objects.filter(is_active=True).order_by('id')
+        paginator = Paginator(variations, 6)
         page = request.GET.get('page')
-        paged_products = paginator.get_page(page)
+        paged_variations = paginator.get_page(page)
         category_list = Category.objects.filter(is_deleted=False)
-        product_count = products.count()
+        variations_count = variations.count()
         context = {
-            'products' : paged_products,
-            'product_count' : product_count,
+            'variations' : paged_variations,
+            'variations_count' : variations_count,
             'category_list' : category_list,
         }
         return render(request, 'store/store.html',context)
@@ -34,32 +34,23 @@ class Store(View):
 class SlugStore(View):
     def get(self,request, category_slug=None):
         categories = None
-        products = None
+        variations = None
         if category_slug != None:
             categories = get_object_or_404(Category, slug=category_slug)
-            products = MyProducts.objects.filter(category=categories, is_available=True)
-            paginator = Paginator(products, 6)
-            page = request.GET.get('page')
-            paged_products = paginator.get_page(page)
-            category_list = Category.objects.filter(is_deleted=False)
-            product_count = products.count()
-            context = {
-                'products' : paged_products,
-                'product_count' : product_count,
-                'category_list' : category_list,
-            }
+            variations = Variations.objects.filter(product__category=categories, is_active=True)
+            
         else: 
-            products = MyProducts.objects.all().filter(is_available=True)
-            paginator = Paginator(products, 6)
-            page = request.GET.get('page')
-            paged_products = paginator.get_page(page)
-            category_list = Category.objects.filter(is_deleted=False)
-            product_count = products.count()
-            context = {
-                'products' : paged_products,
-                'product_count' : product_count,
-                'category_list' : category_list,
-            }
+            variations = Variations.objects.filter(is_active=True)
+        paginator = Paginator(variations, 6)
+        page = request.GET.get('page')
+        paged_variations = paginator.get_page(page)
+        category_list = Category.objects.filter(is_deleted=False)
+        variations_count = variations.count()
+        context = {
+            'variations' : paged_variations,
+            'variations_count' : variations_count,
+            'category_list' : category_list,
+        }
         return render(request, 'store/store.html',context)
 
 class ProductDetailView(View):
@@ -84,10 +75,10 @@ class SearchView(View):
         if 'keyword' in request.GET:
             keyword = request.GET['keyword']
             if keyword:
-                products = MyProducts.objects.order_by('-create_date').filter(Q(product_name__icontains=keyword) |  Q(description__icontains=keyword))
-                product_count = products.count()
+                variations = Variations.objects.filter(Q(product__product_name__icontains=keyword) |  Q(description__icontains=keyword) | Q(price__icontains=keyword)).order_by('-create_date')
+                variations_count = variations.count()
         context = {
-            'products': products,
-            'product_count':product_count,
+            'variations': variations,
+            'variations_count':variations_count,
         }
         return  render(request, 'store/store.html', context)
