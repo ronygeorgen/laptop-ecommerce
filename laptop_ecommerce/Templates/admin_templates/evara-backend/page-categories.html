@@ -201,83 +201,87 @@
                         <!--Below Form for Edit category -->
                         {% if category %}
                         <div class="col-md-3">
-                            
-                            <form method="post" action="{% url 'edit_category' category.id %}"  enctype="multipart/form-data">
+                            <form method="post" action="{% url 'edit_category' category.id %}" enctype="multipart/form-data" onsubmit="return validateForm1()">
                                 {% csrf_token %}
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
-                                    <input type="text" placeholder="Type here" class="form-control" value="{{category.category_name}}" name="product_name" id="product_name"   />
+                                    <input type="text" placeholder="Type here" class="form-control" value="{{category.category_name}}" name="product_name" id="product_name" />
+                                    <span id="productNameError" class="text-danger"></span>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Description</label>
-                                    <textarea name="product_description" placeholder="Type here"  class="form-control">{{category.description}}</textarea>
+                                    <textarea name="product_description" placeholder="Type here" class="form-control" id="product_description">{{category.description}}</textarea>
+                                    <span id="descriptionError" class="text-danger"></span>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Current Category Image</label>
                                     {% if category.cat_image %}
-                                    <div class="d-flex justify-content-center">
-                                        <img src="{{category.cat_image.url}}" alt="Current category image" style="max-width: 100px; max-height: 100px;">
-                                    </div>
+                                        <div class="d-flex justify-content-center">
+                                            <img src="{{category.cat_image.url}}" alt="Current category image" style="max-width: 100px; max-height: 100px;">
+                                        </div>
                                     {% else %}
-                                    <p>No image available</p>
+                                        <p>No image available</p>
                                     {% endif %}
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Category Image</label>
-                                    <input type="file" name="cat_image"  class="form-control">
+                                    <input type="file" name="cat_image" class="form-control" id="cat_image">
+                                    <span id="catImageError" class="text-danger"></span>
                                 </div>
                                 <div class="d-flex justify-content-center text-danger">
+                                    <!-- Display other errors here if needed -->
                                 </div>
                                 {% if my_id.0 == deleted_id.0 %}
-                                <div class="row">
-                                    <div class="col-md-7">
-                                        <h6>make_avaliable?</h6>
+                                    <div class="row">
+                                        <div class="col-md-7">
+                                            <h6>make_avaliable?</h6>
+                                        </div>
+                                        <div class="col-md-5 form-check">
+                                            <input class="form-check-input" type="checkbox" checked="" value="false" name="mycheck" />
+                                        </div>
                                     </div>
-                                <div class="col-md-5 form-check">
-                                    <input class="form-check-input" type="checkbox" checked="" value="false" name="mycheck" />
-                                </div>
-                                </div>
                                 {% else %}
-                                <span class="p-5"><p>You can't delete category from here</p></span>
+                                    <span class="p-5"><p>You can't delete the category from here</p></span>
                                 {% endif %}
                                 <div class="d-grid">
                                     <button class="btn btn-primary">Save edits</button>
                                 </div>
                                 <div class="d-grid pt-5">
-                                    <button class="btn " > <a href="{% url 'category' %}">Go to Create category</a></button>
+                                    <button class="btn"> <a href="{% url 'category' %}">Go to Create category</a></button>
                                 </div>
                             </form>
                         </div>
+                        
                         {% else %}
                         <!--Below Form for add category -->
                         <div class="col-md-3">
-                            <form method="post" action="{% url 'category' %}"  enctype="multipart/form-data" onsubmit="return validateProductName()">
+                            <form method="post" action="{% url 'category' %}" enctype="multipart/form-data" onsubmit="return validateForm2()">
                                 {% csrf_token %}
                                 <div class="mb-4">
                                     <label for="product_name" class="form-label">Name</label>
-                                    <input type="text" placeholder="Type here" class="form-control" name="product_name" id="product_name" value="{{ entered_data.product_name }}"  />
+                                    <input type="text" placeholder="Type here" class="form-control" name="product_name" id="product_name" value="{{ entered_data.product_name }}" />
+                                    <small id="productNameError" class="text-danger"></small>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Description</label>
-                                    <textarea name="product_description" placeholder="Type here"  class="form-control">{{ entered_data.product_description }}</textarea>
+                                    <textarea name="product_description" placeholder="Type here" class="form-control" id="product_description">{{ entered_data.product_description }}</textarea>
+                                    <small id="descriptionError" class="text-danger"></small>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Category Image</label>
-                                    <input type="file" name="cat_image" class="form-control">
+                                    <input type="file" name="cat_image" class="form-control" accept="image/*">
+                                    <small id="catImageError" class="text-danger"></small>
                                 </div>
-                                
+                        
                                 <div class="d-flex justify-content-center text-danger">
                                     {% for message in messages %}
-                                        
-                                            {{message}}
-                                       
+                                        {{ message }}
                                     {% endfor %}
                                 </div>
                                 <div class="d-grid">
                                     <button class="btn btn-primary">Create category</button>
                                 </div>
                             </form>
-                            
                         </div>
                         {% endif %}
                         
@@ -391,6 +395,114 @@
     <script src="{% static 'adminstyles/assets/js/main.js' %}" type="text/javascript"></script>
 </body>
 
+<script>
+    function validateForm1() {
+    // Reset error messages
+    clearError('productNameError');
+    clearError('descriptionError');
+    clearError('catImageError');
 
-<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-categories.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
+    // Get input values
+    var productName = document.getElementById("product_name").value.trim();
+    var description = document.getElementById("product_description").value.trim();
+    var catImageInput = document.getElementById("cat_image");
+    var catImage = catImageInput.files[0];  // Get the selected file
+
+    // Check if fields are empty
+    if (productName === "" || description === "") {
+        showError('productNameError', "All fields are required.");
+        showError('descriptionError', "Description cannot be empty.");
+        return false;
+    }
+
+    // Check for white spaces at the beginning
+    if (/^\s/.test(productName)) {
+        showError('productNameError', "Name cannot start with white spaces.");
+        return false;
+    }
+
+    // Check if name contains letters
+    if (!/[a-zA-Z]/.test(productName)) {
+        showError('productNameError', "Name must contain letters.");
+        return false;
+    }
+
+    // Check if name contains letters and doesn't contain special characters
+    if (!/^[a-zA-Z]+$/.test(productName)) {
+        showError('productNameError', "Name must contain letters and no special characters.");
+        return false;
+    }
+
+    
+
+    // If all validations pass, submit the form
+    return true;
+}
+
+
+    function validateForm2() {
+        // Reset error messages
+        clearError('productNameError');
+        clearError('descriptionError');
+        clearError('catImageError');
+
+        // Get input values
+        var productName = document.getElementsByName("product_name")[0].value.trim();
+        var description = document.getElementsByName("product_description")[0].value.trim();
+        var catImage = document.getElementsByName("cat_image")[0].value.trim();
+
+
+        // Check if fields are empty
+        if (productName === "" || description === "" || catImage === "") {
+            showError('productNameError', "All fields are required.");
+            showError('descriptionError', "Description cannot be empty.");
+            showError('catImageError', "Please upload an image.");
+            return false;
+        }
+
+        // Check for white spaces at the beginning
+        if (/^\s/.test(productName)) {
+            showError('productNameError', "Name cannot start with white spaces.");
+            return false;
+        }
+
+        // Check if name contains letters
+        if (!/[a-zA-Z]/.test(productName)) {
+            showError('productNameError', "Name must contain letters.");
+            return false;
+        }
+
+        // Check if name contains letters and doesn't contain special characters
+        if (!/^[a-zA-Z]+$/.test(productName)) {
+            showError('productNameError', "Name must contain letters and no special characters.");
+            return false;
+        }
+
+    // Check if description doesn't contain special characters
+    if (/[^a-zA-Z0-9\s]/.test(description)) {
+        showError('descriptionError', "Description cannot contain special characters.");
+        return false;
+    }
+
+        // Check if catImage is an image file
+        var allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+        if (!allowedExtensions.exec(catImage)) {
+            showError('catImageError', "Invalid image file. Please upload a valid image.");
+            return false;
+        }
+
+        // If all validations pass, submit the form
+        return true;
+    }
+
+    function showError(elementId, errorMessage) {
+        // Display error message below the input field
+        document.getElementById(elementId).innerHTML = errorMessage;
+    }
+
+    function clearError(elementId) {
+        // Clear error message
+        document.getElementById(elementId).innerHTML = "";
+    }
+</script>
 </html>

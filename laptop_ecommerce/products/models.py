@@ -52,6 +52,15 @@ class Variations(models.Model):
 
     objects = VariationsManager()
 
+    def save(self, *args, **kwargs):
+        # Ensure that price and stock are not below zero
+        if self.price < 0:
+            self.price = 0
+
+        if self.stock < 0:
+            self.stock = 0
+
+        super().save(*args, **kwargs)
     def __str__(self):
         return self.variation_values
     

@@ -2,7 +2,7 @@
 {% block content %}
 
 <section class="section-conten padding-y bg">
-
+  {% include 'includes/alerts.html' %}
     <div class="container">
         <div class="row">
         {% include 'includes/userdashboard_sidebar.html' %}
@@ -23,44 +23,86 @@
                             <div class="form-group col-md-6">
                               <label for="">First Name</label>
                               {{user_form.first_name}}
+                              <div class="text-danger">
+                                {% for error in user_form.first_name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
                             </div>
                             <div class="form-group col-md-6">
                               <label for="">Last Name</label>
                               {{user_form.last_name}}
+                              <div class="text-danger">
+                                {% for error in user_form.last_name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
                             </div>
                           </div>
                           <div class="form-row">
                             <div class="form-group col-md-6">
                               <label for="">Phone Nmber</label>
                               {{user_form.phone_number}}
+                              <div class="text-danger">
+                                {% for error in user_form.phone_number.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
                             </div>
                             <div class="form-group col-md-6">
                               <label for="">Profile Picture</label>
                               {{profile_form.profile_picture}}
+                              <div class="text-danger">
+                                {% for error in profile_form.profile_picture.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
                             </div>
                           </div>
                           <div class="form-group">
                             <label for="">Address Line 1</label>
                             {{profile_form.address_line_1}}
+                            <div class="text-danger">
+                              {% for error in profile_form.address_line_1.errors %}
+                                  {{ error }}
+                              {% endfor %}
+                          </div>
                           </div>
                           <div class="form-group">
                             <label for="">Address Line 2</label>
                             {{profile_form.address_line_2}}
                           </div>
+                          </div>
                           <div class="form-row">
                             <div class="form-group col-md-4">
                               <label for="">City</label>
                               {{profile_form.city}}
+                              <div class="text-danger">
+                                {% for error in profile_form.city.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
                             </div>
                             <div class="form-group col-md-4">
                               <label for="">State</label>
                               {{profile_form.state}}
+                              <div class="text-danger">
+                              {% for error in profile_form.state.errors %}
+                              {{ error }}
+                              {% endfor %}
                             </div>
+                          </div>
                             <div class="form-group col-md-4">
                               <label for="">Country</label>
                               {{profile_form.country}}
+                              <div class="text-danger">
+                              {% for error in profile_form.country.errors %}
+                                  {{ error }}
+                              {% endfor %}
+                            </div>
                             </div>
                           </div>
+                        </div>
                           <input type="submit" value="save" class="btn btn-primary">
                         </form>
                     </div>
