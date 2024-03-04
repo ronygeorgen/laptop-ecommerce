@@ -23,6 +23,8 @@ class VariationsForm(forms.ModelForm):
         self.fields['price'].widget.attrs['class'] = 'form-control'
         self.fields['stock'].widget.attrs['class'] = 'form-control'
     
+    
+    
 class ImageForm(forms.ModelForm):
     class Meta:
         model = Image
@@ -33,5 +35,12 @@ class ImageForm(forms.ModelForm):
     def clean_image(self):
         image = self.cleaned_data['image']
         validate_file_size(image)
+        self.validate_image_content(image)
         return image
+    
+    def validate_image_content(self, image):
+        # Custom validation for the 'image' field
+        if not image.name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+            raise ValidationError('Only image files (PNG, JPG, JPEG, GIF) are allowed.')
+        
 ImageFormSet = forms.inlineformset_factory(Variations, Image, form=ImageForm, extra=2, can_delete=False)

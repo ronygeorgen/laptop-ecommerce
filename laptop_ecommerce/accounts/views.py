@@ -250,13 +250,19 @@ class ResetPasswordView(View):
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class UserDashboardView(View):
     def get(self, request):
+        try:
+            userprofile = get_object_or_404(UserProfile, user=request.user)
+        except Exception as e:
+             return HttpResponse(e)
         orders = Order.objects.order_by('-created_at').filter(user_id=request.user.id, is_ordered=True)
         orders_count = orders.count()
         context = {
             'orders_count':orders_count,
+            'userprofile': userprofile,
         }
         return render(request, 'accounts/userdashboard.html', context)
-    
+
+
 class MyOrdersView(View):
     def get(self, request):
         orders = Order.objects.filter(user=request.user, is_ordered=True).order_by('-created_at')
@@ -267,7 +273,10 @@ class MyOrdersView(View):
     
 class EditProfileView(View):
     def get(self, request):
-        userprofile = get_object_or_404(UserProfile, user=request.user)
+        try:
+            userprofile = get_object_or_404(UserProfile, user=request.user)
+        except Exception as e:
+            return HttpResponse(e)
         user_form = UserForm(instance=request.user)
         profile_form = UserProfileForm(instance=userprofile)
         context = {
@@ -285,7 +294,14 @@ class EditProfileView(View):
             user_form.save()
             profile_form.save()
             messages.success(request, 'Your profile has been updated')
-        return redirect('edit_profile')
+            return redirect('edit_profile')
+        else:
+            context = {
+            'user_form': user_form,
+            'profile_form': profile_form,
+            'userprofile': userprofile,
+        }
+        return render(request, 'accounts/edit_profile.html', context)
 
 class ChangePasswordView(View):
     def get(self, request):
@@ -304,6 +320,7 @@ class ChangePasswordView(View):
                 messages.success(request, 'Password updated successsfully. Please login again')
                 logout(request)
                 return redirect('login')
+            messages.error(request,'Old password is wrong!')
         return render(request, 'accounts/userprofile_change_password.html')
 
         

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views import View
 from . models import Category
+from django.http import HttpResponse
 # Create your views here.
 
 class CategoryView(View):
@@ -26,11 +27,13 @@ class CategoryView(View):
         form_category_image  = request.FILES.get('cat_image')
 
         if form_category and form_description:
-            category = Category(category_name = form_category, description = form_description)
-
-            if form_category_image:
-                category.cat_image = form_category_image
-            category.save()
+            try:
+                category = Category(category_name = form_category, description = form_description)
+                if form_category_image:
+                    category.cat_image = form_category_image
+                category.save()
+            except Exception as e:
+                return HttpResponse(e)
             return redirect('category')
         
         messages.error(request, 'Enter all fields')
@@ -42,9 +45,6 @@ class CategoryView(View):
             'product_name'           : form_category,
             'product_description'    : form_description
         }
-        # entered_data = {
-            
-        # }
             
         return render(request,self.template,context)
     

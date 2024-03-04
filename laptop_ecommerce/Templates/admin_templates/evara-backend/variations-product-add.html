@@ -192,9 +192,16 @@
                 <h2>Edit Variation with Images</h2>
                 <form method="post" action="{% url 'variations_list_edit' variant_to_edit.id %}" enctype="multipart/form-data">
                     {% csrf_token %}
+
+                    {% if variation_form.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ variation_form.non_field_errors }}
+                            {% for field, error in variation_form.errors.items %}
+                                <strong>{{ field }}:</strong> {{ error }}<br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                     {{ variation_form.as_p }}
-                    
-                    
                     
                     <div class="card mt-3">
                         {{ formset.management_form }}

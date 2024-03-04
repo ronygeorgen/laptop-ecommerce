@@ -45,7 +45,7 @@
                     <tr>
                         <td>
                             <figure class="itemside align-items-center">
-                                <div class="aside"><img src="{{ cart_item.product.images.url }}" class="img-sm" style="width: 100%;"></div>
+                                <div class="aside"><img src="{{ cart_item.variations.first.images.first.image.url }}" class="img-sm" style="width: 100%;"></div>
                                 <figcaption class="info">
                                     <a href="" class="title text-dark">{{cart_item.product.product_name}}</a>
                                     <p class="text-muted small">

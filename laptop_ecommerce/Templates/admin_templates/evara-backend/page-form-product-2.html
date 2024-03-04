@@ -187,143 +187,85 @@
         <section class="content-main ">
             <!-- Below form for edit product -->
             {% if product_to_edit %}
-            <form method="post" enctype="multipart/form-data" >
+            <form method="post" enctype="multipart/form-data" action="{% url 'product_list_edit' product_to_edit.id  %}" onsubmit="return validateForm1()">
                 {% csrf_token %}
-            <div class="row ">
-                <div class="col-6 ">
-                    <div class="content-header">
-                        <h2 class="content-title">Edit Product</h2>
-                        <div class="d-flex justify-content-center text-danger">
-                            {% for message in messages %}
-                                
+                <div class="row">
+                    <div class="col-6">
+                        <div class="content-header">
+                            <h2 class="content-title">Edit Product</h2>
+                            <div class="d-flex justify-content-center text-danger">
+                                {% for message in messages %}
                                     {{message}}
-                               
-                            {% endfor %}
-                        </div>
-                        <div>
-                            <!-- <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">Save to draft</button> -->
-                            <button class="btn btn-md rounded font-sm hover-up">Save Edits</button>
+                                {% endfor %}
+                            </div>
+                            <div>
+                                <button class="btn btn-md rounded font-sm hover-up">Save Edits</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-                    
-                    <div class="card mb-4 bg-warning-light">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <h6>1. General info</h6>
-                                </div>
-                                <div class="col-md-9">
-                                    <div class="mb-4">
-                                        <label class="form-label">Product title</label>
-                                        <input type="text" placeholder="Type here"  class="form-control" name="product_title"  value = "{{ product_to_edit.product_name }}">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card mb-4 bg-warning-light">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6>1. General info</h6>
                                     </div>
-                                    <!-- <div class="mb-4">
-                                        <label class="form-label">Description</label>
-                                        <textarea placeholder="Type here" class="form-control" rows="4" name="product_description">{{ product_to_edit.description }}</textarea>
-                                    </div> -->
-                                    <!-- <div class="mb-4">
-                                        <label class="form-label">Brand name</label>
-                                        <select class="form-select">
-                                            <option> Adidas </option>
-                                            <option> Nike </option>
-                                            <option> Puma </option>
-                                        </select>
-                                    </div> -->
-                                </div> <!-- col.// -->
-                            </div> <!-- row.// -->
-                            {% if my_id.0 == deleted_id.0 %}
-                            <div class="row"  >
-                                <div class="col-md-4 ">
-                                    <h6>5. Make available?</h6>
+                                    <div class="col-md-9">
+                                        <div class="mb-4">
+                                            <label class="form-label">Product title</label>
+                                            <input type="text" placeholder="Type here" class="form-control" name="product_title" value="{{ product_to_edit.product_name }}">
+                                            <span id="productNameError" class="text-danger"></span>
+                                        </div>
+                                    </div>
                                 </div>
-                            <div class="col-md-1 form-check">
-                                <input class="form-check-input" type="checkbox" value="True" name="mycheck" />
+                                {% if my_id.0 == deleted_id.0 %}
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h6>5. Make available?</h6>
+                                        </div>
+                                        <div class="col-md-1 form-check">
+                                            <input class="form-check-input" type="checkbox" value="True" name="mycheck" />
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h6 class="nav-link disabled" aria-disabled="true">5. is_available</h6>
+                                        </div>
+                                        <div class="col-md-1 form-check">
+                                            <input class="form-check-input nav-link disabled" aria-disabled="true" type="checkbox" value="True" name="mycheck" />
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <hr class="mb-4 mt-0">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h6>4. Category</h6>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="mb-4">
+                                            <label class="form-label">Category</label>
+                                            <select class="form-select" name="mycategory" required>
+                                                {% for cat in categorys %}
+                                                    <option value="{{ cat.slug }}" {% if product_to_edit.category and cat.slug == product_to_edit.category.slug %}selected{% endif %}>{{ cat.category_name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <span id="categoryError" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="mb-4 mt-0">
                             </div>
-                            </div>
-                            {% else %}
-                            <div class="row"  >
-                                <div class="col-md-4 ">
-                                    <h6 class="nav-link disabled" aria-disabled="true">5. is_available</h6>
-                                </div>
-                            <div class="col-md-1 form-check">
-                                <input class="form-check-input  nav-link disabled" aria-disabled="true" type="checkbox" value="True" name="mycheck" />
-                            </div>
-                            </div>
-                            {% endif %}
-                            <!-- <hr class="mb-4 mt-0">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <h6>2. Price</h6>
-                                </div>
-                                <div class="col-md-9">
-                                    <div class="mb-4">
-                                        <label class="form-label">Cost in INR</label>
-                                        <input type="text" placeholder="₹00.0" value=" {{ product_to_edit.price }} " class="form-control" name="product_price">
-                                    </div>
-                                </div> 
-                            </div> -->
-                            <!-- <div class="row">
-                                <div class="col-md-3">
-                                    <h6>3. Stock</h6>
-                                </div>
-                                <div class="col-md-9">
-                                    <div class="mb-4">
-                                        <input type="text" placeholder="0" value=" {{ product_to_edit.stock }} " class="form-control" name="product_stock">
-                                    </div>
-                                </div>
-                            </div>  -->
-                            <hr class="mb-4 mt-0">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <h6>4. Category</h6>
-                                </div>
-                                <div class="col-md-9">
-                                    <div class="mb-4">
-                                        {% for cat in categorys %}
-                                        <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                            <input class="form-check-input" {% if cat.slug == product_to_edit.category.slug %}checked{% endif %} value="{{cat.slug}}" name="mycategory" type="radio">
-                                            <span class="form-check-label">{{cat.category_name}} </span>
-                                        </label>
-                                        {% endfor %}
-                                        
-                                    </div>
-                                </div> <!-- col.// -->
-                                
-                            </div> <!-- row.// -->
-                            
-                            <hr class="mb-4 mt-0">
-                            <!-- <div class="row">
-                                <div class="col-md-3">
-                                    <h6>6. Media</h6>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label">Current product Image</label>
-                                    <div class="d-flex justify-content-center">
-                                        <img src="{{product_to_edit.images.url}}" alt="Current category image" style="max-width: 100px; max-height: 100px;">
-                                    </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <div class="mb-4">
-                                        <label class="form-label">Images</label>
-                                        <input class="form-control" name="product_image" type="file">
-                                    </div>
-                                </div>
-                            </div>  -->
                         </div>
                     </div>
-                
                 </div>
-            </div>
-            </div>
-        </form>
+            </form>
         {% else %}
 
         <!-- Below form for Add product -->
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data"  action="{% url 'product'  %}" onsubmit="return validateForm2()">
             {% csrf_token %}
         <div class="row">
             <div class="col-6">
@@ -356,19 +298,8 @@
                                 <div class="mb-4">
                                     <label class="form-label">Product title</label>
                                     <input type="text" placeholder="Type here"  class="form-control" name="product_title"  value = "{{ products.product_name }}">
+                                    <span id="productTitleError" class="text-danger"></span>
                                 </div>
-                                <!-- <div class="mb-4">
-                                    <label class="form-label">Description</label>
-                                    <textarea placeholder="Type here" class="form-control" rows="4" name="product_description">{{ products.product_description }}</textarea>
-                                </div> -->
-                                <!-- <div class="mb-4">
-                                    <label class="form-label">Brand name</label>
-                                    <select class="form-select">
-                                        <option> Adidas </option>
-                                        <option> Nike </option>
-                                        <option> Puma </option>
-                                    </select>
-                                </div> -->
                             </div> <!-- col.// -->
                         </div> <!-- row.// -->
                         <div class="row">
@@ -379,28 +310,6 @@
                             <input class="form-check-input" type="checkbox" value="True" name="mycheck" />
                         </div>
                         </div>
-                        <!-- <hr class="mb-4 mt-0">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <h6>2. Price</h6>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="mb-4">
-                                    <label class="form-label">Cost in INR</label>
-                                    <input type="text" placeholder="₹00.0" value=" {{ products.product_price }} " class="form-control" name="product_price">
-                                </div>
-                            </div> 
-                        </div>  -->
-                        <!-- <div class="row">
-                            <div class="col-md-3">
-                                <h6>3. Stock</h6>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="mb-4">
-                                    <input type="text" placeholder="0" value=" {{ products.product_stock }} " class="form-control" name="product_stock">
-                                </div>
-                            </div> 
-                        </div>  -->
                         <hr class="mb-4 mt-0">
                         <div class="row">
                             <div class="col-md-3">
@@ -408,37 +317,25 @@
                             </div>
                             <div class="col-md-9">
                                 <div class="mb-4">
-                                    {% for cat in categorys %}
-                                    <label class="mb-2 form-check form-check-inline" style="width: 45%;">
-                                        <input class="form-check-input"  value="{{cat.slug}}" name="mycategory" type="radio">
-                                        <span class="form-check-label">{{cat.category_name}} </span>
-                                    </label>
-                                    {% endfor %}
-                                    
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" name="mycategory">
+                                        {% for cat in categorys %}
+                                            <option value="{{ cat.slug }}">{{ cat.category_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <small id="categoryError" class="text-danger"></small>
                                 </div>
+                                
                             </div> <!-- col.// -->
                             
                         </div> <!-- row.// -->
-                        
-                        <!-- <hr class="mb-4 mt-0">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <h6>6. Media</h6>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="mb-4">
-                                    <label class="form-label">Images</label>
-                                    <input class="form-control" name="product_image" type="file">
-                                </div>
-                            </div>
-                        </div>  -->
                     </div>
                 </div>
             
             </div>
         </div>
         </div>
-    </form>
+        </form>
     {% endif %}
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">
@@ -463,8 +360,57 @@
     <script src="{% static 'adminstyles/assets/js/vendors/jquery.fullscreen.min.js' %}"></script>
     <!-- Main Script -->
     <script src="{% static 'adminstyles/assets/js/main.js' %}" type="text/javascript"></script>
-</body>
 
+
+
+    
+
+</body>
+<script>
+
+
+    function validateForm2() {
+        // Reset error messages
+        clearError('productTitleError');
+
+        // Get input values
+        var productTitle = document.getElementsByName("product_title")[0].value.trim();
+
+
+    
+        // Check if the product title is empty
+        if (productTitle === "") {
+            showError('productTitleError', "Product title cannot be empty.");
+            return false;
+        }
+
+        // Check if product title contains special characters
+        if (/[^a-zA-Z0-9\s]/.test(productTitle)) {
+            showError('productTitleError', "Product title cannot contain special characters.");
+            return false;
+        }
+
+        // Check if productTitle starts with a digit
+        if (/^\d/.test(productTitle)) {
+            showError('productTitleError', "Product title cannot start with a digit.");
+            return false;
+        }
+
+
+        // If all validations pass, submit the form
+        return true;
+    }
+
+    function showError(elementId, errorMessage) {
+        // Display error message below the input field
+        document.getElementById(elementId).innerHTML = errorMessage;
+    }
+
+    function clearError(elementId) {
+        // Clear error message
+        document.getElementById(elementId).innerHTML = "";
+    }
+</script>
 
 <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-form-product-2.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:32 GMT -->
 </html>

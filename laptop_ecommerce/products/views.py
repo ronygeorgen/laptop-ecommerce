@@ -3,7 +3,7 @@ from django.views import View
 from .models import MyProducts, Variations, Image
 from category.models import Category
 from django.contrib import messages
-from django.http import Http404 
+from django.http import Http404, HttpResponse
 from .forms import VariationsForm, ImageFormSet
 from django.urls import reverse
 
@@ -70,10 +70,16 @@ class ProductEditView(View):
         return render(request, 'admin_templates\evara-backend\page-form-product-2.html', context)
     def post(self, request, pk):
         product_to_be_edited = MyProducts.objects.get(pk=pk)
-        product_to_be_edited.product_name = request.POST.get('product_title')
-        product_to_be_edited.description = request.POST.get('product_description')
-        product_to_be_edited.price = request.POST.get('product_price')
-        product_to_be_edited.stock = request.POST.get('product_stock')
+        product_name = request.POST.get('product_title')
+        if not product_name or not product_name.strip():
+            return HttpResponse("Product name should contain at least one non-whitespace character.")
+        if product_name[0].isdigit():
+            return HttpResponse("Product name should not start with a digit.")
+        if product_name.split()[0][0].isdigit():
+            return HttpResponse("Product name should not start with a digit after whitespaces.")
+        product_to_be_edited.product_name = product_name
+        product_to_be_edited.save()
+
         if 'mycategory' in request.POST:
             form_category       = request.POST.get('mycategory')
             # print(form_category)
@@ -86,8 +92,6 @@ class ProductEditView(View):
             product_to_be_edited.category = category_instance
         if 'mycheck' in request.POST:
             product_to_be_edited.is_available = request.POST.get('mycheck')=='True'
-        if 'product_image' in request.FILES:
-            product_to_be_edited.images = request.FILES['product_image']
         product_to_be_edited.save()
         return redirect ('product_list')
 
