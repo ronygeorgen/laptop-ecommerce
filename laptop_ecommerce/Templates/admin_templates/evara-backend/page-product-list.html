@@ -187,7 +187,7 @@
         <section class="content-main">
             <div class="content-header">
                 <div>
-                    <h2 class="content-title card-title">Products List</h2>
+                    <h2 class="content-title card-title">Brand List</h2>
                     <p>Lorem ipsum dolor sit amet.</p>
                 </div>
                 <div>
@@ -231,7 +231,7 @@
                                         <img src="{{ not_deleted_product.images.url }}" class="img-sm img-thumbnail" alt="Item">
                                     </div> -->
                                     <div class="info col-4">
-                                        <h6 class="mb-0">{{ not_deleted_product.product_name }}</h6>
+                                        <h6 class="mb-0">{{ not_deleted_product.brand_name }}</h6>
                                     </div>
                                     <!-- <div class="info col-8">
                                         <h6 class="mb-0">{{ not_deleted_product.description }}</h6>
@@ -239,7 +239,7 @@
                                 </a>
                             </div>
                             
-                            <!-- <div class="col-lg-2 col-sm-2 col-4 col-price justify-content-center d-flex"> <span>₹{{ not_deleted_product.price }} </span> </div> -->
+                            <div class="col-lg-2 col-sm-2 col-4 col-price justify-content-center d-flex"> {{ not_deleted_product.category.category_name }}  </div>
                             <div class="col-lg-2 col-sm-2 col-4 col-status">
                                 <span class="badge rounded-pill alert-success">Active</span>
                             </div>
@@ -270,7 +270,7 @@
                                         <img src="{{ deleted_product.images.url }}" class="img-sm img-thumbnail" alt="Item">
                                     </div> -->
                                     <div class="info col-4">
-                                        <h6 class="mb-0">{{ deleted_product.product_name }}</h6>
+                                        <h6 class="mb-0">{{ deleted_product.brand_name }}</h6>
                                     </div>
                                     <!-- <div class="info col-8">
                                         <h6 class="mb-0">{{ deleted_product.description }}</h6>

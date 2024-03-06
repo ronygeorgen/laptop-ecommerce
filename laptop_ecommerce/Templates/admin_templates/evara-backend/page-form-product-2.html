@@ -192,7 +192,7 @@
                 <div class="row">
                     <div class="col-6">
                         <div class="content-header">
-                            <h2 class="content-title">Edit Product</h2>
+                            <h2 class="content-title">Edit Brand</h2>
                             <div class="d-flex justify-content-center text-danger">
                                 {% for message in messages %}
                                     {{message}}
@@ -214,7 +214,7 @@
                                     </div>
                                     <div class="col-md-9">
                                         <div class="mb-4">
-                                            <label class="form-label">Product title</label>
+                                            <label class="form-label">Brand title</label>
                                             <input type="text" placeholder="Type here" class="form-control" name="product_title" value="{{ product_to_edit.product_name }}">
                                             <span id="productNameError" class="text-danger"></span>
                                         </div>
@@ -270,7 +270,7 @@
         <div class="row">
             <div class="col-6">
                 <div class="content-header">
-                    <h2 class="content-title">Add New Product</h2>
+                    <h2 class="content-title">Add New Brand</h2>
                     <div class="d-flex justify-content-center text-danger">
                         {% for message in messages %}
                             
@@ -296,7 +296,7 @@
                             </div>
                             <div class="col-md-9">
                                 <div class="mb-4">
-                                    <label class="form-label">Product title</label>
+                                    <label class="form-label">Brand title</label>
                                     <input type="text" placeholder="Type here"  class="form-control" name="product_title"  value = "{{ products.product_name }}">
                                     <span id="productTitleError" class="text-danger"></span>
                                 </div>

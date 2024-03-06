@@ -2,9 +2,9 @@ from django.contrib import admin
 from .models import MyProducts, Variations, Image
 
 class VariationAdmin(admin.ModelAdmin):
-    list_display = ('product', 'variation_category', 'variation_values', 'description', 'price', 'display_images', 'stock', 'is_active')
+    list_display = ('product','brand_name', 'color', 'ram', 'storage', 'description', 'price', 'display_images', 'stock', 'is_active')
     list_editable = ('is_active',)
-    list_filter = ('product', 'variation_category', 'variation_values',)
+    list_filter = ('product', 'brand_name',  'color', 'ram', 'storage',)
 
     def display_images(self, obj):
         return ", ".join([str(image) for image in obj.images.all()])
