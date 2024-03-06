@@ -26,23 +26,22 @@
 
 	
 <div class="row">
-	{% for product in variations|dictsort:'product__id' %}
-		{% with variant=product.1.0 %}
-			<div class="col-md-3">
-				<div class="card card-product-grid">
-					{% if variant.images.exists %}
-						<a href=" {% url 'product_detail' variant.product.category.slug variant.product.slug variant.id %} " class="img-wrap"> <img src="{{ variant.images.first.image.url }}"> 
-						</a>
-					{% endif %}
-					<figcaption class="info-wrap">
-						<a href="{% url 'product_detail' variant.product.category.slug variant.product.slug variant.id %}" class="title">{{ variant.product.product_name }}</a>
-						<div class="price mt-1">₹{{ variant.price }}</div> <!-- price-wrap.// -->
-						<p>Different varients available</p>
-					</figcaption>
-				</div>
-			</div> <!-- col.// -->
-			{% endwith %}
-	{% endfor %}
+	{% for variation in variations %}
+                <div class="col-md-3">
+                    <div class="card card-product-grid">
+                        {% if variation.images.exists %}
+                            <a href="{% url 'product_detail' variation.product.category.slug variation.product.slug variation.id %}" class="img-wrap">
+                                <img src="{{ variation.images.first.image.url }}">
+                            </a>
+                        {% endif %}
+                        <figcaption class="info-wrap">
+                            <a href="{% url 'product_detail' variation.product.category.slug variation.product.slug variation.id %}" class="title">{{ variation.product.product_name }}</a>
+                            <div class="price mt-1">₹{{ variation.price }}</div>
+                            <p>{{ variation.description }}</p>
+                        </figcaption>
+                    </div>
+                </div> <!-- col.// -->
+            {% endfor %}
 </div> <!-- row.// -->
 
 </div><!-- container // -->
