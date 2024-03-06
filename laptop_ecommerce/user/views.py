@@ -11,7 +11,7 @@ from django.db.models import Q
 class Home(View):
     def get(self,request):
     
-        variations = Variations.objects.filter(is_active=True)
+        variations = Variations.objects.filter(is_active=True).distinct('product')
         context = {
             'variations' : variations
         }
