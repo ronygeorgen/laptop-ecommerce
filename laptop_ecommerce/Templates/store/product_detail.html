@@ -35,7 +35,7 @@
                         {% csrf_token %}
                         <article class="content-body">
 
-                            <h2 class="title">{{single_product.product_name}}</h2>
+                            <h2 class="title">{{selected_variant.product.product_name}}</h2>
 
                             <div class="mb-3">
                                 <var class="price h4">₹{{selected_variant.price}} </var>
@@ -48,10 +48,10 @@
                                 <div class="item-option-select">
                                     <h6>Choose Color</h6>
                                     <select name="color" class="form-control" required>
-                                        <option value="" disabled selected>Select</option>
-                                        {% for i in single_product.variations_set.colors %}
-                                            <option value="{{ i.variation_values | lower }}">{{ i.variation_values | capfirst }}</option>
-                                        {% endfor %}
+                                        <option value="{{ selected_variant | lower }}" disabled selected>{{ selected_variant.color | capfirst }}</option>
+                                        
+                                            <option value="{{ i.variation_values | lower }}">{{ selected_variant.color | capfirst }}</option>
+                                        
                                     </select>
                                 </div>
                             </div>
@@ -60,10 +60,10 @@
                                 <div class="item-option-select">
                                     <h6>Select RAM </h6>
                                     <select name="ram" class="form-control" required>
-                                        <option value="" disabled selected>Select</option>
-                                        {% for i in single_product.variations_set.ram %}
-                                            <option value="{{ i.variation_values | lower }}">{{ i.variation_values | upper }}</option>
-                                        {% endfor %}
+                                        <option value="{{ selected_variant | lower }}" disabled selected>{{ selected_variant.ram | capfirst }}</option>
+                                        
+                                            <option value="{{ i.variation_values.ram | lower }}">{{ i.variation_values.ram | upper }}</option>
+                                        
                                     </select>
                                 </div>
                             </div>
@@ -72,10 +72,10 @@
                                 <div class="item-option-select">
                                     <h6>Select Storage</h6>
                                     <select name="storage" class="form-control" required>
-                                        <option value="" disabled selected>Select</option>
-                                        {% for i in single_product.variations_set.storage %}
+                                        <option value="{{ selected_variant | lower }}" disabled selected>{{ selected_variant.storage | capfirst }}</option>
+                                        
                                             <option value="{{ i.variation_values | lower }}">{{ i.variation_values | upper }}</option>
-                                        {% endfor %}
+                                        
                                     </select>
                                 </div>
                             </div>

@@ -12,25 +12,24 @@ def validate_file_size(value):
 class VariationsForm(forms.ModelForm):
     class Meta:
         model = Variations
-        fields = ['product', 'variation_category', 'variation_values', 'description', 'price', 'stock', 'is_active']
+        fields = ['product', 'brand_name', 'color', 'ram','storage', 'description', 'price', 'stock', 'is_active']
 
     def __init__(self, *args, **kwargs):
         super(VariationsForm, self).__init__(*args, **kwargs)
         self.fields['product'].widget.attrs['class'] = 'form-control'
-        self.fields['variation_category'].widget.attrs['class'] = 'form-control'
-        self.fields['variation_values'].widget.attrs['class'] = 'form-control'
+        self.fields['brand_name'].widget.attrs['class'] = 'form-control'
+        self.fields['color'].widget.attrs['class'] = 'form-control'
+        self.fields['ram'].widget.attrs['class'] = 'form-control'
+        self.fields['storage'].widget.attrs['class'] = 'form-control'
         self.fields['description'].widget.attrs['class'] = 'form-control'
         self.fields['price'].widget.attrs['class'] = 'form-control'
         self.fields['stock'].widget.attrs['class'] = 'form-control'
-    
     
     
 class ImageForm(forms.ModelForm):
     class Meta:
         model = Image
         fields = ['image']
-
-        
         
     def clean_image(self):
         image = self.cleaned_data['image']
