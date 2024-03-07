@@ -5,7 +5,7 @@ from category.models import Category
 from carts.models import Cart, CartItem
 from carts.views import _CartId
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 # Create your views here.
 class Home(View):
@@ -82,3 +82,25 @@ class SearchView(View):
             'variations_count':variations_count,
         }
         return  render(request, 'store/store.html', context)
+    
+
+class GetVariantDetailsView(View):
+    def get(self, request):
+        variant_id = request.GET.get('variantID')
+        if variant_id and variant_id.isdigit():
+            variant = get_object_or_404(Variations, id=variant_id)
+
+            data = {
+                'product_name': variant.product.product_name,
+                'description': variant.description,
+                'price': variant.price,
+                'colors': [v.color for v in variant.product.variations_set.all()],
+                'selected_color': variant.color,
+                'rams': [v.ram for v in variant.product.variations_set.all()],
+                'selected_ram': variant.ram,
+                'storages': [v.storage for v in variant.product.variations_set.all()],
+                'selected_storage': variant.storage
+            }
+            return JsonResponse(data)
+        else:
+            return JsonResponse({'error': 'Invalid or missing variant_id'}, status=400)
