@@ -25,4 +25,6 @@ urlpatterns = [
     path('store/category/<slug:category_slug>/<slug:product_slug>/<int:variation_id>/',ProductDetailView.as_view(), name='product_detail'),
     path('store/search/', SearchView.as_view(), name='search'),
     path('get_variant_details/', GetVariantDetailsView.as_view(), name='get_variant_details'),
+
+    path('api/product-details/', GetSecondVariant.as_view(), name='get_second_product_details'),
 ]

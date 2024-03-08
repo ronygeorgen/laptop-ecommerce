@@ -86,7 +86,7 @@ class SearchView(View):
 
 class GetVariantDetailsView(View):
     def get(self, request):
-        variant_id = request.GET.get('variantID')
+        variant_id = request.GET.get('variant_id')
         if variant_id and variant_id.isdigit():
             variant = get_object_or_404(Variations, id=variant_id)
 
@@ -104,3 +104,39 @@ class GetVariantDetailsView(View):
             return JsonResponse(data)
         else:
             return JsonResponse({'error': 'Invalid or missing variant_id'}, status=400)
+
+
+class GetSecondVariant(View):
+    def get(self, request):
+        color = request.GET.get('color')
+        ram = request.GET.get('ram')
+        storage = request.GET.get('storage')
+        variant_id = request.GET.get('variant_id')
+
+        if color and ram and storage and variant_id:
+            try:
+                variant = Variations.objects.get(
+                    product__id=variant_id,
+                    color=color,
+                    ram=ram,
+                    storage=storage
+                )
+
+                data = {
+                    'product_name': variant.product.product_name,
+                    'description': variant.description,
+                    'price': variant.price,
+                    'colors': [v.color for v in variant.product.variations_set.all()],
+                    'selected_color': variant.color,
+                    'rams': [v.ram for v in variant.product.variations_set.all()],
+                    'selected_ram': variant.ram,
+                    'storages': [v.storage for v in variant.product.variations_set.all()],
+                    'selected_storage': variant.storage,
+                }
+
+                return JsonResponse(data)
+
+            except Variations.DoesNotExist:
+                return JsonResponse({'error': 'Variant not found'}, status=404)
+        else:
+            return JsonResponse({'error': 'Color, RAM, or Storage is missing'}, status=400)
