@@ -5,19 +5,14 @@
 
 <section class="section-content padding-y bg">
     <div class="container">
-
         <!-- ============================ COMPONENT 1 ================================= -->
         <div class="card">
             <div class="row no-gutters">
                 <aside class="col-md-6">
                     <article class="gallery-wrap">
                         <div class="swiper-container">
-                            <div class="swiper-wrapper custom-swiper-container">
-                                {% for image in selected_variant.images.all %}
-                                    <div class="swiper-slide">
-                                        <img src="{{ image.image.url }}" alt="Image" class="img-fluid">
-                                    </div>
-                                {% endfor %}
+                            <div class="swiper-wrapper custom-swiper-container" id="swiperWrapper">
+                                <!-- images display here -->
                             </div>
                             <!-- Add Pagination -->
                             <div class="swiper-pagination"></div>
@@ -31,7 +26,7 @@
                     <!-- gallery-wrap .end// -->
                 </aside>
                 <main class="col-md-6 border-left">
-                    <form id="product-detail-form" action="{% url 'add_cart' selected_variant.id %}" method="POST">
+                    <form id="product-detail-form" action="{% url 'add_cart' 0 %}" method="POST">
                         {% csrf_token %}
                         <article class="content-body">
 
@@ -47,7 +42,7 @@
                             <div class="row">
                                 <div class="item-option-select">
                                     <h6>Choose Color</h6>
-                                    <select name="color" id="colorDropdown" class="form-control" required>
+                                    <select name="color" id="colorDropdown"  class="form-control" required>
                                         
                                         
                                     </select>
@@ -133,156 +128,204 @@
 <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
 <script>
-// document.addEventListener("DOMContentLoaded", function () {
-//     // Extract initial values from the URL
-//     var urlPath = window.location.pathname;
-//     var urlParts = urlPath.split('/').filter(Boolean);
-//     var initialVariantID = urlParts[urlParts.length - 1];
-    
+document.addEventListener("DOMContentLoaded", function () {
+    // Extract initial values from the URL
+    var urlPath = window.location.pathname;
+    var urlParts = urlPath.split('/').filter(Boolean);
+    var initialVariantID = urlParts[urlParts.length - 1];
+    var initialRam = urlParts[urlParts.length - 2];
+    var initialColor = urlParts[urlParts.length - 3];
 
-//     console.log("Initial Color:", initialColor);
-//     console.log("Initial RAM:", initialRam);
-//     console.log("Initial Storage:", initialStorage);
+    console.log("Initial Color:", initialColor);
+    console.log("Initial RAM:", initialRam);
+    console.log("Initial Storage:", initialStorage);
 
-//     if(initialVariantID){
-//         getProductDetails(initialVariantID);
-//     }else{
-//         var initialStorage = urlParts[urlParts.length - 1];
-//         var initialRam = urlParts[urlParts.length - 2];
-//         var initialColor = urlParts[urlParts.length - 3];
-//         // Fetch product details based on the initial values
-//         getsecondProductDetails(initialColor, initialRam, initialStorage, initialVariantID);
-        
-//         // Event listener for dropdown changes
-//         $('select[name="color"], select[name="ram"], select[name="storage"]').change(function () {
-//             var selectedColor = $('select[name="color"]').val();
-//             var selectedRam = $('select[name="ram"]').val();
-//             var selectedStorage = $('select[name="storage"]').val();
+        getProductDetails(initialVariantID);
 
-//             // Update product details based on selected options
-//             updateProductDetails(selectedColor, selectedRam, selectedStorage, initialVariantID);
-//         });
-//     }
-        
-// });
+//    // Event listener for color dropdown changes
+//    $('#colorDropdown').change(function () {
+//         var selectedColor = $(this).val();
+//         var selectedRam = $('select[name="ram"]').val();
+//         var selectedStorage = $('select[name="storage"]').val();
 
-// // Fetch details for the product
-// function getProductDetails(variantId) {
-//     $.ajax({
-//         url: "{% url 'get_variant_details' %}",
-//         method: 'GET',
-//         data: {variant_id: variantId },
-//         success: function (data) {
-//             // Extract color, RAM, storage from the data
-//             var colorDropdown = $('#colorDropdown');
-//             var ramDropdown = $('#ramDropdown');
-//             var storageDropdown = $('#storageDropdown');
+//         // Update product details based on selected options
+//         updateProductDetails(selectedColor, selectedRam, selectedStorage, initialVariantID);
+//     });
 
-//             // Update dropdown options
-//             updateDropdownOptions(colorDropdown, data.colors, data.selected_color);
-//             updateDropdownOptions(ramDropdown, data.rams, data.selected_ram);
-//             updateDropdownOptions(storageDropdown, data.storages, data.selected_storage);
+    // Event listener for other dropdown changes (e.g., ram and storage)
+    // Add similar code for 'ram' and 'storage' dropdowns
 
-//             // Update product details on the page
-//             $('#product-name').text(data.product_name);
-//             $('#product-description').text(data.description);
-//             $('#product-price').text('₹' + data.price);
+});
 
+$('#colorDropdown').change(function () {
+    console.log('DROP')
+        var selectedColor = $(this).val();    
+        var selectedRam = $('select[name="ram"]').val();
+        var selectedStorage = $('select[name="storage"]').val();
+        console.log(selectedColor,selectedRam,selectedStorage)
+        // Update product details based on selected options
+        getsecondProductDetails(selectedColor, selectedRam, selectedStorage)
+        updateProductDetails(selectedColor, selectedRam, selectedStorage);
+    });
+
+    $('#ramDropdown').change(function () {
+    console.log('DROP')
+        var selectedRam = $(this).val();
+        var selectedColor = $('select[name="color"]').val();
+        var selectedStorage = $('select[name="storage"]').val();
+        console.log(selectedColor,selectedRam,selectedStorage)
+
+        getsecondProductDetails(selectedColor, selectedRam, selectedStorage)
+        // Update product details based on selected options
+        updateProductDetails(selectedColor, selectedRam, selectedStorage);
+    });
+
+    $('#storageDropdown').change(function () {
+    console.log('DROP')
+        var selectedStorage = $(this).val(); 
+        var selectedRam = $('select[name="ram"]').val();
+        var selectedColor = $('select[name="color"]').val();
+        console.log(selectedColor,selectedRam,selectedStorage)
+        // Update product details based on selected options
+        updateProductDetails(selectedColor, selectedRam, selectedStorage);
+    });
+
+
+
+
+
+function getsecondProductDetails(color, ram, storage) {
+    $.ajax({
+        url: '/api/product-details/',
+        method: 'GET',
+        data: { color: color, ram: ram, storage: storage},
+        success: function (data) {
+            // Extract color, RAM, storage from the data
+            var colorDropdown = $('#colorDropdown');
+            var ramDropdown = $('#ramDropdown');
+            var storageDropdown = $('#storageDropdown');
+
+            // Update dropdown options
+            updateDropdownOptions(colorDropdown, data.colors, data.selected_color);
+            updateDropdownOptions(ramDropdown, data.rams, data.selected_ram);
+            updateDropdownOptions(storageDropdown, data.storages, data.selected_storage);
+
+            // Update product details on the page
+            $('#product-name').text(data.product_name);
+            $('#product-description').text(data.description);
+            $('#product-price').text('₹' + data.price);
+
+            updateSwiperGallery(data.images);
+
+            // Display the selected color, RAM, and storage
+            $('#selected-color').text(data.selected_color);
+            $('#selected-ram').text(data.selected_ram);
+            $('#selected-storage').text(data.selected_storage);
+
+            $('#product-detail-form').attr('action', "{% url 'add_cart' 0 %}".replace('0', data.currentid));
+        },
+        error: function () {
+            console.error('Error fetching product details.');
+        }
+    });
+}
+
+
+// Fetch details for the product
+function getProductDetails(variantId) {
+    $.ajax({
+        url: "{% url 'get_variant_details' %}",
+        method: 'GET',
+        data: {variant_id: variantId },
+        success: function (data) {
+            // Extract color, RAM, storage from the data
+            var colorDropdown = $('#colorDropdown');
+            var ramDropdown = $('#ramDropdown');
+            var storageDropdown = $('#storageDropdown');
+
+            // Update dropdown options
+            updateDropdownOptions(colorDropdown, data.colors, data.selected_color);
+            updateDropdownOptions(ramDropdown, data.rams, data.selected_ram);
+            updateDropdownOptions(storageDropdown, data.storages, data.selected_storage);
+            // Update product details on the page
+            $('#product-name').text(data.product_name);
+            $('#product-description').text(data.description);
+            $('#product-price').text('₹' + data.price);
+            updateSwiperGallery(data.images);
             
-//         },
-//         error: function () {
-//             console.error('Error fetching product details.');
-//         }
-//     });
-// }
+            $('#product-detail-form').attr('action', "{% url 'add_cart' 0 %}".replace('0', data.currentid));
+        },
+        error: function () {
+            console.error('Error fetching product details.');
+        }
+    });
+}
 
-// function getsecondProductDetails(color, ram, storage, variantId) {
-//     $.ajax({
-//         url: '/api/product-details/',
-//         method: 'GET',
-//         data: { color: color, ram: ram, storage: storage, variant_id: variantId },
-//         success: function (data) {
-//             // Extract color, RAM, storage from the data
-//             var colorDropdown = $('#colorDropdown');
-//             var ramDropdown = $('#ramDropdown');
-//             var storageDropdown = $('#storageDropdown');
 
-//             // Update dropdown options
-//             updateDropdownOptions(colorDropdown, data.colors, data.selected_color);
-//             updateDropdownOptions(ramDropdown, data.rams, data.selected_ram);
-//             updateDropdownOptions(storageDropdown, data.storages, data.selected_storage);
+    function updateProductDetails(color, ram, storage, variantId) {
+        // Check if all required values are present
+        if (color && ram && storage &&  variantId) {
+            $.ajax({
+                url: '/api/product-details/',
+                method: 'GET',
+                data: { color: color, ram: ram, storage: storage, variant_id: initialVariantID },
+                success: function (data) {
+                    $('#product-name').text(data.product_name);
+                    $('#product-description').text(data.description);
+                    $('#product-price').text('₹' + data.price);
 
-//             // Update product details on the page
-//             $('#product-name').text(data.product_name);
-//             $('#product-description').text(data.description);
-//             $('#product-price').text('₹' + data.price);
+                    updateDropdownOptions('color', data.colors, data.selected_color);
+                    updateDropdownOptions('ram', data.rams, data.selected_ram);
+                    updateDropdownOptions('storage', data.storages, data.selected_storage);
 
-//             // Display the selected color, RAM, and storage
-//             $('#selected-color').text(data.selected_color);
-//             $('#selected-ram').text(data.selected_ram);
-//             $('#selected-storage').text(data.selected_storage);
-//         },
-//         error: function () {
-//             console.error('Error fetching product details.');
-//         }
-//     });
-// }
-//     function updateProductDetails(color, ram, storage, variantId) {
-//         // Check if all required values are present
-//         if (color && ram && storage &&  variantId) {
-//             $.ajax({
-//                 url: '/api/product-details/',
-//                 method: 'GET',
-//                 data: { color: color, ram: ram, storage: storage, variant_id: initialVariantID },
-//                 success: function (data) {
-//                     $('#product-name').text(data.product_name);
-//                     $('#product-description').text(data.description);
-//                     $('#product-price').text('₹' + data.price);
+                    // Display the selected color, RAM, and storage
+                    $('#selected-color').text(data.selected_color);
+                    $('#selected-ram').text(data.selected_ram);
+                    $('#selected-storage').text(data.selected_storage);
+                },
+            });
+        } else {
+            console.warn('Color, RAM, or Storage is missing. Skipping AJAX request.');
+        }
+    }
+    function updateDropdownOptions(dropdown, options, selectedOption) {
+            dropdown.empty();
+            var uniqueOptions = new Set(options);
 
-//                     updateDropdownOptions('color', data.colors, data.selected_color);
-//                     updateDropdownOptions('ram', data.rams, data.selected_ram);
-//                     updateDropdownOptions('storage', data.storages, data.selected_storage);
+            uniqueOptions.forEach(function (option) {
+                dropdown.append($('<option>', {
+                    value: option,
+                    text: option.charAt(0).toUpperCase() + option.slice(1)
+                }));
+            });
+            dropdown.val(selectedOption);
+        }
 
-//                     // Display the selected color, RAM, and storage
-//                     $('#selected-color').text(data.selected_color);
-//                     $('#selected-ram').text(data.selected_ram);
-//                     $('#selected-storage').text(data.selected_storage);
-//                 },
-//             });
-//         } else {
-//             console.warn('Color, RAM, or Storage is missing. Skipping AJAX request.');
-//         }
-//     }
-//     function updateDropdownOptions(dropdown, options, selectedOption) {
-//             dropdown.empty();
-//             dropdown.append($('<option>', {
-//                 value: '',
-//                 text: 'Select' + dropdown.attr('id').charAt(0).toUpperCase() + dropdown.attr('id').slice(1)            }));
-//             var uniqueOptions = new Set(options);
+        $('select[name="color"], select[name="ram"], select[name="storage"]').change(function () {
+            var selectedColor = $('select[name="color"]').val();
+            var selectedRam = $('select[name="ram"]').val();
+            var selectedStorage = $('select[name="storage"]').val();
 
-//             uniqueOptions.forEach(function (option) {
-//                 dropdown.append($('<option>', {
-//                     value: option,
-//                     text: option.charAt(0).toUpperCase() + option.slice(1)
-//                 }));
-//             });
-//             dropdown.val(selectedOption);
-//         }
+            updateProductDetails(selectedColor, selectedRam, selectedStorage);
+    });
 
-//         $('select[name="color"], select[name="ram"], select[name="storage"]').change(function () {
-//             var selectedColor = $('select[name="color"]').val();
-//             var selectedRam = $('select[name="ram"]').val();
-//             var selectedStorage = $('select[name="storage"]').val();
+        var initialColor = $('select[name="color"]').val();
+        var initialRam = $('select[name="ram"]').val();
+        var initialStorage = $('select[name="storage"]').val();
+        updateProductDetails(initialColor, initialRam, initialStorage, ); 
 
-//             updateProductDetails(selectedColor, selectedRam, selectedStorage);
-//     });
+    // function for image displaying
+    function updateSwiperGallery(images) {
+    var swiperWrapper = $('.swiper-wrapper');
+    swiperWrapper.empty();
 
-//         var initialColor = $('select[name="color"]').val();
-//         var initialRam = $('select[name="ram"]').val();
-//         var initialStorage = $('select[name="storage"]').val();
-//         updateProductDetails(initialColor, initialRam, initialStorage, initialVariantID); 
+    images.forEach(function (image) {
+        swiperWrapper.append('<div class="swiper-slide"><img src="' + image.image_url_1 + '" alt="Image 1" class="img-fluid"></div>');
+        
+    });
+    
+}
 
-    document.addEventListener("DOMContentLoaded", function () {
         var swiper = new Swiper('.swiper-container', {
             slidesPerView: 1,
             spaceBetween: 10,
@@ -305,11 +348,34 @@
                 },
             },
         });
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     var swiper = new Swiper('.swiper-container', {
+    //         slidesPerView: 1,
+    //         spaceBetween: 10,
+    //         navigation: {
+    //             nextEl: '.swiper-button-next',
+    //             prevEl: '.swiper-button-prev',
+    //         },
+    //         pagination: {
+    //             el: '.swiper-pagination',
+    //             clickable: true,
+    //         },
+    //         on: {
+    //             slideChangeTransitionStart: function () {
+    //                 // Reset opacity for all slides
+    //                 $('.swiper-slide').css('opacity', 0);
+    //             },
+    //             slideChangeTransitionEnd: function () {
+    //                 // Show the active slide
+    //                 $('.swiper-slide-active').css('opacity', 1);
+    //             },
+    //         },
+    //     });
 
         
 
         
-    });
+    // });
 </script>
 
 <style>

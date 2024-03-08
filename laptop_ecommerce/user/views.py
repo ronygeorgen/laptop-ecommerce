@@ -99,8 +99,11 @@ class GetVariantDetailsView(View):
                 'rams': [v.ram for v in variant.product.variations_set.all()],
                 'selected_ram': variant.ram,
                 'storages': [v.storage for v in variant.product.variations_set.all()],
-                'selected_storage': variant.storage
+                'selected_storage': variant.storage,
+                'currentid':variant.id,
             }
+            images = [{'image_url_1': image.image.url, 'image_url_2': image.image.url} for image in variant.images.all()]
+            data['images'] = images
             return JsonResponse(data)
         else:
             return JsonResponse({'error': 'Invalid or missing variant_id'}, status=400)
@@ -111,17 +114,14 @@ class GetSecondVariant(View):
         color = request.GET.get('color')
         ram = request.GET.get('ram')
         storage = request.GET.get('storage')
-        variant_id = request.GET.get('variant_id')
 
-        if color and ram and storage and variant_id:
+        if color and ram and storage :
             try:
                 variant = Variations.objects.get(
-                    product__id=variant_id,
                     color=color,
                     ram=ram,
                     storage=storage
                 )
-
                 data = {
                     'product_name': variant.product.product_name,
                     'description': variant.description,
@@ -132,7 +132,11 @@ class GetSecondVariant(View):
                     'selected_ram': variant.ram,
                     'storages': [v.storage for v in variant.product.variations_set.all()],
                     'selected_storage': variant.storage,
+                    'currentid':variant.id,
+                    
                 }
+                images = [{'image_url_1': image.image.url, 'image_url_2': image.image.url} for image in variant.images.all()]
+                data['images'] = images
 
                 return JsonResponse(data)
 
