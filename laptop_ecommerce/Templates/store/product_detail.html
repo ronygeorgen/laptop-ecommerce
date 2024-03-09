@@ -142,19 +142,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         getProductDetails(initialVariantID);
 
-//    // Event listener for color dropdown changes
-//    $('#colorDropdown').change(function () {
-//         var selectedColor = $(this).val();
-//         var selectedRam = $('select[name="ram"]').val();
-//         var selectedStorage = $('select[name="storage"]').val();
-
-//         // Update product details based on selected options
-//         updateProductDetails(selectedColor, selectedRam, selectedStorage, initialVariantID);
-//     });
-
-    // Event listener for other dropdown changes (e.g., ram and storage)
-    // Add similar code for 'ram' and 'storage' dropdowns
-
 });
 
 $('#colorDropdown').change(function () {
@@ -189,9 +176,6 @@ $('#colorDropdown').change(function () {
         // Update product details based on selected options
         updateProductDetails(selectedColor, selectedRam, selectedStorage);
     });
-
-
-
 
 
 function getsecondProductDetails(color, ram, storage) {

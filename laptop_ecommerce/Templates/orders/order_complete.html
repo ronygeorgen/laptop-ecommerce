@@ -67,10 +67,10 @@
                                             <tr>
                                                 <td> {{item.product.product_name}} 
                                                 <p class="text-muted small">
-                                                    {% if item.variations.all %}
-                                                        {% for i in item.variations.all %}
-                                                            {{ i.variation_category | capfirst }} : {{ i.variation_values | capfirst }} <br>
-                                                        {% endfor %}
+                                                    {% if item.variations.first %}
+                                                            Color  : {{ item.variations.first.color | capfirst }} <br>
+                                                            Ram    : {{ item.variations.first.ram | capfirst }} <br>
+                                                            Storage: {{ item.variations.first.storage | capfirst }} <br>
                                                     {% endif %}
                                                 </p>
                                             </td>
