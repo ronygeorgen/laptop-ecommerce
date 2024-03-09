@@ -17,49 +17,29 @@ class _CartId(View):
         return cart
 
 class AddCartView(View):
-    def get(self, request, variant_id):
-        variant = Variations.objects.get(id=variant_id) #get the variant
-        try:
-            cart_id_instance = _CartId()
-            cart = Cart.objects.get(cart_id= cart_id_instance.get(request)) #get the cart using the cart id present in the session
-        except Cart.DoesNotExist:
-            cart = Cart.objects.create(
-                cart_id = cart_id_instance.get(request)
-            )
-            cart.save()
-
-        try:
-            cart_item = CartItem.objects.get(variations__in=[variant], cart=cart, is_active=True)
-            cart_item.quantity += 1
-            cart_item.save()
-        except CartItem.DoesNotExist:
-            cart_item = CartItem.objects.create(
-                user = request.user if request.user.is_authenticated else None,
-                product = variant.product,
-                cart=cart,
-                quantity = 1,
-            )
-            cart_item.variations.add(variant)
-            cart_item.save()
-
-        return redirect ('cart')
     
     # below post method for adding product and its variation to database
     def post(self, request, variant_id):
         current_user = request.user
         variant = Variations.objects.get(id=variant_id)
-
+        available_stock = variant.stock
+        if available_stock <= 0 :
+            return HttpResponse('No more stock available')
         # If the user is authenticated
         if current_user.is_authenticated:
-            product_variation = self.get_product_variation(request, variant.product)
+            product_variation = self.get_variation(request, variant)
 
+            
             # Check if the cart item already exists
             cart_item = self.get_cart_item(current_user, variant.product, product_variation)
-
+            
+            
             if cart_item:
-                # Increase the cart item quantity
-                cart_item.quantity += 1
-                cart_item.save()
+                if available_stock > cart_item.quantity:
+                    cart_item.quantity += 1
+                    cart_item.save()
+                else:
+                    return HttpResponse('Not enough stock available')
             else:
                 # Create a new cart item
                 cart_item = CartItem.objects.create(
@@ -72,40 +52,56 @@ class AddCartView(View):
 
         # If the user is not authenticated
         else:
-            product_variation = self.get_product_variation(request, variant.product)
+            product_variation = self.get_variation(request, variant)
 
             # Get or create the cart
             cart = self.get_or_create_cart(request)
 
             # Check if the cart item already exists
             cart_item = self.get_cart_item(None, variant.product, product_variation, cart)
+            
 
             if cart_item:
                 # Increase the cart item quantity
-                cart_item.quantity += 1
-                cart_item.save()
+                if available_stock > cart_item.quantity:
+                    cart_item.quantity += 1
+                    cart_item.save()
+                else:
+                    return HttpResponse('Not enough stock available')
             else:
                 # Create a new cart item
                 cart_item = CartItem.objects.create(
                     product=variant.product,
                     quantity=1,
                     cart=cart,
+                    
                 )
                 cart_item.variations.add(*product_variation)
                 cart_item.save()
 
         return redirect('cart')
 
-    def get_product_variation(self, request, product):
+    def get_variation(self, request, variant):
         product_variation = []
-        for item in request.POST:
-            key = item
-            value = request.POST[key]
-            try:
-                variation = Variations.objects.get(product=product, variation_category__iexact=key, variation_values__iexact=value)
-                product_variation.append(variation)
-            except Variations.DoesNotExist:
-                pass
+        form_fields = ['product','brand_name','color', 'ram', 'storage','price','stock','description','is_active' ]
+        for field in form_fields:
+            value = request.POST.get(field)
+            if value:
+                try:
+                    variation = Variations.objects.get(
+                        product=variant.product,
+                        brand_name=variant.brand_name, 
+                        color=variant.color,
+                        ram=variant.ram,
+                        storage=variant.storage,
+                        price=variant.price,
+                        stock=variant.stock,
+                        description=variant.description,
+                        is_active=variant.is_active,
+                        )
+                    product_variation.append(variation)
+                except Variations.DoesNotExist:
+                    pass
         return product_variation
 
     def get_cart_item(self, user, product, product_variation, cart=None):

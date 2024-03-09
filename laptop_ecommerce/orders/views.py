@@ -53,7 +53,7 @@ class CashOnDeliveryView(View):
             orderproduct.variations.set(product_variation)
             orderproduct.save()
         #Reduce the quantity of the sold products
-            product = Variations.objects.get(id=item.product_id)
+            product = Variations.objects.get(id=item.variations.first().id)
             product.stock -= item.quantity
             product.save()
         #clear cart
@@ -134,6 +134,11 @@ class PaymentsView(View):
                 orderproduct = OrderProduct.objects.get(id=orderproduct.id)
                 orderproduct.variations.set(product_variation)
                 orderproduct.save()
+            
+            #Reduce the quantity of the sold products
+                product = Variations.objects.get(id=item.variations.first().id)
+                product.stock -= item.quantity
+                product.save()
             
             #clear cart
             CartItem.objects.filter(user=request.user).delete()
