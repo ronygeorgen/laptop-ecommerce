@@ -9,12 +9,14 @@
         <main class="col-md-9">
             <article class="card">
             <header class="card-header">
-                <strong class="d-inline-block mr-3 d-flex justify-content-center">Your single order history</strong>
+                <strong class="d-inline-block mr-3 d-flex justify-content-center">Single order View</strong>
                 <div class="text-right"><a href="{% url 'my_orders' %}" class="d-inline-block mr-3 btn btn-primary">Go Back</a></div>
                 <div>
                   {% for address in for_address %}
                   <p>Order ID : {{ address.order.order_number }} </p>
                   <p>Billing Name: {{ address.order.full_name }}</p>
+                  <p>Subtotal: {{subtotal}} </p>
+                  <p>Tax : {{tax}} </p>
                   <p>Order Total : ₹{{ address.order.order_total }}</p>
                   {% endfor %}
                 </div>
@@ -32,12 +34,14 @@
                             </thead>
                             <tbody>
                                 {% for order in orders %}
+                                {% for _ in ''|ljust:order.quantity %}
                               <tr>
                                 <td class="text-center" scope="row">{{order.product.product_name}}</td>
                                 <td class="text-center" scope="row">₹{{order.product_price}}</td>
                                 <td class="text-center" scope="row">{{order.order.created_at}}</td>
                                 <td class="text-center" scope="row"><a href="" class="btn btn-warning">Cancel</a></td>
                               </tr>
+                              {% endfor %}
                               {% endfor %}
                             </tbody>
                           </table>
