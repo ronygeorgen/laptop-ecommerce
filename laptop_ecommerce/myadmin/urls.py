@@ -6,4 +6,5 @@ urlpatterns = [
     path('user_list/',UserManagementView.as_view(), name='user_list'),
     path('user_block/<pk>/',UserBlockView.as_view(), name='user_block'),
     path('user_unblock/<pk>/',UserUnblockView.as_view(), name='user_unblock'),
+    path('order_list/',OrderList.as_view(), name='order_list'),
 ]
