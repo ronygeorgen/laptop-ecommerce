@@ -279,9 +279,16 @@ class MyOrdersDetailedView(View):
     def get(self, request, order_id, pk):
         orders = OrderProduct.objects.filter(order__order_number=order_id, user=request.user, ordered=True).order_by('-created_at')
         for_address = OrderProduct.objects.filter(id=pk,user=request.user, ordered=True)
+        order_table = Order.objects.values('tax').filter(order_number=order_id)
+        tax = order_table.first().get('tax') if order_table else 0
+        subtotal = 0
+        for i in orders:
+            subtotal += i.product_price * i.quantity
         context = {
             'orders' : orders,
             'for_address':for_address,
+            'tax':tax,
+            'subtotal':subtotal,
         }
         return render (request, 'accounts/my_orders_detailed_view.html', context)
     
