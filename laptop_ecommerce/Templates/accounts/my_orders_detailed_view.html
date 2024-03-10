@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="section-conten padding-y bg">
+
+    <div class="container">
+        <div class="row">
+        {% include 'includes/userdashboard_sidebar.html' %}
+        <main class="col-md-9">
+            <article class="card">
+            <header class="card-header">
+                <strong class="d-inline-block mr-3 d-flex justify-content-center">Your single order history</strong>
+                <div class="text-right"><a href="{% url 'my_orders' %}" class="d-inline-block mr-3 btn btn-primary">Go Back</a></div>
+                <div>
+                  {% for order in address %}
+                  <p>Order ID : {{ order.order.order_number }} </p>
+                  <p>Billing Name: {{ order.order.full_name }}</p>
+                  <p>Order Total : ₹{{ order.order.order_total }}</p>
+                  {% endfor %}
+                </div>
+            </header>
+                <div class="row"> 
+                    <div class="col-md-12">
+                        <table class="table">
+                            <thead>
+                              <tr>
+                                <th class="text-center" scope="col">Order Item</th>
+                                <th class="text-center" scope="col">Product Price</th>
+                                <th class="text-center" scope="col">Date</th>
+                                <th class="text-center" scope="col">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                              <tr>
+                                <td class="text-center" scope="row">{{order.product.product_name}}</td>
+                                <td class="text-center" scope="row">₹{{order.product_price}}</td>
+                                <td class="text-center" scope="row">{{order.order.created_at}}</td>
+                                <td class="text-center" scope="row"><a href="" class="btn btn-warning">Cancel</a></td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                    </div>
+                </div> <!-- row.// -->
+            <div class="table-responsive">
+            </div> <!-- table-responsive .end// -->
+            </article> <!-- order-group.// --> 
+        </main>
+    </div> <!-- row.// -->
+    </div>
+    
+    
+    </section>
+    
+    
+{% endblock %}

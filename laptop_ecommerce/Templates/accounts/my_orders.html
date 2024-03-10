@@ -5,49 +5,57 @@
 
     <div class="container">
         <div class="row">
-        {% include 'includes/userdashboard_sidebar.html' %}
-        <main class="col-md-9">
-            <article class="card">
-            <header class="card-header">
-                <strong class="d-inline-block mr-3">Your order history</strong>
-            </header>
-            <div class="card-body">
-                <div class="row"> 
-                    <div class="col-md-12">
-                        <table class="table">
-                            <thead>
-                              <tr>
-                                <th scope="col">Order #</th>
-                                <th scope="col">Billing Name</th>
-                                <th scope="col">Phone</th>
-                                <th scope="col">Order Total</th>
-                                <th scope="col">Date</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                                {% for order in orders %}
-                              <tr>
-                                <th scope="row"> {{order.order_number}} </th>
-                                <td>{{order.full_name}}</td>
-                                <td>{{order.phone}}</td>
-                                <td>₹{{order.order_total}}</td>
-                                <td>{{order.created_at}}</td>
-                              </tr>
-                              {% endfor %}
-                            </tbody>
-                          </table>
-                    </div>
-                </div> <!-- row.// -->
-            </div> <!-- card-body .// -->
-            <div class="table-responsive">
-            </div> <!-- table-responsive .end// -->
-            </article> <!-- order-group.// --> 
-        </main>
-    </div> <!-- row.// -->
+            {% include 'includes/userdashboard_sidebar.html' %}
+            <main class="col-md-9">
+                <article class="card">
+                    <header class="card-header">
+                        <strong class="d-inline-block mr-3">Your order history</strong>
+                    </header>
+                    <div class="row"> 
+                        <div class="col-md-12">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" scope="col">Order #</th>
+                                        <th class="text-center" scope="col">Billing Name</th>
+                                        <th class="text-center" scope="col">Order Items</th>
+                                        <th class="text-center" scope="col">Total Quantity</th>
+                                        <th class="text-center" scope="col">Order Total</th>
+                                        <th class="text-center" scope="col">Date</th>
+                                        <th class="text-center" scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                        {% ifchanged order.order.order_number %}
+                                            <tr>
+                                                <th class="text-center" scope="row"> {{order.order.order_number}} </th>
+                                                <td class="text-center" scope="row">{{order.order.full_name}}</td>
+                                                <td class="text-center" scope="row">
+                                                    {% for item in orders|dictsort:'order.order_number' %}
+                                                        {% if item.order.order_number == order.order.order_number %}
+                                                            {{ item.product.product_name }} - ({{ item.quantity }}) <br>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </td>
+                                                <td class="text-center" scope="row">{{ order.total_quantity }}</td>
+                                                <td class="text-center" scope="row">₹{{ order.order.order_total }}</td>
+                                                <td class="text-center" scope="row">{{ order.order.created_at }}</td>
+                                                <td class="text-center" scope="row"><a href="{% url 'my_orders_detailed_view' order_id=order.order.order_number pk=order.id %}" class="btn btn-primary">View Details</a></td>
+                                             
+                                              </tr>
+                                        {% endifchanged %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> <!-- row.// -->
+                    <div class="table-responsive">
+                    </div> <!-- table-responsive .end// -->
+                </article> <!-- order-group.// --> 
+            </main>
+        </div> <!-- row.// -->
     </div>
-    
-    
-    </section>
-    
-    
+</section>
+
 {% endblock %}

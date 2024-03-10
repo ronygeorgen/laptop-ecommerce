@@ -1,8 +1,9 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.views import View
+from django.db.models import Sum
 from .forms import RegistrationForm, UserForm, UserProfileForm
 from .models import Account, UserProfile
-from orders .models import Order
+from orders .models import Order, OrderProduct
 from django.contrib import messages
 from django.contrib.auth import authenticate,login as auth_login , logout
 from django.contrib.auth.decorators import login_required
@@ -254,7 +255,7 @@ class UserDashboardView(View):
             userprofile = get_object_or_404(UserProfile, user=request.user)
         except Exception as e:
              return HttpResponse(e)
-        orders = Order.objects.order_by('-created_at').filter(user_id=request.user.id, is_ordered=True)
+        orders = OrderProduct.objects.order_by('-created_at').filter(user_id=request.user.id, ordered=True)
         orders_count = orders.count()
         context = {
             'orders_count':orders_count,
@@ -265,11 +266,24 @@ class UserDashboardView(View):
 
 class MyOrdersView(View):
     def get(self, request):
-        orders = Order.objects.filter(user=request.user, is_ordered=True).order_by('-created_at')
-        context = {
+        orders = OrderProduct.objects.filter(user=request.user, ordered=True).order_by('-created_at')
+        for order in orders:
+            order.total_quantity = OrderProduct.objects.filter(order=order.order, ordered=True).aggregate(Sum('quantity'))['quantity__sum'] or 0
+       
+        context = { 
             'orders' : orders,
         }
         return render(request, 'accounts/my_orders.html', context)
+
+class MyOrdersDetailedView(View):
+    def get(self, request, order_id, pk):
+        orders = OrderProduct.objects.filter(order__order_number=order_id, user=request.user, ordered=True).order_by('-created_at')
+        address = OrderProduct.objects.filter(id=pk,user=request.user, ordered=True)
+        context = {
+            'orders' : orders,
+            'address':address,
+        }
+        return render (request, 'accounts/my_orders_detailed_view.html', context)
     
 class EditProfileView(View):
     def get(self, request):
