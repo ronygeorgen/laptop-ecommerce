@@ -42,14 +42,12 @@
                         <span class="text">Categories</span>
                     </a>
                 </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-orders-1.html"> <i class="icon material-icons md-shopping_cart"></i>
+                <li class="menu-item has-submenu ">
+                    <a class="menu-link" href=""> <i class="icon material-icons md-shopping_cart"></i>
                         <span class="text">Orders</span>
                     </a>
-                    <div class="submenu">
-                        <a href="page-orders-1.html">Order list 1</a>
-                        <a href="page-orders-2.html">Order list 2</a>
-                        <a href="page-orders-detail.html">Order detail</a>
+                    <div class="submenu active">
+                        <a href="{% url 'order_list' %}">Order list</a>
                     </div>
                 </li>
                 <li class="menu-item has-submenu">
@@ -72,15 +70,6 @@
                         <a href="{% url 'variations_add' %}" >Add Variations</a>
                         <a href="{% url 'variations_list' %}" >Variations List</a>
                         
-                    </div>
-                </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-transactions-1.html"> <i class="icon material-icons md-monetization_on"></i>
-                        <span class="text">Transactions</span>
-                    </a>
-                    <div class="submenu">
-                        <a href="page-transactions-1.html">Transaction 1</a>
-                        <a href="page-transactions-2.html">Transaction 2</a>
                     </div>
                 </li>
                 <li class="menu-item">

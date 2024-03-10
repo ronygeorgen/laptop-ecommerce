@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.http import HttpResponse
 from accounts.models import Account
+from orders.models import Order
 
 # Create your views here.
 class Dashboard(View):
@@ -30,3 +31,11 @@ class UserUnblockView(View):
         user_to_be_unblocked.is_active = True
         user_to_be_unblocked.save()
         return redirect('user_list')
+    
+class OrderList(View):
+    def get(self, request):
+        orders = Order.objects.filter(is_ordered=True)
+        context = {
+            'orders': orders,
+        }
+        return render(request, 'admin_templates/evara-backend/page-orders-1.html', context)
