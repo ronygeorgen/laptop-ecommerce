@@ -12,10 +12,10 @@
                 <strong class="d-inline-block mr-3 d-flex justify-content-center">Your single order history</strong>
                 <div class="text-right"><a href="{% url 'my_orders' %}" class="d-inline-block mr-3 btn btn-primary">Go Back</a></div>
                 <div>
-                  {% for order in address %}
-                  <p>Order ID : {{ order.order.order_number }} </p>
-                  <p>Billing Name: {{ order.order.full_name }}</p>
-                  <p>Order Total : ₹{{ order.order.order_total }}</p>
+                  {% for address in for_address %}
+                  <p>Order ID : {{ address.order.order_number }} </p>
+                  <p>Billing Name: {{ address.order.full_name }}</p>
+                  <p>Order Total : ₹{{ address.order.order_total }}</p>
                   {% endfor %}
                 </div>
             </header>

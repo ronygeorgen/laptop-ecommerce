@@ -278,10 +278,10 @@ class MyOrdersView(View):
 class MyOrdersDetailedView(View):
     def get(self, request, order_id, pk):
         orders = OrderProduct.objects.filter(order__order_number=order_id, user=request.user, ordered=True).order_by('-created_at')
-        address = OrderProduct.objects.filter(id=pk,user=request.user, ordered=True)
+        for_address = OrderProduct.objects.filter(id=pk,user=request.user, ordered=True)
         context = {
             'orders' : orders,
-            'address':address,
+            'for_address':for_address,
         }
         return render (request, 'accounts/my_orders_detailed_view.html', context)
     
