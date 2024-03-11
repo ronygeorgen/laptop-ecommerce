@@ -291,6 +291,14 @@ class MyOrdersDetailedView(View):
             'subtotal':subtotal,
         }
         return render (request, 'accounts/my_orders_detailed_view.html', context)
+
+class UserOrderCancelView(View):
+    def post(self, request, pk):
+        cancel = OrderProduct.objects.filter(pk=pk).first()
+        cancel.requestcancel = 'Yes'
+        cancel.save()
+        
+        return redirect('my_orders')
     
 class EditProfileView(View):
     def get(self, request):

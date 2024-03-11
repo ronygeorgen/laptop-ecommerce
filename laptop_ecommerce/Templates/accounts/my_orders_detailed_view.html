@@ -39,7 +39,10 @@
                                 <td class="text-center" scope="row">{{order.product.product_name}}</td>
                                 <td class="text-center" scope="row">₹{{order.product_price}}</td>
                                 <td class="text-center" scope="row">{{order.order.created_at}}</td>
-                                <td class="text-center" scope="row"><a href="" class="btn btn-warning">Cancel</a></td>
+                                <form action="{% url 'user_order_cancel_view' order.id %}" method="POST">
+                                  {% csrf_token %}
+                                <td class="text-center" scope="row"><button type="submit" class="btn btn-warning">Cancel</button></td>
+                                </form>
                               </tr>
                               {% endfor %}
                               {% endfor %}
