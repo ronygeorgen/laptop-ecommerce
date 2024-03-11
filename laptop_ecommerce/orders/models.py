@@ -1,6 +1,7 @@
 from django.db import models
 from accounts.models import Account
 from products.models import MyProducts, Variations
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -74,6 +75,10 @@ class Order(models.Model):
         return self.first_name
     
 class OrderProduct(models.Model):
+    STATUS = (
+        ('No', 'No'),
+        ('Yes', 'Yes'),
+    )
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
@@ -82,8 +87,22 @@ class OrderProduct(models.Model):
     quantity = models.IntegerField()
     product_price = models.FloatField()
     ordered = models.BooleanField(default=False)
+    requestcancel = models.CharField(max_length=30, choices=STATUS, default='No')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.product.product_name
+    
+class Wallet(models.Model):
+    user = models.OneToOneField(Account, on_delete=models.CASCADE)
+    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        # Ensure that the balance is not below zero
+        if self.balance < 0:
+            raise ValidationError("Balance cannot be below zero.")
+        
+        super(Wallet, self).save(*args, **kwargs)
