@@ -138,6 +138,23 @@
                     </div>
                 </div>
             </div> <!-- card-body.// -->
+            <div class="card-body">
+                <dl class="dlist-align">
+                    <dt>Wallet Balance:</dt>
+                    <dd class="text-right">₹{{ wallet_balance }}</dd>
+                  </dl>
+                  <div class="card-body">
+                    <div class="d-flex justify-content-center">
+                        {% if wallet_balance >= grand_total %}
+                        <form method="POST" action="{% url 'walletpayment' order.order_number %}">
+                            {% csrf_token %}
+                            <button class="btn btn-warning">Make payment using wallet</button>
+                        </form>
+                        {% else %}
+                        <p>Wallet balance not enough</p>
+                        {% endif %}
+                    </div>
+            </div>
             </div> <!-- card.// -->
     
     </aside> <!-- col.// -->

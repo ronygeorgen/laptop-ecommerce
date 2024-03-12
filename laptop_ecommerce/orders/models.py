@@ -88,6 +88,7 @@ class OrderProduct(models.Model):
     product_price = models.FloatField()
     ordered = models.BooleanField(default=False)
     requestcancel = models.CharField(max_length=30, choices=STATUS, default='No')
+    is_cancelled = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
