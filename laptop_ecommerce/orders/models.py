@@ -91,6 +91,11 @@ class OrderProduct(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        if self.quantity < 0:
+            raise ValidationError("Quantity cannot below zero")
+        super(OrderProduct, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.product.product_name
     

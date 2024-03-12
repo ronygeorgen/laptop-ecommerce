@@ -25,3 +25,18 @@ class CartItem(models.Model):
 
     def __unicode__(self):
         return self.product
+    
+class WishList(models.Model):
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"WishList {self.id} - User: {self.user.username}"
+
+class WishListItems(models.Model):
+    wishlist = models.ForeignKey(WishList, on_delete=models.CASCADE)
+    variantID = models.ForeignKey(Variations, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"WishListItems {self.id} - WishList: {self.wishlist.id}, VariantID: {self.variantID}"

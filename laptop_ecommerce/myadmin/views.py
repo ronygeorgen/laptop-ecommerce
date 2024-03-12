@@ -50,7 +50,7 @@ class OrderCancelApprove(View):
         try:
             order = OrderProduct.objects.get(pk=pk)
             # order.ordered='False'
-            order.quantity -= 1
+            # order.quantity -= 1
             order.requestcancel ='No'
             # order.order.status = 'Cancelled'
             # order.order.is_ordered = False
@@ -70,10 +70,10 @@ class OrderCancelApprove(View):
             wallet.balance += Decimal(order.product_price)
             wallet.save()
         except Wallet.DoesNotExist:
-            # If the wallet entry doesn't exist, create a new entry
             wallet = Wallet(
                 user=user_instance,
                 balance=order.product_price,
             )
             wallet.save()
         return redirect('order_list')
+

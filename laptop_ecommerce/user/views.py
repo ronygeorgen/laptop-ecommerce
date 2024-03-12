@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from products.models import MyProducts, Variations, Image
 from category.models import Category
@@ -7,6 +7,9 @@ from carts.views import _CartId
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
+from carts.models import *
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 # Create your views here.
 class Home(View):
     def get(self,request):
@@ -55,11 +58,16 @@ class SlugStore(View):
 
 class ProductDetailView(View):
     def get(self, request, category_slug, product_slug, variation_id):
+        wishlist_item = None
         try:
             single_product = MyProducts.objects.get(category__slug=category_slug, slug=product_slug)
             selected_variant = Variations.objects.get(id=variation_id)
             cart_id_instance = _CartId()
             in_cart = CartItem.objects.filter(cart__cart_id=cart_id_instance.get(request), product=single_product).exists()
+            try:
+                wishlist_item = WishListItems.objects.get(variantID = variation_id)
+            except WishListItems.DoesNotExist:
+                pass
             
         except Exception as e:
             raise e
@@ -67,6 +75,7 @@ class ProductDetailView(View):
             'single_product' : single_product,
             'in_cart'        : in_cart,
             'selected_variant': selected_variant,
+            'wishlist_item':wishlist_item,
         }
         return render(request, 'store/product_detail.html', context)
     
@@ -83,6 +92,50 @@ class SearchView(View):
         }
         return  render(request, 'store/store.html', context)
     
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class AddToWishlistView(View):
+    def get(self, request, variation_id):
+        variation = Variations.objects.get(id=variation_id)
+        wishlist, created = WishList.objects.get_or_create(user=request.user)
+        wishlist_item = WishListItems.objects.create(wishlist=wishlist, variantID=variation)
+        return redirect('wishlist')
+    
+@method_decorator(login_required(login_url='login'), name='dispatch')
+class WishlistView(View):
+    def get(self,request):
+        wishlist = WishList.objects.get(user=request.user.id)
+        wishlist_item = WishListItems.objects.filter(wishlist=wishlist).prefetch_related('variantID__images')
+        paginator = Paginator(wishlist_item, 6)
+        page = request.GET.get('page')
+        paged_variations = paginator.get_page(page)
+        category_list = Category.objects.filter(is_deleted=False)
+        variations_count = wishlist_item.count()
+        context = {
+            'variations' : paged_variations,
+            'variations_count' : variations_count,
+            'category_list' : category_list,
+        }
+        return render(request, 'store/wishlist.html',context)
+
+class RemoveWishlistView(View):
+    def get(self, request, variation_id):
+        variation = Variations.objects.get(id=variation_id)
+        wishlist = WishList.objects.get(user=request.user)
+        wishlist_item = WishListItems.objects.get(wishlist=wishlist, variantID=variation)
+        wishlist_item.delete()
+        wishlist = WishList.objects.get(user=request.user.id)
+        wishlist_item = WishListItems.objects.filter(wishlist=wishlist).prefetch_related('variantID__images')
+        paginator = Paginator(wishlist_item, 6)
+        page = request.GET.get('page')
+        paged_variations = paginator.get_page(page)
+        category_list = Category.objects.filter(is_deleted=False)
+        variations_count = wishlist_item.count()
+        context = {
+            'variations' : paged_variations,
+            'variations_count' : variations_count,
+            'category_list' : category_list,
+        }
+        return render(request, 'store/wishlist.html',context)
 
 class GetVariantDetailsView(View):
     def get(self, request):
@@ -144,3 +197,4 @@ class GetSecondVariant(View):
                 return JsonResponse({'error': 'Variant not found'}, status=404)
         else:
             return JsonResponse({'error': 'Color, RAM, or Storage is missing'}, status=400)
+  

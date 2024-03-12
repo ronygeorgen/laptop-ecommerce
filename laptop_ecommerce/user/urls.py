@@ -27,4 +27,9 @@ urlpatterns = [
     path('get_variant_details/', GetVariantDetailsView.as_view(), name='get_variant_details'),
 
     path('api/product-details/', GetSecondVariant.as_view(), name='get_second_product_details'),
+
+
+    path('add_to_wishlist/<variation_id>/', AddToWishlistView.as_view(), name='add_to_wishlist'),
+    path('remove_wishlist/<variation_id>/', RemoveWishlistView.as_view(), name='remove_wishlist'),
+    path('wishlist/', WishlistView.as_view(), name='wishlist'),
 ]
