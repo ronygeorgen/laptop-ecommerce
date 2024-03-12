@@ -3,11 +3,12 @@ from django.views import View
 from django.http import HttpResponse, JsonResponse
 from carts.models  import CartItem, Cart
 from .forms import OrderForm
-from orders.models import Order, Payment, OrderProduct, Addresses
+from orders.models import Order, Payment, OrderProduct, Addresses, Wallet
 import datetime
 import json
 from products.models import MyProducts, Variations
 from django.core.mail import EmailMessage
+from decimal import Decimal
 from django.template.loader import render_to_string
 
 # Create your views here.
@@ -27,6 +28,88 @@ class CashOnDeliveryView(View):
         order.payment = payment
         order.is_ordered = True
         order.save()
+
+        #Move the cart items to order product table
+        cart_items = CartItem.objects.filter(user=request.user)
+
+        for item in cart_items:
+            orderproduct = OrderProduct()
+            orderproduct.order_id = order.id
+            orderproduct.payment = payment
+            orderproduct.user_id = request.user.id
+            orderproduct.product_id = item.product_id
+            orderproduct.quantity = item.quantity
+            orderproduct.product_price = 0
+            # Iterate over variations and get the price for each variation
+            for variation in item.variations.all():
+                orderproduct.product_price += variation.price
+            
+            orderproduct.ordered = True
+            orderproduct.save()
+
+
+            cart_item = CartItem.objects.get(id=item.id)
+            product_variation = cart_item.variations.all()
+            orderproduct = OrderProduct.objects.get(id=orderproduct.id)
+            orderproduct.variations.set(product_variation)
+            orderproduct.save()
+        #Reduce the quantity of the sold products
+            product = Variations.objects.get(id=item.variations.first().id)
+            product.stock -= item.quantity
+            product.save()
+        #clear cart
+        CartItem.objects.filter(user=request.user).delete()
+        #send order received email to customer
+        mail_subject = 'Thank you for your order!'
+        message = render_to_string('orders/order_recieved_email.html',{
+            'user': request.user,
+            'order': order,
+        })
+        to_email = request.user.email
+        send_email =  EmailMessage(mail_subject, message, to=[to_email])
+        send_email.send()
+        try:
+            order = Order.objects.get(order_number=order_number, is_ordered=True)
+            ordered_products = OrderProduct.objects.filter(order_id=order.id)
+            subtotal = 0
+            for i in ordered_products:
+                subtotal += i.product_price * i.quantity
+            
+            context = {
+                'order': order,
+                'ordered_products' : ordered_products,
+                'order_number': order.order_number,
+                'transID': payment.payment_id,
+                'payment': payment,
+                'subtotal': subtotal,
+            }
+            return render(request, 'orders/order_complete.html', context)
+        except (Payment.DoesNotExist, Order.DoesNotExist):
+            return redirect('home')
+        
+class WalletPayment(View):
+    def post(self,request, order_number):
+        current_user = request.user
+        order = Order.objects.get(user=current_user, is_ordered=False, order_number=order_number)
+        wallet = Wallet.objects.get(user=request.user)
+        payment_method = 'Wallet'
+        payment = Payment(
+            user= request.user,
+            payment_id = order.order_number,
+            payment_method=payment_method,
+            amount_paid=order.order_total,
+            status='Paid'
+        )
+        payment.save()
+        order.payment = payment
+        order.is_ordered = True
+        order.save()
+        tax = order.tax
+        subtotal_amount = order.order_total
+        grand_total = subtotal_amount + tax
+        grand_total_decimal = Decimal(str(grand_total))
+        wallet.balance -= grand_total_decimal
+        wallet.save()
 
         #Move the cart items to order product table
         cart_items = CartItem.objects.filter(user=request.user)
@@ -168,6 +251,8 @@ class PlaceOrderView(View):
         current_user = request.user
         cart_items = CartItem.objects.filter(user=current_user)
         cart_count = cart_items.count()
+        wallet = Wallet.objects.get(user=request.user)
+        wallet_balance = wallet.balance
         if cart_count <= 0 :
             return redirect('store')
         grand_total = 0
@@ -175,6 +260,7 @@ class PlaceOrderView(View):
         for cart_item in cart_items:
             total += (cart_item.variations.first().price * cart_item.quantity)
             quantity = cart_item.quantity
+
         tax = (2 * total)/100
         grand_total = total + tax
         #store all the billing information inside the Order table
@@ -241,7 +327,8 @@ class PlaceOrderView(View):
             'cart_items': cart_items,
             'total': total,
             'tax': tax,
-            'grand_total': grand_total
+            'grand_total': grand_total,
+            'wallet_balance':wallet_balance,
         }
         return render(request, 'orders/payments.html',context)
 class OrderCompleteView(View):

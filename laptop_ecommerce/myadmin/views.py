@@ -52,6 +52,7 @@ class OrderCancelApprove(View):
             # order.ordered='False'
             # order.quantity -= 1
             order.requestcancel ='No'
+            order.is_cancelled = True
             # order.order.status = 'Cancelled'
             # order.order.is_ordered = False
             # order.payment.status = 'Cancelled'
