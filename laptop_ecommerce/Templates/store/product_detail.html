@@ -26,6 +26,12 @@
                     <!-- gallery-wrap .end// -->
                 </aside>
                 <main class="col-md-6 border-left">
+                    <div class="text-right">
+                        
+                        
+                        
+                        
+                    </div>
                     <form id="product-detail-form" action="{% url 'add_cart' 0 %}" method="POST">
                         {% csrf_token %}
                         <article class="content-body">
@@ -72,14 +78,36 @@
                             <hr>
                             {% if selected_variant.stock <= 0 %}
                                 <h5 class="text-danger">Out of stock </h5>
+                                {% if wishlist_item %}
+                                    <a class="btn btn-danger" href="{% url 'wishlist' %}">Go to wishlist</a>
+                                {% else %}
+                                    <a id="add-to-wishlist-button" href="{% url 'add_to_wishlist' selected_variant.id %}" class="btn btn-danger ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                    </svg></a>
+
+                                {% endif %}
                             {% else %}
                                 <button type="submit" class="btn btn-primary">
                                     <span class="text">Add to cart</span> <i class="fas fa-shopping-cart"></i>
                                 </button>
+                                {% if wishlist_item %}
+                                    <a class="btn btn-danger" href="{% url 'wishlist' %}">Go to wishlist</a>
+                                {% else %}
+                                    <a id="add-to-wishlist-button" href="{% url 'add_to_wishlist' selected_variant.id %}" class="btn btn-danger ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+                                    </svg></a>
+
+                                {% endif %}
+                            </form>
+                            
                             {% endif %}
                         </article>
                         <!-- product-info-aside .// -->
-                    </form>
+                    
+                   
+                   
                 </main>
                 <!-- col.// -->
             </div>
@@ -177,6 +205,7 @@ $('#colorDropdown').change(function () {
         updateProductDetails(selectedColor, selectedRam, selectedStorage);
     });
 
+    
 
 function getsecondProductDetails(color, ram, storage) {
     $.ajax({
@@ -332,34 +361,7 @@ function getProductDetails(variantId) {
                 },
             },
         });
-    // document.addEventListener("DOMContentLoaded", function () {
-    //     var swiper = new Swiper('.swiper-container', {
-    //         slidesPerView: 1,
-    //         spaceBetween: 10,
-    //         navigation: {
-    //             nextEl: '.swiper-button-next',
-    //             prevEl: '.swiper-button-prev',
-    //         },
-    //         pagination: {
-    //             el: '.swiper-pagination',
-    //             clickable: true,
-    //         },
-    //         on: {
-    //             slideChangeTransitionStart: function () {
-    //                 // Reset opacity for all slides
-    //                 $('.swiper-slide').css('opacity', 0);
-    //             },
-    //             slideChangeTransitionEnd: function () {
-    //                 // Show the active slide
-    //                 $('.swiper-slide-active').css('opacity', 1);
-    //             },
-    //         },
-    //     });
-
-        
-
-        
-    // });
+    
 </script>
 
 <style>

@@ -7,6 +7,8 @@ from django.http import HttpResponse
 from products.models import Variations
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from category.models import Category
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 # Create your views here.
 
 class _CartId(View):
@@ -210,3 +212,4 @@ class CheckoutView(View):
             'grand_total': grand_total,
         }
         return render(request, 'store/checkout.html', context)
+ 
