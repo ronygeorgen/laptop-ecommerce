@@ -91,6 +91,7 @@ class WalletPayment(View):
     def post(self,request, order_number):
         current_user = request.user
         order = Order.objects.get(user=current_user, is_ordered=False, order_number=order_number)
+
         wallet = Wallet.objects.get(user=request.user)
         payment_method = 'Wallet'
         payment = Payment(
@@ -251,7 +252,10 @@ class PlaceOrderView(View):
         current_user = request.user
         cart_items = CartItem.objects.filter(user=current_user)
         cart_count = cart_items.count()
-        wallet = Wallet.objects.get(user=request.user)
+        try:
+            wallet = Wallet.objects.get(user=request.user)
+        except Wallet.DoesNotExist:
+            wallet = Wallet.objects.create(user=request.user)
         wallet_balance = wallet.balance
         if cart_count <= 0 :
             return redirect('store')
