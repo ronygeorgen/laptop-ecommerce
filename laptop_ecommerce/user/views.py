@@ -13,13 +13,11 @@ from django.utils.decorators import method_decorator
 # Create your views here.
 class Home(View):
     def get(self,request):
-        if request.user.is_admin == True:
-            return render(request,'accounts/login.html')
-        else:
-            variations = Variations.objects.filter(is_active=True).distinct('product')
-            context = {
-                'variations' : variations
-            }
+        
+        variations = Variations.objects.filter(is_active=True).distinct('product')
+        context = {
+            'variations' : variations
+        }
         return render(request,'home.html', context)
 class Store(View):
     def get(self,request):
