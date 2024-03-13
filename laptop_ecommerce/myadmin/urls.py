@@ -8,4 +8,5 @@ urlpatterns = [
     path('user_unblock/<pk>/',UserUnblockView.as_view(), name='user_unblock'),
     path('order_list/',OrderList.as_view(), name='order_list'),
     path('order_cancel_approve/<pk>/',OrderCancelApprove.as_view(), name='order_cancel_approve'),
+    path('sales_report/',SalesReportView.as_view(), name='sales_report'),
 ]

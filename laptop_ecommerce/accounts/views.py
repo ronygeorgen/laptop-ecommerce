@@ -98,7 +98,7 @@ class LoginView(View):
                     return redirect('login')
                 
             #login for user    
-            else:
+            elif not is_admin:
                 user_details = authenticate(email=myemail, password=mypassword)
                 
                 if user_details:

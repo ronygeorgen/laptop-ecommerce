@@ -13,11 +13,13 @@ from django.utils.decorators import method_decorator
 # Create your views here.
 class Home(View):
     def get(self,request):
-    
-        variations = Variations.objects.filter(is_active=True).distinct('product')
-        context = {
-            'variations' : variations
-        }
+        if request.user.is_admin == True:
+            return render(request,'accounts/login.html')
+        else:
+            variations = Variations.objects.filter(is_active=True).distinct('product')
+            context = {
+                'variations' : variations
+            }
         return render(request,'home.html', context)
 class Store(View):
     def get(self,request):
@@ -103,7 +105,10 @@ class AddToWishlistView(View):
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class WishlistView(View):
     def get(self,request):
-        wishlist = WishList.objects.get(user=request.user.id)
+        try:
+            wishlist = WishList.objects.get(user=request.user.id)
+        except WishList.DoesNotExist:
+            wishlist = WishList.objects.create(user=request.user)
         wishlist_item = WishListItems.objects.filter(wishlist=wishlist).prefetch_related('variantID__images')
         paginator = Paginator(wishlist_item, 6)
         page = request.GET.get('page')
