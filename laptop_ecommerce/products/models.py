@@ -26,7 +26,7 @@ class MyProducts(models.Model):
 
 class Variations(models.Model):
     product             = models.ForeignKey(MyProducts, on_delete=models.CASCADE)
-    brand_name          = models.CharField(max_length=500, blank =True)
+    brand_name          = models.CharField(max_length=500, blank =True, null=False)
     color               = models.CharField(max_length=100, blank=True)
     ram                 = models.CharField(max_length=100, blank=True)
     storage             = models.CharField(max_length=100, blank=True)

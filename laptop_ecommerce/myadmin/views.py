@@ -5,10 +5,16 @@ from accounts.models import Account
 from products.models import Variations
 from orders.models import Order, OrderProduct, Wallet
 from decimal import Decimal
+from datetime import datetime
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 # Create your views here.
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class Dashboard(View):
     def get(self,request):
+        if not request.user.is_admin:
+            return redirect('login')
         return render(request,'admin_templates/evara-backend/index.html')
 class UserManagementView(View):
     def get(self, request):
@@ -78,3 +84,49 @@ class OrderCancelApprove(View):
             wallet.save()
         return redirect('order_list')
 
+class SalesReportView(View):
+    def get(self, request):
+        if not request.user.is_admin:
+            return redirect('login')
+
+        start_date_value = ""
+        end_date_value = ""
+        try:
+            orders = Order.objects.filter(is_ordered=True).order_by('-created_at')
+        except:
+            pass
+
+        context = {
+            'orders': orders,
+            'start_date_value': start_date_value,
+            'end_date_value': end_date_value
+        }
+
+        return render(request, 'admin_templates/evara-backend/sales_report.html', context)
+
+    def post(self, request):
+        if not request.user.is_admin:
+            return redirect('adminlog:admin_login')
+
+        start_date_value = ""
+        end_date_value = ""
+        orders = Order.objects.filter(is_ordered=True).order_by('-created_at')
+
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        start_date_value = start_date
+        end_date_value = end_date
+
+        if start_date and end_date:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d')
+            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+
+            orders = orders.filter(created_at__range=(start_date, end_date))
+
+        context = {
+            'orders': orders,
+            'start_date_value': start_date_value,
+            'end_date_value': end_date_value
+        }
+
+        return render(request, 'admin_templates/evara-backend/sales_report.html', context)

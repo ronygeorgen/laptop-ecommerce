@@ -303,9 +303,9 @@ function getProductDetails(variantId) {
     }
     function updateDropdownOptions(dropdown, options, selectedOption) {
             dropdown.empty();
-            var uniqueOptions = new Set(options);
+            // var uniqueOptions = new Set(options);
 
-            uniqueOptions.forEach(function (option) {
+            options.forEach(function (option) {
                 dropdown.append($('<option>', {
                     value: option,
                     text: option.charAt(0).toUpperCase() + option.slice(1)

@@ -50,7 +50,7 @@
                         <a href="{% url 'order_list' %}">Order list</a>
                     </div>
                 </li>
-                <li class="menu-item has-submenu">
+                <!-- <li class="menu-item has-submenu">
                     <a class="menu-link" href="page-sellers-cards.html"> <i class="icon material-icons md-store"></i>
                         <span class="text">Sellers</span>
                     </a>
@@ -59,7 +59,7 @@
                         <a href="page-sellers-list.html">Sellers list</a>
                         <a href="page-seller-detail.html">Seller profile</a>
                     </div>
-                </li>
+                </li> -->
                 <li class="menu-item has-submenu active">
                     <a class="menu-link" href="#"> <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Products</span>
@@ -72,7 +72,7 @@
                         
                     </div>
                 </li>
-                <li class="menu-item has-submenu">
+                <!-- <li class="menu-item has-submenu">
                     <a class="menu-link" href="page-transactions-1.html"> <i class="icon material-icons md-monetization_on"></i>
                         <span class="text">Transactions</span>
                     </a>
@@ -80,7 +80,7 @@
                         <a href="page-transactions-1.html">Transaction 1</a>
                         <a href="page-transactions-2.html">Transaction 2</a>
                     </div>
-                </li>
+                </li> -->
                 <li class="menu-item">
                     <a class="menu-link" href="{% url 'user_list' %}"> <i class="icon material-icons md-person"></i>
                         <span class="text">User Management</span>
@@ -90,6 +90,11 @@
                         <a href="page-account-register.html">User registration</a>
                         <a href="page-error-404.html">Error 404</a>
                     </div> -->
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="{% url 'sales_report' %}"> <i class="icon material-icons md-store"></i>
+                        <span class="text">Sales Report</span>
+                    </a>
                 </li>
                 <li class="menu-item">
                     <a class="menu-link" href="page-reviews.html"> <i class="icon material-icons md-comment"></i>
@@ -229,7 +234,7 @@
                                         <img src="{{ not_deleted_product.images.url }}" class="img-sm img-thumbnail" alt="Item">
                                     </div> -->
                                     <div class="info col-4">
-                                        <h6 class="mb-0">{{ not_deleted_product.brand_name }}</h6>
+                                        <h6 class="mb-0">{{ not_deleted_product.product_name }}</h6>
                                     </div>
                                     <!-- <div class="info col-8">
                                         <h6 class="mb-0">{{ not_deleted_product.description }}</h6>
@@ -268,7 +273,7 @@
                                         <img src="{{ deleted_product.images.url }}" class="img-sm img-thumbnail" alt="Item">
                                     </div> -->
                                     <div class="info col-4">
-                                        <h6 class="mb-0">{{ deleted_product.brand_name }}</h6>
+                                        <h6 class="mb-0">{{ deleted_product.product_name }}</h6>
                                     </div>
                                     <!-- <div class="info col-8">
                                         <h6 class="mb-0">{{ deleted_product.description }}</h6>
