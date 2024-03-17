@@ -3,7 +3,7 @@ from django.views import View
 from django.http import HttpResponse
 from accounts.models import Account
 from products.models import Variations
-from orders.models import Order, OrderProduct, Wallet
+from orders.models import Order, OrderProduct, Wallet, Payment
 from decimal import Decimal
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -71,17 +71,23 @@ class OrderCancelApprove(View):
             pass
 
         user_instance = order.user
-        
         try:
-            wallet = Wallet.objects.get(user=user_instance)
-            wallet.balance += Decimal(order.product_price)
-            wallet.save()
-        except Wallet.DoesNotExist:
-            wallet = Wallet(
-                user=user_instance,
-                balance=order.product_price,
-            )
-            wallet.save()
+            payment = Payment.objects.filter(user=user_instance, payment_id=order.order.order_number , payment_method='cod').first()
+            
+            if not payment:
+                try:
+                    wallet = Wallet.objects.get(user=user_instance)
+                    wallet.balance += Decimal(order.product_price)
+                    wallet.save()
+                except Wallet.DoesNotExist:
+                    wallet = Wallet(
+                        user=user_instance,
+                        balance=order.product_price,
+                    )
+                    wallet.save()
+        except Payment.DoesNotExist:
+            pass
+        
         return redirect('order_list')
 
 class SalesReportView(View):

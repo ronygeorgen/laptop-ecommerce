@@ -10,6 +10,7 @@ from products.models import MyProducts, Variations
 from django.core.mail import EmailMessage
 from decimal import Decimal
 from django.template.loader import render_to_string
+from carts.views import _CartId
 
 # Create your views here.
 class CashOnDeliveryView(View):
@@ -261,12 +262,20 @@ class PlaceOrderView(View):
             return redirect('store')
         grand_total = 0
         tax = 0
+        discount = 0
+        cart_id_instance = _CartId()
         for cart_item in cart_items:
             total += (cart_item.variations.first().price * cart_item.quantity)
-            quantity = cart_item.quantity
 
-        tax = (2 * total)/100
-        grand_total = total + tax
+        tax = (Decimal('0.02') * total)
+        cart_inst = Cart.objects.get(cart_id=cart_id_instance.get(request))
+        if cart_inst.coupon is not None:
+                discount = cart_inst.coupon.discount_rate
+                grand_total = (total + tax) - discount
+        else:
+            grand_total = total + tax
+        if grand_total < 0:
+            grand_total = 0
         #store all the billing information inside the Order table
         data = Order()
         data.user = current_user
@@ -331,6 +340,7 @@ class PlaceOrderView(View):
             'cart_items': cart_items,
             'total': total,
             'tax': tax,
+            'discount':discount,
             'grand_total': grand_total,
             'wallet_balance':wallet_balance,
         }

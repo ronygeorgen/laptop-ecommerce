@@ -106,6 +106,12 @@
                   <dt>Tax:</dt>
                   <dd class="text-right"> ₹{{ tax }}</dd>
                 </dl>
+                {% if discount %}
+                <dl class="dlist-align">
+                    <dt>Coupon Discount</dt>
+                    <dd class="text-right"> ₹{{ discount }}</dd>
+                </dl>
+                {% endif %}
                 <dl class="dlist-align">
                   <dt>Grand Total:</dt>
                   <dd class="text-right text-dark b"><strong>₹{{ grand_total }}</strong></dd>
@@ -126,13 +132,17 @@
                     <h5 class="card-header">Cash On Delivery</h5>
                     <div class="card-body">
                         <div class="d-flex justify-content-center">
+                            {% if grand_total <= 1000 %}
                             <form method="POST" action="{% url 'cashondelivery' order.order_number %}">
                                 {% csrf_token %}
                                 <button class="btn btn-warning">Place Order</button>
                             </form>
-                        </div>
                         <div class="d-flex justify-content-center">
                             <p>Please keep the exact amount ready for the delivery.</p>
+                        </div>
+                            {% else %}
+                            <p>Cash on delivery is not available for orders greater than ₹1000</p>
+                            {% endif %}
                         </div>
                         
                     </div>
