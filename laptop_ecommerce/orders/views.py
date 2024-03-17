@@ -59,6 +59,16 @@ class CashOnDeliveryView(View):
             product.stock -= item.quantity
             product.save()
         #clear cart
+        try:
+            cart_id_instance = _CartId()
+            cart = Cart.objects.filter(cart_id= cart_id_instance.get(request)).first()
+            if cart and cart.coupon and cart.coupon.is_active==True:
+                print("Made into false")
+                cart.coupon.is_active = False
+                cart.coupon.save()
+        except Cart.DoesNotExist:
+            pass
+        cart.delete()
         CartItem.objects.filter(user=request.user).delete()
         #send order received email to customer
         mail_subject = 'Thank you for your order!'
@@ -142,6 +152,16 @@ class WalletPayment(View):
             product.stock -= item.quantity
             product.save()
         #clear cart
+        try:
+            cart_id_instance = _CartId()
+            cart = Cart.objects.filter(cart_id= cart_id_instance.get(request)).first()
+            if cart and cart.coupon and cart.coupon.is_active==True:
+                print("Made into false")
+                cart.coupon.is_active = False
+                cart.coupon.save()
+        except Cart.DoesNotExist:
+            pass
+        cart.delete()
         CartItem.objects.filter(user=request.user).delete()
         #send order received email to customer
         mail_subject = 'Thank you for your order!'
@@ -226,6 +246,16 @@ class PaymentsView(View):
                 product.save()
             
             #clear cart
+            try:
+                cart_id_instance = _CartId()
+                cart = Cart.objects.filter(cart_id= cart_id_instance.get(request)).first()
+                if cart and cart.coupon and cart.coupon.is_active==True:
+                    print("Made into false")
+                    cart.coupon.is_active = False
+                    cart.coupon.save()
+            except Cart.DoesNotExist:
+                pass
+            cart.delete()
             CartItem.objects.filter(user=request.user).delete()
             #send order received email to customer
             mail_subject = 'Thank you for your order!'
