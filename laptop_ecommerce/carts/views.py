@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from category.models import Category
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.contrib import messages
+from decimal import Decimal
 # Create your views here.
 
 class _CartId(View):
@@ -35,7 +37,7 @@ class AddCartView(View):
             # Check if the cart item already exists
             cart_item = self.get_cart_item(current_user, variant.product, product_variation)
             
-            
+            cart = self.get_or_create_cart(request)
             if cart_item:
                 if available_stock > cart_item.quantity:
                     cart_item.quantity += 1
@@ -47,6 +49,7 @@ class AddCartView(View):
                 cart_item = CartItem.objects.create(
                     product=variant.product,
                     quantity=1,
+                    cart=cart,
                     user=current_user,
                 )
                 cart_item.variations.add(*product_variation)
@@ -166,11 +169,35 @@ class CartView(View):
                 cart_id_instance = _CartId()
                 cart = Cart.objects.get(cart_id=cart_id_instance.get(request))
                 cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+
+            try:
+                coupon_code=request.GET.get('coupon_code')
+                print(coupon_code)
+                try:
+                    coupon = Coupon.objects.get(coupon_id=coupon_code)
+                    
+                    if coupon.is_active:
+                        coupen_inst=Coupon.objects.get(coupon_id=coupon)
+                        discount=coupon.discount_rate
+                        cart.coupon=coupen_inst
+                        cart.save()
+                        messages.success(request, 'Coupon applied successfully!')
+                    else:
+                        messages.error(request, 'Coupon has expired')
+                except Coupon.DoesNotExist:
+                    messages.error(request, 'Invalid coupon code')
+                
+            except:
+                pass
             for cart_item in cart_items:
                 total += (cart_item.variations.first().price * cart_item.quantity)
                 quantity += cart_item.quantity
             tax = (2 * total)/100
-            grand_total = total + tax
+            try:
+                if discount is not None:
+                    grand_total=(total + tax) - discount  
+            except:  
+                grand_total = total + tax
         except ObjectDoesNotExist:
             pass
 
@@ -181,8 +208,91 @@ class CartView(View):
             'tax' : tax,
             'grand_total': grand_total,
         }
+        try:
+            if discount is not None:
+                context['descount'] = discount
+        except:
+            pass
+        
 
         return render (request, 'store/cart.html', context)
+    
+    def post(self, request):
+        total = 0
+        quantity = 0
+        cart_items = []
+        try:
+            tax = 0
+            grand_total = 0
+        
+            coupon_code=request.POST.get('coupon_code')
+            try:
+                coupon = Coupon.objects.get(coupon_id=coupon_code)
+                # discount=coupon.discount_rate
+                if coupon.is_active:
+                    if request.user.is_authenticated:
+                        cart_items = CartItem.objects.filter(user=request.user, is_active=True)
+                        cart_inst = Cart.objects.create(coupon=coupon_code)
+                        cart_inst.save()
+                        # cart_inst = cart_items.get(cart)
+                        # coupen_inst=Coupon.objects.get(coupon_id=coupon)
+                        # cart_id_instance = _CartId()
+                        # cart = Cart.objects.get(cart_id=cart_id_instance.get(request))
+                        # cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+                        # cart_inst.coupon=coupon
+                        # cart_inst.save()
+                        # messages.success(request, 'Coupon applied successfully!')
+                    else:
+                        # coupon=Coupon.objects.get(coupon_id=coupon)
+                        cart_id_instance = _CartId()
+                        cart = Cart.objects.get(cart_id=cart_id_instance.get(request))
+                        cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+                        # cart.coupon=coupon
+                        # cart.save()
+                        # messages.success(request, 'Coupon applied successfully!')
+
+                    for cart_item in cart_items:
+                        total += (cart_item.variations.first().price * cart_item.quantity)
+                        quantity += cart_item.quantity
+                    tax = (Decimal('0.02') * total)
+                    discount = coupon.discount_rate
+                    grand_total = (total + tax) - discount
+                    if grand_total < 0:
+                        grand_total = 0
+                    if request.user.is_authenticated:
+                        cart_inst = Cart.objects.get(coupon=coupon)
+                        cart_inst.coupon = coupon
+                        cart_inst.save()
+                    else:
+                        cart.coupon = coupon
+                        cart.save()
+                    messages.success(request, 'Coupon applied successfully!')
+                else:
+                    messages.error(request, 'Coupon has expired')
+                
+            except Coupon.DoesNotExist:
+                messages.error(request, 'Invalid coupon code')
+            
+        except ObjectDoesNotExist:
+            pass
+
+        context = {
+            'total': total,
+            'quantity': quantity,
+            'cart_items': cart_items,
+            'tax' : tax,
+            'grand_total': grand_total,
+        }
+        try:
+            if discount is not None:
+                context['descount'] = discount
+        except:
+            pass
+        
+
+        return render (request, 'store/cart.html', context)
+    
+    
 
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class CheckoutView(View):
