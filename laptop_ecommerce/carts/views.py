@@ -215,7 +215,13 @@ class CartView(View):
             coupon_code=request.POST.get('coupon_code')
             try:
                 coupon = Coupon.objects.get(coupon_id=coupon_code)
-                # discount=coupon.discount_rate
+                try:
+                    coupon_check = Cart.objects.filter(coupon = coupon).first()
+                    if coupon_check:
+                        messages.error(request, 'Coupon already applied')
+                        return redirect('cart')
+                except Cart.DoesNotExist:
+                    pass
                 if coupon.is_active:
                     if request.user.is_authenticated:
                         cart_items = CartItem.objects.filter(user=request.user, is_active=True)
@@ -245,10 +251,10 @@ class CartView(View):
                     messages.success(request, 'Coupon applied successfully!')
                 else:
                     messages.error(request, 'Coupon has expired')
-                
+                    
             except Coupon.DoesNotExist:
                 messages.error(request, 'Invalid coupon code')
-            
+                
         except ObjectDoesNotExist:
             pass
         return redirect ('cart')
