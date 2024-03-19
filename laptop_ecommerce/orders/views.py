@@ -11,7 +11,7 @@ from django.core.mail import EmailMessage
 from decimal import Decimal
 from django.template.loader import render_to_string
 from carts.views import _CartId
-
+from carts.utils import apply_offers
 # Create your views here.
 class CashOnDeliveryView(View):
     def post(self,request, order_number):
@@ -280,6 +280,7 @@ class PlaceOrderView(View):
         pass
     
     def post(self, request, total=0, quantity=0):
+        applied_offer = None
         current_user = request.user
         cart_items = CartItem.objects.filter(user=current_user)
         cart_count = cart_items.count()
@@ -306,6 +307,7 @@ class PlaceOrderView(View):
             grand_total = total + tax
         if grand_total < 0:
             grand_total = 0
+        grand_total, applied_offer = apply_offers(cart_items, grand_total)
         #store all the billing information inside the Order table
         data = Order()
         data.user = current_user
@@ -373,6 +375,7 @@ class PlaceOrderView(View):
             'discount':discount,
             'grand_total': grand_total,
             'wallet_balance':wallet_balance,
+            'applied_offer': applied_offer,
         }
         return render(request, 'orders/payments.html',context)
 class OrderCompleteView(View):

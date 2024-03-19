@@ -36,8 +36,23 @@
                         {% endif %}
                         <figcaption class="info-wrap">
                             <a href="{% url 'product_detail' variation.product.category.slug variation.product.slug variation.id %}" class="title">{{ variation.product.product_name }}</a>
+                            <small>{{variation.product.category}}</small>
                             <div class="price mt-1">₹{{ variation.price }}</div>
                             <p>{{ variation.description }}</p>
+                            <div>
+                                {% for offer in category_offer %}
+                                    {% if offer.category == variation.product.category %}
+                                        <p class="text-success">{{ offer.discount_rate |floatformat:"0" }}₹ category discount available</p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div>
+                                {% for offer in product_offer %}
+                                    {% if offer.products == variation.product %}
+                                        <p class="text-success">{{ offer.discount_rate |floatformat:"0" }}₹ product discount available</p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
                         </figcaption>
                     </div>
                 </div> <!-- col.// -->

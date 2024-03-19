@@ -33,4 +33,5 @@ urlpatterns = [
     path('cart/', include('carts.urls')),
     path('orders/', include('orders.urls')),
     path('coupon/', include('coupon_Mng.urls')),
+    path('dashboard/offer_mng/', include('offer_management.urls')),
 ]

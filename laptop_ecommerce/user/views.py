@@ -10,13 +10,17 @@ from django.db.models import Q
 from carts.models import *
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from offer_management.models import CategoryOffer, ProductOffer
 # Create your views here.
 class Home(View):
     def get(self,request):
-        
         variations = Variations.objects.filter(is_active=True).distinct('product')
+        category_offer = CategoryOffer.objects.filter(is_active=True)
+        product_offer = ProductOffer.objects.filter(is_active=True)
         context = {
-            'variations' : variations
+            'variations' : variations,
+            'category_offer': category_offer,
+            'product_offer':product_offer,
         }
         return render(request,'home.html', context)
 class Store(View):
@@ -27,10 +31,14 @@ class Store(View):
         paged_variations = paginator.get_page(page)
         category_list = Category.objects.filter(is_deleted=False)
         variations_count = variations.count()
+        category_offer = CategoryOffer.objects.filter(is_active=True)
+        product_offer = ProductOffer.objects.filter(is_active=True)
         context = {
             'variations' : paged_variations,
             'variations_count' : variations_count,
             'category_list' : category_list,
+            'category_offer':category_offer,
+            'product_offer':product_offer,
         }
         return render(request, 'store/store.html',context)
 
@@ -49,10 +57,14 @@ class SlugStore(View):
         paged_variations = paginator.get_page(page)
         category_list = Category.objects.filter(is_deleted=False)
         variations_count = variations.count()
+        category_offer = CategoryOffer.objects.filter(is_active=True)
+        product_offer = ProductOffer.objects.filter(is_active=True)
         context = {
             'variations' : paged_variations,
             'variations_count' : variations_count,
             'category_list' : category_list,
+            'category_offer':category_offer,
+            'product_offer':product_offer,
         }
         return render(request, 'store/store.html',context)
 
@@ -71,11 +83,15 @@ class ProductDetailView(View):
             
         except Exception as e:
             raise e
+        category_offer = CategoryOffer.objects.filter(is_active=True)
+        product_offer = ProductOffer.objects.filter(is_active=True)
         context = {
             'single_product' : single_product,
             'in_cart'        : in_cart,
             'selected_variant': selected_variant,
             'wishlist_item':wishlist_item,
+            'category_offer':category_offer,
+            'product_offer':product_offer,
         }
         return render(request, 'store/product_detail.html', context)
     
@@ -113,10 +129,14 @@ class WishlistView(View):
         paged_variations = paginator.get_page(page)
         category_list = Category.objects.filter(is_deleted=False)
         variations_count = wishlist_item.count()
+        category_offer = CategoryOffer.objects.filter(is_active=True)
+        product_offer = ProductOffer.objects.filter(is_active=True)
         context = {
             'variations' : paged_variations,
             'variations_count' : variations_count,
             'category_list' : category_list,
+            'category_offer':category_offer,
+            'product_offer':product_offer,
         }
         return render(request, 'store/wishlist.html',context)
 
@@ -133,10 +153,14 @@ class RemoveWishlistView(View):
         paged_variations = paginator.get_page(page)
         category_list = Category.objects.filter(is_deleted=False)
         variations_count = wishlist_item.count()
+        category_offer = CategoryOffer.objects.filter(is_active=True)
+        product_offer = ProductOffer.objects.filter(is_active=True)
         context = {
             'variations' : paged_variations,
             'variations_count' : variations_count,
             'category_list' : category_list,
+            'category_offer':category_offer,
+            'product_offer':product_offer,
         }
         return render(request, 'store/wishlist.html',context)
 
