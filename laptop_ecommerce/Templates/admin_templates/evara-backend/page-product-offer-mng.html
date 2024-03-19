@@ -1,0 +1,497 @@
+{% load static %}
+<!DOCTYPE HTML>
+<html lang="en">
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-categories.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
+<head>
+    <meta charset="utf-8">
+    <title>Laptops</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href=" {% static 'adminstyles/assets/imgs/theme/favicon.svg' %} ">
+    <!-- Template CSS -->
+    <link href="{% static 'adminstyles/assets/css/main.css' %}" rel="stylesheet" type="text/css" />
+    <script src="{% static 'adminstyles/assets/js/validation.js' %}"></script>
+</head>
+<body>
+    <div class="screen-overlay"></div>
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="{% url 'dashboard' %}" class="brand-wrap">
+                <img src="{% static 'adminstyles/assets/imgs/theme/logo.svg' %}" class="logo" alt="Evara Dashboard">
+            </a>
+            <div>
+                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+            </div>
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item ">
+                    <a class="menu-link" href="{% url 'dashboard' %}"> <i class="icon material-icons md-home"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item ">
+                    <a class="menu-link" href="{% url 'category' %}"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Categories</span>
+                    </a>
+                </li>
+                <li class="menu-item has-submenu">
+                    <a class="menu-link" href=""> <i class="icon material-icons md-shopping_cart"></i>
+                        <span class="text">Orders</span>
+                    </a>
+                    <div class="submenu ">
+                        <a href="{% url 'order_list' %}">Order list</a>
+                    </div>
+                </li>
+                <li class="menu-item ">
+                    <a class="menu-link"  href="{% url 'add_coupon' %}"> <i class="icon material-icons md-pie_chart"></i>
+                        <span class="text">Coupon</span>
+                    </a>
+                </li>
+                <li class="menu-item has-submenu active">
+                    <a class="menu-link" > <i class="icon material-icons md-store"></i>
+                        <span class="text">Offer Management</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="{% url 'category_offer' %}" >Category Offer</a>
+                        <a href="{% url 'product_offer' %}" class="active">Product Offer</a>
+                        <a href="page-seller-detail.html">Referral offer</a>
+                    </div>
+                </li>
+                <li class="menu-item has-submenu ">
+                    <a class="menu-link" href="#"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="{% url 'product' %}" >Add Products</a>
+                        <a href="{% url 'product_list' %}" >Product List</a>
+                        <a href="{% url 'variations_add' %}" >Add Variations</a>
+                        <a href="{% url 'variations_list' %}" >Variations List</a>
+                        
+                    </div>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="{% url 'user_list' %}"> <i class="icon material-icons md-person"></i>
+                        <span class="text">User Management</span>
+                    </a>
+                    <!-- <div class="submenu">
+                        <a href="page-account-login.html">User login</a>
+                        <a href="page-account-register.html">User registration</a>
+                        <a href="page-error-404.html">Error 404</a>
+                    </div> -->
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="{% url 'sales_report' %}"> <i class="icon material-icons md-store"></i>
+                        <span class="text">Sales Report</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="page-reviews.html"> <i class="icon material-icons md-comment"></i>
+                        <span class="text">Reviews</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="page-brands.html"> <i class="icon material-icons md-stars"></i>
+                        <span class="text">Brands</span> </a>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" disabled href="#"> <i class="icon material-icons md-pie_chart"></i>
+                        <span class="text">Statistics</span>
+                    </a>
+                </li>
+            </ul>
+            <hr>
+            <ul class="menu-aside">
+                <li class="menu-item has-submenu">
+                    <a class="menu-link" href="#"> <i class="icon material-icons md-settings"></i>
+                        <span class="text">Settings</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="page-settings-1.html">Setting sample 1</a>
+                        <a href="page-settings-2.html">Setting sample 2</a>
+                    </div>
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="page-blank.html"> <i class="icon material-icons md-local_offer"></i>
+                        <span class="text"> Starter page </span>
+                    </a>
+                </li>
+            </ul>
+            <br>
+            <br>
+        </nav>
+    </aside>
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                        <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products">
+                        <option value="New orders">
+                        <option value="Apple iphone">
+                        <option value="Ahmed Hassan">
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="{% static 'adminstyles/assets/imgs/theme/flag-us.png' %}" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="{% static 'adminstyles/assets/imgs/theme/flag-fr.png' %}" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="{% static 'adminstyles/assets/imgs/theme/flag-jp.png' %}" alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="{% static 'adminstyles/assets/imgs/theme/flag-cn.png' %}" alt="Français">中国人</a>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="{% static 'adminstyles/assets/imgs/people/avatar2.jpg' %}" alt="User"></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href=" {% url 'logout' %}"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Product Offer Management </h2>
+                    <p>Add, edit or delete a category</p>
+                </div>
+                <div>
+                    <input type="text" placeholder="Search Categories" class="form-control bg-white">
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <!--Below Form for Edit category -->
+
+                        {% if product %}
+                        <div class="col-md-3">
+                            <form method="post" action="{% url 'product_edit' product.id %}" >
+                                {% csrf_token %}
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Name</label>
+                                    {{form.offer_name}}
+                                    <span id="productNameError" class="text-danger"></span>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Expiry Date</label>
+                                    {{form.expire_date}}
+                                    <small id="descriptionError" class="text-danger"></small>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Product</label>
+                                    {{form.products}}
+                                    <small id="catImageError" class="text-danger"></small>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Discount Rate</label>
+                                    {{form.discount_rate}}
+                                    <div class="text-danger">
+                                        {% for error in form.discount_rate.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% if my_id.0 == deleted_id.0 %}
+                                    <div class="row">
+                                        <div class="col-md-7">
+                                            <h6>make_avaliable?</h6>
+                                        </div>
+                                        <div class="col-md-5 form-check">
+                                            {{form.is_active}}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <span class="p-5"><p>You can't delete the category offer from here</p></span>
+                                {% endif %}
+                                <div class="d-grid">
+                                    <button class="btn btn-primary">Save edits</button>
+                                </div>
+                                <div class="d-grid pt-5">
+                                    <button class="btn"> <a href="{% url 'product_offer' %}">Go to Create product offer</a></button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        {% else %}
+                        <!--Below Form for add category offer -->
+                        <div class="col-md-3">
+                            <form method="post" action="{% url 'product_offer' %}" >
+                                {% csrf_token %}
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Product offer name</label>
+                                    {{form.offer_name}}
+                                    <small id="productNameError" class="text-danger"></small>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Expiry Date</label>
+                                    {{form.expire_date}}
+                                    <small id="descriptionError" class="text-danger"></small>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Product</label>
+                                    {{form.products}}
+                                    <small id="catImageError" class="text-danger"></small>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Discount Rate</label>
+                                    {{form.discount_rate}}
+                                    <div class="text-danger" >
+                                        {% for error in form.discount_rate.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">is_active</label>
+                                    {{form.is_active}}
+                                    <small id="catImageError" class="text-danger"></small>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary">Create product offer</button>
+                                </div>
+                            </form>
+                        </div>
+                        {% endif %}
+                        <div class="col-md-9">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <!-- <th class="text-center">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" />
+                                                </div>
+                                            </th> -->
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Expiry Date</th>
+                                            <th>category</th>
+                                            <th>Discount Rate</th>
+                                            <th>is_active</th>
+                                            <th class="text-end">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Below loop for display not deleted categories -->
+                                        {% for product in active_product_offer %}
+                                        <tr>
+                                            <td> {{ product.id }} </td>
+                                            <td><b> {{ product.offer_name }} </b></td>
+                                            <td> {{ product.expire_date }} </td>
+                                            <td> {{ product.category }} </td>
+                                            <td> {{ product.discount_rate }} </td>
+                                            <td> <span class="badge rounded-pill alert-success" >Active</span> </td>
+                                            <td class="text-end">
+                                                <div class="dropdown">
+                                                    <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="#">View detail</a>
+                                                        <a class="dropdown-item" href=" {% url 'product_edit' product.id %} ">Edit info</a>
+                                                        <a class="dropdown-item text-danger" href="{% url 'soft_delete_product' product.id %}">Delete</a>
+                                                    </div>
+                                                </div> <!-- dropdown //end -->
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+
+                                        <!-- Below loop for display soft deleted categories -->
+                                        {% for product_deleted in deactive_product_offer %}
+                                        <tr>
+                                            <td> {{ product_deleted.id }} </td>
+                                            <td><b> {{ product_deleted.offer_name }} </b></td>
+                                            <td> {{ product_deleted.expire_date }} </td>
+                                            <td> {{ product_deleted.category }} </td>
+                                            <td> {{ product_deleted.discount_rate }} </td>
+                                            <td> <span class="badge rounded-pill alert-danger" >Deactivate</span> </td>
+                                            <td class="text-end">
+                                                <div class="dropdown">
+                                                    <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="#">View detail</a>
+                                                        <a class="dropdown-item" href=" {% url 'product_edit' product_deleted.id %} ">Edit info</a>
+                                                    </div>
+                                                </div> <!-- dropdown //end -->
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> <!-- .col// -->
+                    </div> <!-- .row // -->
+                </div> <!-- card body .// -->
+            </div> <!-- card .// -->
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <script src="{% static 'adminstyles/assets/js/vendors/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'adminstyles/assets/js/vendors/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'adminstyles/assets/js/vendors/select2.min.js' %}"></script>
+    <script src="{% static 'adminstyles/assets/js/vendors/perfect-scrollbar.js' %}"></script>
+    <script src="{% static 'adminstyles/assets/js/vendors/jquery.fullscreen.min.js' %}"></script>
+
+
+    <!-- Main Script -->
+    <script src="{% static 'adminstyles/assets/js/main.js' %}" type="text/javascript"></script>
+</body>
+
+<!-- <script>
+    function validateForm1() {
+    // Reset error messages
+    clearError('productNameError');
+    clearError('descriptionError');
+    clearError('catImageError');
+
+    // Get input values
+    var productName = document.getElementById("product_name").value.trim();
+    var description = document.getElementById("product_description").value.trim();
+    var catImageInput = document.getElementById("cat_image");
+    var catImage = catImageInput.files[0];  // Get the selected file
+
+    // Check if fields are empty
+    if (productName === "" || description === "") {
+        showError('productNameError', "All fields are required.");
+        showError('descriptionError', "Description cannot be empty.");
+        return false;
+    }
+
+    // Check for white spaces at the beginning
+    if (/^\s/.test(productName)) {
+        showError('productNameError', "Name cannot start with white spaces.");
+        return false;
+    }
+
+    // Check if name contains letters
+    if (!/[a-zA-Z]/.test(productName)) {
+        showError('productNameError', "Name must contain letters.");
+        return false;
+    }
+
+    // Check if name contains letters and doesn't contain special characters
+    if (!/^[a-zA-Z]+$/.test(productName)) {
+        showError('productNameError', "Name must contain letters and no special characters.");
+        return false;
+    }
+
+    
+
+    // If all validations pass, submit the form
+    return true;
+}
+
+
+    function validateForm2() {
+        // Reset error messages
+        clearError('productNameError');
+        clearError('descriptionError');
+        clearError('catImageError');
+
+        // Get input values
+        var productName = document.getElementsByName("product_name")[0].value.trim();
+        var description = document.getElementsByName("product_description")[0].value.trim();
+        var catImage = document.getElementsByName("cat_image")[0].value.trim();
+
+
+        // Check if fields are empty
+        if (productName === "" || description === "" || catImage === "") {
+            showError('productNameError', "All fields are required.");
+            showError('descriptionError', "Description cannot be empty.");
+            showError('catImageError', "Please upload an image.");
+            return false;
+        }
+
+        // Check for white spaces at the beginning
+        if (/^\s/.test(productName)) {
+            showError('productNameError', "Name cannot start with white spaces.");
+            return false;
+        }
+
+        // Check if name contains letters
+        if (!/[a-zA-Z]/.test(productName)) {
+            showError('productNameError', "Name must contain letters.");
+            return false;
+        }
+
+        // Check if name contains letters and doesn't contain special characters
+        if (!/^[a-zA-Z]+$/.test(productName)) {
+            showError('productNameError', "Name must contain letters and no special characters.");
+            return false;
+        }
+
+    // Check if description doesn't contain special characters
+    if (/[^a-zA-Z0-9\s]/.test(description)) {
+        showError('descriptionError', "Description cannot contain special characters.");
+        return false;
+    }
+
+        // Check if catImage is an image file
+        var allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i;
+        if (!allowedExtensions.exec(catImage)) {
+            showError('catImageError', "Invalid image file. Please upload a valid image.");
+            return false;
+        }
+
+        // If all validations pass, submit the form
+        return true;
+    }
+
+    function showError(elementId, errorMessage) {
+        // Display error message below the input field
+        document.getElementById(elementId).innerHTML = errorMessage;
+    }
+
+    function clearError(elementId) {
+        // Clear error message
+        document.getElementById(elementId).innerHTML = "";
+    }
+</script> -->
+</html>

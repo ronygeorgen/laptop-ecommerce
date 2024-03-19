@@ -12,6 +12,7 @@ from django.http import HttpResponse
 from django.contrib.auth.hashers import check_password
 from carts.views import _CartId
 from carts.models import Cart, CartItem
+from orders.models import Wallet
 
 #below library is installed in the myenv using pip install requests
 import requests
@@ -253,6 +254,7 @@ class UserDashboardView(View):
     def get(self, request):
         try:
             userprofile = get_object_or_404(UserProfile, user=request.user)
+            wallet = get_object_or_404(Wallet,user=request.user )
         except Exception as e:
              return HttpResponse(e)
         orders = OrderProduct.objects.order_by('-created_at').filter(user_id=request.user.id, ordered=True)
@@ -260,6 +262,7 @@ class UserDashboardView(View):
         context = {
             'orders_count':orders_count,
             'userprofile': userprofile,
+            'wallet':wallet,
         }
         return render(request, 'accounts/userdashboard.html', context)
 

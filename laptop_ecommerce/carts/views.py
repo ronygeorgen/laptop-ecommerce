@@ -11,6 +11,8 @@ from category.models import Category
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.contrib import messages
 from decimal import Decimal
+from offer_management.models import CategoryOffer, ProductOffer
+from .utils import apply_offers
 # Create your views here.
 
 class _CartId(View):
@@ -165,6 +167,7 @@ class CartView(View):
         total = 0
         quantity = 0
         discount = 0
+        applied_offer = None
         cart_items = []
         cart_id_instance = _CartId()
         try:
@@ -188,6 +191,7 @@ class CartView(View):
                 grand_total = total + tax
             if grand_total < 0:
                 grand_total = 0
+            grand_total, applied_offer = apply_offers(cart_items, grand_total)
         except ObjectDoesNotExist:
             pass
 
@@ -198,7 +202,10 @@ class CartView(View):
             'tax' : tax,
             'grand_total': grand_total,
             'discount': discount,
+            'applied_offer': applied_offer,
         }
+        if applied_offer:
+            context['applied_offer'] = applied_offer
 
         return render (request, 'store/cart.html', context)
     

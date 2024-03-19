@@ -4,11 +4,16 @@ from .models import Coupon
 from .forms import CouponForm
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
+from django.utils import timezone
 # Create your views here.
 
 class AddCoupon(View):
     def get(self,request):
         coupons = Coupon.objects.all()
+        expired_coupons = Coupon.objects.filter(is_active=True, end_date__lt=timezone.now())
+        for coupon in expired_coupons:
+            coupon.is_active=False
+            coupon.save()
         form = CouponForm()
         context = {
             'form': form,

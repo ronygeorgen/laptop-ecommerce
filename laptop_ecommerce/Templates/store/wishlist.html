@@ -3,6 +3,12 @@
 {% block content %}
 
 <!-- ========================= SECTION PAGETOP ========================= -->
+<style>
+    .card-product-grid .info-wrap {
+        height: 220px; 
+        overflow: hidden; 
+    }
+</style>
 <section class="section-pagetop bg">
     <div class="container">
         {% if 'search' in request.path %}
@@ -112,8 +118,23 @@
                 {% endif %}
                 <figcaption class="info-wrap">
                 <a href="{% url 'product_detail' variation.variantID.product.category.slug variation.variantID.product.slug variation.variantID_id %}" class="title">{{ variation.variantID.product.product_name }}</a>
+                <small>{{variation.variantID.product.category}}</small>
                     <div class="price mt-1">₹{{ variation.variantID.price }}</div> <!-- price-wrap.// -->
                     <p>Different varients available</p>
+                    <div>
+                        {% for offer in category_offer %}
+                            {% if offer.category == variation.variantID.product.category %}
+                                <p class="text-success">{{ offer.discount_rate |floatformat:"0" }}₹ category discount available</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div>
+                        {% for offer in product_offer %}
+                            {% if offer.products == variation.variantID.product %}
+                                <p class="text-success">{{ offer.discount_rate |floatformat:"0" }}₹ product discount available</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </figcaption>
                 <a href="{% url 'product_detail' variation.variantID.product.category.slug variation.variantID.product.slug variation.variantID_id %}" class="btn btn-block btn-primary">View Details </a>
                 <a href="{% url 'remove_wishlist'  variation.variantID_id %}" class="btn btn-block btn-danger">Remove </a>

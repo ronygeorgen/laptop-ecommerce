@@ -114,6 +114,12 @@
                         <dd class="text-right"> ₹{{ discount }}</dd>
                     </dl>
                     {% endif %}
+                    {% if applied_offer %}
+                    <dl class="dlist-align">
+                        <dt>Applied offer</dt>
+                        <dd class="text-right text-success">- ₹{{ applied_offer }}</dd>
+                    </dl>
+                    {% endif %}
                     <dl class="dlist-align">
                         <dt>Grand Total:</dt>
                         <dd class="text-right text-dark b"><strong>₹{{ grand_total }}</strong></dd>

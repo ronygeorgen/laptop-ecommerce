@@ -37,12 +37,27 @@
                         <article class="content-body">
 
                             <h2 class="title" id="product-name"></h2>
-
+                            <p  id="product-description"></p>
                             <div class="mb-3">
                                 <var class="price h4" id="product-price"> </var>
                             </div>
-
-                            <p  id="product-description"></p>
+                            {% if selected_variant %}
+                            <small>{{variation.product.category}}</small>
+                            <div>
+                                {% for offer in category_offer %}
+                                    {% if offer.category == selected_variant.product.category %}
+                                        <p class="text-success">{{ offer.discount_rate |floatformat:"0" }}₹ category discount available</p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div>
+                                {% for offer in product_offer %}
+                                    {% if offer.products == selected_variant.product %}
+                                        <p class="text-success">{{ offer.discount_rate |floatformat:"0" }}₹ product discount available</p>
+                                    {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                            </div>
 
                             <hr>
                             <div class="row">
