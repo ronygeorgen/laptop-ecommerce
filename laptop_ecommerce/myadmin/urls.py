@@ -9,4 +9,5 @@ urlpatterns = [
     path('order_list/',OrderList.as_view(), name='order_list'),
     path('order_cancel_approve/<pk>/',OrderCancelApprove.as_view(), name='order_cancel_approve'),
     path('sales_report/',SalesReportView.as_view(), name='sales_report'),
+    path('order_detail_admin/<pk>/',OrderDetailView.as_view(), name = 'order_detail_admin')
 ]

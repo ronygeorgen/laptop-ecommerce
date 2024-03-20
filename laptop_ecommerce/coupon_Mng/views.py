@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from .models import Coupon
 from .forms import CouponForm
@@ -34,3 +34,40 @@ class AddCoupon(View):
                 'coupons': coupons,
             }
             return render(request, 'admin_templates/evara-backend/coupon_mng.html', context)
+
+class EditCouponView(View):
+    def get(self,request,pk):
+        coupon_to_edit = Coupon.objects.get(pk=pk)
+        form = CouponForm( instance=coupon_to_edit)
+        coupons = Coupon.objects.all()
+        expired_coupons = Coupon.objects.filter(is_active=True, end_date__lt=timezone.now())
+        for coupon in expired_coupons:
+            coupon.is_active=False
+            coupon.save()
+        context = {
+            'coupon_to_edit': coupon_to_edit,
+            'form': form,
+            'coupons': coupons,
+        }
+        return render(request, 'admin_templates/evara-backend/coupon_mng.html', context)
+    def post(self,request,pk):
+        coupon_to_edit = Coupon.objects.get(pk=pk)
+        form = CouponForm(request.POST, instance=coupon_to_edit)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Coupon edited successfully')
+            return redirect('add_coupon')
+        else:
+            coupons = Coupon.objects.all()
+            context = {
+                'coupon_to_edit': coupon_to_edit,
+                'form': form,
+                'coupons': coupons,
+            }
+            return render(request, 'admin_templates/evara-backend/coupon_mng.html', context)
+
+class DeleteCouponView(View):
+    def get(self,request,pk):
+        coupon_to_delete = Coupon.objects.get(pk=pk)
+        coupon_to_delete.delete()
+        return redirect('add_coupon')
