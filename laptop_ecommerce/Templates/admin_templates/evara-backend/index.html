@@ -250,7 +250,7 @@
                         <article class="icontext">
                             <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Monthly Earning</h6> <span>{{ monthly_earning }}</span>
+                                <h6 class="mb-1 card-title">Monthly Earning</h6> <span>{{ monthly_earning|floatformat:"0" }}</span>
                                 <span class="text-sm">
                                     Based in your local time.
                                 </span>
@@ -264,7 +264,7 @@
                     <div class="card mb-4">
                         <article class="card-body">
                             <h5 class="card-title">Sale statistics</h5>
-                            <canvas id="myChart" height="120px"></canvas>
+                            <canvas id="myChart1" height="120px"></canvas>
                         </article>
                     </div>
                     <div class="row">
@@ -419,7 +419,7 @@
                                             <i class="material-icons md-payment font-xxl text-muted mr-5"></i> {{ order.payment.payment_method }}
                                         </td>
                                         <td>
-                                            <a href="#" class="btn btn-xs">View details</a>
+                                            <a href="{% url 'order_detail_admin' order.id %}" class="btn btn-xs">View details</a>
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -470,9 +470,9 @@
 
     var order_filter = '{{ order_filter }}';
     
-    var month = '{{ month }}' ;
-    var new_users = '{{ new_users }}' ;
-    var orders_count = '{{ orders_count }}';
+    var month = JSON.parse('{{ month|safe }}');
+    var new_users = JSON.parse('{{ new_users|safe }}');
+    var orders_count = JSON.parse('{{ orders_count|safe }}');
         
 
 (function ($) {
@@ -480,8 +480,8 @@
     
 
     /*Sale statistics Chart*/
-    if ($('#myChart').length) {
-        var ctx = document.getElementById('myChart').getContext('2d');
+    if ($('#myChart1').length) {
+        var ctx = document.getElementById('myChart1').getContext('2d');
         
 
         var chart = new Chart(ctx, {
@@ -509,7 +509,7 @@
                         data: new_users
                     },
                     {
-                        label: 'Products',
+                        label: 'Revenue',
                         tension: 0.3,
                         fill: true,
                         backgroundColor: 'rgba(380, 200, 230, 0.2)',

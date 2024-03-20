@@ -37,12 +37,12 @@ class Dashboard(View):
         end_date = timezone.datetime(current_year, current_month, num_days, 23, 59, 59)
 
         # Calculate the total earnings for the current month
-        monthly_earnings = Order.objects.filter(status=Order.status).filter(created_at__range=(start_date, end_date)).aggregate(total_earnings=Sum('order_total'))['total_earnings'] or 0
+        monthly_earnings = Order.objects.filter(created_at__range=(start_date, end_date)).aggregate(total_earnings=Sum('order_total'))['total_earnings'] or 0
         return monthly_earnings
     def get(self,request):
         if not request.user.is_admin:
             return redirect('login')
-        orders = Order.objects.filter(status='New')
+        orders = Order.objects.filter(status='Delivered')
         count = orders.count()
 
         revenue = orders.aggregate(total_revenue=Sum('order_total'))['total_revenue'] or 0
