@@ -1,11 +1,12 @@
+{% load static %}
 <!DOCTYPE HTML>
 <html lang="en">
 
 
-<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-orders-detail.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:22 GMT -->
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-orders-1.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:21 GMT -->
 <head>
     <meta charset="utf-8">
-    <title>Evara Dashboard</title>
+    <title>Laptops</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,17 +15,16 @@
     <meta property="og:url" content="">
     <meta property="og:image" content="">
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg">
+    <link rel="shortcut icon" type="image/x-icon" href=" {% static 'adminstyles/assets/imgs/theme/favicon.svg' %} ">
     <!-- Template CSS -->
-    <link href="assets/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="{% static 'adminstyles/assets/css/main.css' %}" rel="stylesheet" type="text/css" />
 </head>
-
 <body>
     <div class="screen-overlay"></div>
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
-            <a href="index.html" class="brand-wrap">
-                <img src="assets/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard">
+            <a href="{% url 'dashboard' %}" class="brand-wrap">
+                <img src="{% static 'adminstyles/assets/imgs/theme/logo.svg' %}" class="logo" alt="Evara Dashboard">
             </a>
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
@@ -32,71 +32,60 @@
         </div>
         <nav>
             <ul class="menu-aside">
-                <li class="menu-item">
-                    <a class="menu-link" href="index.html"> <i class="icon material-icons md-home"></i>
+                <li class="menu-item ">
+                    <a class="menu-link" href="{% url 'dashboard' %}"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-products-list.html"> <i class="icon material-icons md-shopping_bag"></i>
+                <li class="menu-item ">
+                    <a class="menu-link" href="{% url 'category' %}"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Categories</span>
+                    </a>
+                </li>
+                <li class="menu-item has-submenu active">
+                    <a class="menu-link" href=""> <i class="icon material-icons md-shopping_cart"></i>
+                        <span class="text">Orders</span>
+                    </a>
+                    <div class="submenu ">
+                        <a class="active" href="{% url 'order_list' %}">Order list</a>
+                    </div>
+                </li>
+                <li class="menu-item has-submenu ">
+                    <a class="menu-link" > <i class="icon material-icons md-store"></i>
+                        <span class="text">Offer Management</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="{% url 'category_offer' %}" >Category Offer</a>
+                        <a href="{% url 'product_offer' %}">Product Offer</a>
+                        <a href="page-seller-detail.html">Referral offer</a>
+                    </div>
+                </li>
+                <li class="menu-item has-submenu ">
+                    <a class="menu-link" href="#"> <i class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Products</span>
                     </a>
                     <div class="submenu">
-                        <a href="page-products-list.html">Product List</a>
-                        <a href="page-products-grid.html">Product grid</a>
-                        <a href="page-products-grid-2.html">Product grid 2</a>
-                        <a href="page-categories.html">Categories</a>
+                        <a href="{% url 'product' %}" >Add Products</a>
+                        <a href="{% url 'product_list' %}" >Product List</a>
+                        <a href="{% url 'variations_add' %}" >Add Variations</a>
+                        <a href="{% url 'variations_list' %}" >Variations List</a>
+                        
                     </div>
                 </li>
-                <li class="menu-item has-submenu active">
-                    <a class="menu-link" href="page-orders-1.html"> <i class="icon material-icons md-shopping_cart"></i>
-                        <span class="text">Orders</span>
+                <li class="menu-item">
+                    <a class="menu-link" href="{% url 'user_list' %}"> <i class="icon material-icons md-person"></i>
+                        <span class="text">User Management</span>
                     </a>
-                    <div class="submenu">
-                        <a href="page-orders-1.html">Order list 1</a>
-                        <a href="page-orders-2.html">Order list 2</a>
-                        <a href="page-orders-detail.html" class="active">Order detail</a>
-                    </div>
-                </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-sellers-cards.html"> <i class="icon material-icons md-store"></i>
-                        <span class="text">Sellers</span>
-                    </a>
-                    <div class="submenu">
-                        <a href="page-sellers-cards.html">Sellers cards</a>
-                        <a href="page-sellers-list.html">Sellers list</a>
-                        <a href="page-seller-detail.html">Seller profile</a>
-                    </div>
-                </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-form-product-1.html"> <i class="icon material-icons md-add_box"></i>
-                        <span class="text">Add product</span>
-                    </a>
-                    <div class="submenu">
-                        <a href="page-form-product-1.html">Add product 1</a>
-                        <a href="page-form-product-2.html">Add product 2</a>
-                        <a href="page-form-product-3.html">Add product 3</a>
-                        <a href="page-form-product-4.html">Add product 4</a>
-                    </div>
-                </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="page-transactions-1.html"> <i class="icon material-icons md-monetization_on"></i>
-                        <span class="text">Transactions</span>
-                    </a>
-                    <div class="submenu">
-                        <a href="page-transactions-1.html">Transaction 1</a>
-                        <a href="page-transactions-2.html">Transaction 2</a>
-                    </div>
-                </li>
-                <li class="menu-item has-submenu">
-                    <a class="menu-link" href="#"> <i class="icon material-icons md-person"></i>
-                        <span class="text">Account</span>
-                    </a>
-                    <div class="submenu">
+                    <!-- <div class="submenu">
                         <a href="page-account-login.html">User login</a>
                         <a href="page-account-register.html">User registration</a>
                         <a href="page-error-404.html">Error 404</a>
-                    </div>
+                    </div> -->
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="{% url 'sales_report' %}"> <i class="icon material-icons md-store"></i>
+                        <span class="text">Sales Report</span>
+                    </a>
                 </li>
                 <li class="menu-item">
                     <a class="menu-link" href="page-reviews.html"> <i class="icon material-icons md-comment"></i>
@@ -168,14 +157,14 @@
                     <li class="dropdown nav-item">
                         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
-                            <a class="dropdown-item text-brand" href="#"><img src="assets/imgs/theme/flag-us.png" alt="English">English</a>
-                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
-                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
-                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
+                            <a class="dropdown-item text-brand" href="#"><img src="{% static 'adminstyles/assets/imgs/theme/flag-us.png' %}" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="{% static 'adminstyles/assets/imgs/theme/flag-fr.png' %}" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="{% static 'adminstyles/assets/imgs/theme/flag-jp.png' %}" alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="{% static 'adminstyles/assets/imgs/theme/flag-cn.png' %}" alt="Français">中国人</a>
                         </div>
                     </li>
                     <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="assets/imgs/people/avatar2.jpg" alt="User"></a>
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="{% static 'adminstyles/assets/imgs/people/avatar2.jpg' %}" alt="User"></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
                             <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
@@ -183,7 +172,7 @@
                             <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                            <a class="dropdown-item text-danger" href=" {% url 'logout' %} "><i class="material-icons md-exit_to_app"></i>Logout</a>
                         </div>
                     </li>
                 </ul>
@@ -193,7 +182,7 @@
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title">Order detail</h2>
-                    <p>Details for Order ID: 3453012</p>
+                    <p>Details for Order ID: {{selected_order.order_number}}</p>
                 </div>
             </div>
             <div class="card">
@@ -201,19 +190,22 @@
                     <div class="row align-items-center">
                         <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
                             <span>
-                                <i class="material-icons md-calendar_today"></i> <b>Wed, Aug 13, 2020, 4:34PM</b>
+                                <i class="material-icons md-calendar_today"></i> <b>{{selected_order.created_at}}</b>
                             </span> <br>
-                            <small class="text-muted">Order ID: 3453012</small>
+                            <small class="text-muted">Order ID:{{selected_order.order_number}} </small>
                         </div>
                         <div class="col-lg-6 col-md-6 ms-auto text-md-end">
-                            <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
-                                <option>Change status</option>
-                                <option>Awaiting payment</option>
-                                <option>Confirmed</option>
-                                <option>Shipped</option>
-                                <option>Delivered</option>
-                            </select>
-                            <a class="btn btn-primary" href="#">Save</a>
+                            <form method="post" action="{% url 'order_detail_admin' selected_order.id %}">
+                                {% csrf_token %}
+                                <select name="status" class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
+                                    <option value="" {% if not selected_order.status %}selected{% endif %}>Change status</option>
+                                    <option value="Awaiting payment" {% if selected_order.status == 'Awaiting payment' %}selected{% endif %}>Awaiting payment</option>
+                                    <option value="Confirmed" {% if selected_order.status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                                    <option value="Shipped" {% if selected_order.status == 'Shipped' %}selected{% endif %}>Shipped</option>
+                                    <option value="Delivered" {% if selected_order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </form>
                             <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a>
                         </div>
                     </div>
@@ -228,9 +220,8 @@
                                 <div class="text">
                                     <h6 class="mb-1">Customer</h6>
                                     <p class="mb-1">
-                                        John Alexander <br> <template class="__cf_email__" data-cfemail="e2838e879aa2879a838f928e87cc818d8f">[email&#160;protected]</template> <br> +998 99 22123456
+                                        {{selected_order.full_name}} <br> <template class="__cf_email__" data-cfemail="e2838e879aa2879a838f928e87cc818d8f">[email&#160;protected]</template> <br> {{selected_order.phone}}
                                     </p>
-                                    <a href="#">View profile</a>
                                 </div>
                             </article>
                         </div> <!-- col// -->
@@ -242,9 +233,8 @@
                                 <div class="text">
                                     <h6 class="mb-1">Order info</h6>
                                     <p class="mb-1">
-                                        Shipping: Fargo express <br> Pay method: card <br> Status: new
+                                        Shipping: Fargo express <br> Pay method: {{selected_order.payment.payment_method}} <br> Status: {{selected_order.payment.status}}
                                     </p>
-                                    <a href="#">Download info</a>
                                 </div>
                             </article>
                         </div> <!-- col// -->
@@ -256,9 +246,8 @@
                                 <div class="text">
                                     <h6 class="mb-1">Deliver to</h6>
                                     <p class="mb-1">
-                                        City: Tashkent, Uzbekistan <br>Block A, House 123, Floor 2 <br> Po Box 10000
+                                        City: {{selected_order.state}}, {{selected_order.city}} <br>{{selected_order.address_line_1}}, {{selected_order.address_line_2}}, <br>Pin: {{selected_order.pincode}}  
                                     </p>
-                                    <a href="#">View profile</a>
                                 </div>
                             </article>
                         </div> <!-- col// -->
@@ -277,103 +266,29 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>
-                                                <a class="itemside" href="#">
-                                                    <div class="left">
-                                                        <img src="assets/imgs/items/1.jpg" width="40" height="40" class="img-xs" alt="Item">
-                                                    </div>
-                                                    <div class="info"> T-shirt blue, XXL size </div>
-                                                </a>
                                             </td>
-                                            <td> $44.25 </td>
-                                            <td> 2 </td>
-                                            <td class="text-end"> $99.50 </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a class="itemside" href="#">
-                                                    <div class="left">
-                                                        <img src="assets/imgs/items/2.jpg" width="40" height="40" class="img-xs" alt="Item">
-                                                    </div>
-                                                    <div class="info"> Winter jacket for men </div>
-                                                </a>
-                                            </td>
-                                            <td> $7.50 </td>
-                                            <td> 2 </td>
-                                            <td class="text-end"> $15.00 </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a class="itemside" href="#">
-                                                    <div class="left">
-                                                        <img src="assets/imgs/items/3.jpg" width="40" height="40" class="img-xs" alt="Item">
-                                                    </div>
-                                                    <div class="info"> Jeans wear for men </div>
-                                                </a>
-                                            </td>
-                                            <td> $43.50 </td>
-                                            <td> 2 </td>
-                                            <td class="text-end"> $102.04 </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a class="itemside" href="#">
-                                                    <div class="left">
-                                                        <img src="assets/imgs/items/4.jpg" width="40" height="40" class="img-xs" alt="Item">
-                                                    </div>
-                                                    <div class="info"> Product name color and size </div>
-                                                </a>
-                                            </td>
-                                            <td> $99.00 </td>
-                                            <td> 3 </td>
-                                            <td class="text-end"> $297.00 </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4">
-                                                <article class="float-end">
-                                                    <dl class="dlist">
-                                                        <dt>Subtotal:</dt>
-                                                        <dd>$973.35</dd>
-                                                    </dl>
-                                                    <dl class="dlist">
-                                                        <dt>Shipping cost:</dt>
-                                                        <dd>$10.00</dd>
-                                                    </dl>
-                                                    <dl class="dlist">
-                                                        <dt>Grand total:</dt>
-                                                        <dd> <b class="h5">$983.00</b> </dd>
-                                                    </dl>
-                                                    <dl class="dlist">
-                                                        <dt class="text-muted">Status:</dt>
-                                                        <dd>
-                                                            <span class="badge rounded-pill alert-success text-success">Payment done</span>
-                                                        </dd>
-                                                    </dl>
-                                                </article>
-                                            </td>
+                                            {% for order_product in selected_order.orderproduct_set.all %}
+        <tr>
+                                                <td>
+                                                    <a class="itemside" href="#">
+                                                        {% if order_product.variations.exists %}
+                                                            <img src="{{ order_product.variations.first.images.first.image.url }}" width="40" height="40" class="img-xs" alt="Item">
+                                                        {% else %}
+                                                        {% endif %}
+                                                        <div class="info">{{ order_product.product.product_name }}</div>
+                                                    </a>
+                                                </td>
+                                                <td> ₹{{ order_product.product_price }} </td>
+                                                <td> {{ order_product.quantity }} </td>
+                                                <td class="text-end"> ₹{{ order_product.payment.amount_paid }} </td>
+                                            </tr>
+                                            {% endfor %}
                                         </tr>
                                     </tbody>
                                 </table>
                             </div> <!-- table-responsive// -->
                         </div> <!-- col// -->
                         <div class="col-lg-1"></div>
-                        <div class="col-lg-4">
-                            <div class="box shadow-sm bg-light">
-                                <h6 class="mb-15">Payment info</h6>
-                                <p>
-                                    <img src="assets/imgs/card-brands/2.png" class="border" height="20"> Master Card **** **** 4768 <br>
-                                    Business name: Grand Market LLC <br>
-                                    Phone: +1 (800) 555-154-52
-                                </p>
-                            </div>
-                            <div class="h-25 pt-4">
-                                <div class="mb-3">
-                                    <label>Notes</label>
-                                    <textarea class="form-control" name="notes" id="notes" placeholder="Type some note"></textarea>
-                                </div>
-                                <button class="btn btn-primary">Save note</button>
-                            </div>
-                        </div> <!-- col// -->
                     </div>
                 </div> <!-- card-body end// -->
             </div> <!-- card end// -->
@@ -381,7 +296,7 @@
         <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">
                 <div class="col-sm-6">
-                    <script data-cfasync="false" src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+                    <script data-cfasync="false" src="{% static '../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js' %}"></script><script>
                     document.write(new Date().getFullYear())
                     </script> ©, Evara - HTML Ecommerce Template .
                 </div>
@@ -393,13 +308,13 @@
             </div>
         </footer>
     </main>
-    <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
-    <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/vendors/select2.min.js"></script>
-    <script src="assets/js/vendors/perfect-scrollbar.js"></script>
-    <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <script src="{% static 'adminstyles/assets/js/vendors/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'adminstyles/assets/js/vendors/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'adminstyles/assets/js/vendors/select2.min.js' %}"></script>
+    <script src="{% static 'adminstyles/assets/js/vendors/perfect-scrollbar.js' %}"></script>
+    <script src="{% static 'adminstyles/assets/js/vendors/jquery.fullscreen.min.js' %}"></script>
     <!-- Main Script -->
-    <script src="assets/js/main.js" type="text/javascript"></script>
+    <script src="{% static 'adminstyles/assets/js/main.js' %}" type="text/javascript"></script>
 </body>
 
 

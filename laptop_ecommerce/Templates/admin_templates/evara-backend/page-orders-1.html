@@ -236,25 +236,22 @@
                                     <td><span class="badge rounded-pill alert-warning">{{order.order.status}}</span></td>
                                     <td>{{order.variations.first.description}}</td>
                                     <td>{{order.created_at}}</td>
+                                    
                                     {% if order in cancel_requests %}
                                     <td class="text-end">
                                         <form action="{% url 'order_cancel_approve' order.id %}" method="POST">
                                             {% csrf_token %}
                                             <button  class="btn btn-warning rounded font-sm" type="submit">Approve</button>
-                                        <!-- <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> dropdown //end -->
+                                        
                                         </form>
                                     </td>
+                                    
                                     {% endif %}
                                     
                                 </tr>
-                               
+                                <td>
+                                    <a href="{% url 'order_detail_admin' order.order.id %}" class="btn btn-xs">View details</a>
+                                </td>
                                 {% endfor %}
                                 
                             </tbody>

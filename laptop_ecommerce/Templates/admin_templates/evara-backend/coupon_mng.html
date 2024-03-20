@@ -32,7 +32,7 @@
         </div>
         <nav>
             <ul class="menu-aside">
-                <li class="menu-item active">
+                <li class="menu-item ">
                     <a class="menu-link" href="{% url 'dashboard' %}"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
@@ -201,22 +201,31 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
+                            {% if coupon_to_edit %}
+                            <form  method="post" action="{% url 'edit_coupon' coupon_to_edit.id %}">
+                                {% csrf_token %}
+                                {{ form.as_p }}
+                              <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                            {% else %}
                             <form method="post" action="{% url 'add_coupon' %}">
                                 {% csrf_token %}
                                 {{ form.as_p }}
                               <button type="submit" class="btn btn-primary">Submit</button>
                             </form>
+                            {% endif %}
                         </div>
                         <div class="col-md-9">
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>Coupen ID</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Discount</th>
-                                            <th>Availablity</th>
+                                            <th class="text-center">Coupen ID</th>
+                                            <th class="text-center">Start Date</th>
+                                            <th class="text-center">End Date</th>
+                                            <th class="text-center">Discount</th>
+                                            <th class="text-center">Availablity</th>
+                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -227,6 +236,16 @@
                                                 <th>{{coupon.end_date}}</th>
                                                 <th>{{coupon.discount_rate}}</th>
                                                 <th>{{coupon.is_active}}</th>
+                                                <th>
+                                                    <a href="{% url 'edit_coupon' coupon.id %} " class="btn btn-sm font-sm rounded btn-brand">
+                                                        <i class="material-icons md-edit"></i> Edit
+                                                    </a>
+                                                    <a href=" {% url 'delete_coupon' coupon.id %} " class="btn btn-sm font-sm btn-light rounded">
+                                                        <i class="material-icons md-delete_forever"></i> Delete
+                                                    </a>
+                                                </th>
+                                                
+                                            </div>
                                             </tr>
                                         {% endfor %}
         
