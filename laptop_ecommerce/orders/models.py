@@ -41,6 +41,11 @@ class Order(models.Model):
         ('Accepted', 'Accepted'),
         ('completed', 'Completed'),
         ('Cancelled', 'Cancelled'),
+        ('Delivered', 'Delivered'),
+        ('Awaiting payment', 'Awaiting payment'),
+        ('Confirmed', 'Confirmed'),
+        ('Shipped', 'Shipped'),
+        ('Delivered', 'Delivered'),
     )
     user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
     address = models.ForeignKey(Addresses, on_delete=models.SET_NULL, null=True)
