@@ -6,8 +6,17 @@ from django.contrib import messages
 from django.http import Http404, HttpResponse
 from .forms import VariationsForm, ImageFormSet
 from django.urls import reverse
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.utils.decorators import method_decorator
+from django.shortcuts import redirect
 
 # Create your views here.
+
+def is_staff(user):
+    return user.is_staff
+
+@method_decorator(user_passes_test(is_staff), name='dispatch')
 class ProductView(View):
     templates = 'admin_templates\evara-backend\page-form-product-2.html'
     def get(self,request):
@@ -41,7 +50,8 @@ class ProductView(View):
 
         }
         return render(request,self.templates, {'products' : entered_data})
-    
+
+@method_decorator(user_passes_test(is_staff), name='dispatch')    
 class ProductEdit(View):
     def get(self, request):
         category=Category.objects.filter(is_deleted=False)
@@ -54,6 +64,7 @@ class ProductEdit(View):
         }
         return render(request, 'admin_templates\evara-backend\page-product-list.html', context)
 
+@method_decorator(user_passes_test(is_staff), name='dispatch')
 class ProductEditView(View):
     def get(self, request, pk):
         product_to_edit = MyProducts.objects.get(pk=pk)
@@ -95,6 +106,7 @@ class ProductEditView(View):
         product_to_be_edited.save()
         return redirect ('product_list')
 
+@method_decorator(user_passes_test(is_staff), name='dispatch')
 class SoftDeleteProductView(View):
     def get(self, request, pk):
         product_to_delete = MyProducts.objects.get(pk=pk)
@@ -104,6 +116,7 @@ class SoftDeleteProductView(View):
     
 #Below classes for variations 
 
+@method_decorator(user_passes_test(is_staff), name='dispatch')
 class CreateVariationFormView(View):
     template = 'admin_templates/evara-backend/variations-product-add.html'
 
@@ -129,6 +142,7 @@ class CreateVariationFormView(View):
         else:
             return render(request, self.template, {'variation_form': variation_form, 'formset': formset})
     
+@method_decorator(user_passes_test(is_staff), name='dispatch')
 class VariationsListView(View):
     def get(self, request):
         category=Category.objects.filter(is_deleted=False)
@@ -142,6 +156,7 @@ class VariationsListView(View):
         }
         return render(request,'admin_templates\\evara-backend\\variations-product-list.html', context)
 
+@method_decorator(user_passes_test(is_staff), name='dispatch')
 class VariationsListEditView(View):
     def get(self,request,pk):
         variant_to_edit = Variations.objects.get(pk=pk)
@@ -179,6 +194,7 @@ class VariationsListEditView(View):
         }
         return render(request, 'admin_templates/evara-backend/variations-product-add.html', context)
 
+@method_decorator(user_passes_test(is_staff), name='dispatch')
 class SoftDeleteVariant(View):
     def get(self,request,pk):
         variant_to_delete = Variations.objects.get(pk=pk)

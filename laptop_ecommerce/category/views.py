@@ -3,8 +3,16 @@ from django.contrib import messages
 from django.views import View
 from . models import Category
 from django.http import HttpResponse
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.utils.decorators import method_decorator
+from django.shortcuts import redirect
 # Create your views here.
 
+def is_staff(user):
+    return user.is_staff
+
+@method_decorator(user_passes_test(is_staff), name='dispatch')
 class CategoryView(View):
 
     template = 'admin_templates/evara-backend/page-categories.html'
@@ -48,7 +56,7 @@ class CategoryView(View):
             
         return render(request,self.template,context)
     
-
+@method_decorator(user_passes_test(is_staff), name='dispatch')
 class EditView(View):
     template = 'admin_templates/evara-backend/page-categories.html'
     def get(self, request, pk):
@@ -80,7 +88,8 @@ class EditView(View):
             category_to_be_edited.cat_image = request.FILES['cat_image']
         category_to_be_edited.save()            
         return redirect('category')
-    
+
+@method_decorator(user_passes_test(is_staff), name='dispatch')    
 class SoftDeleteCategoryView(View):
     def get(self, request, pk):
         category = Category.objects.get(pk=pk)

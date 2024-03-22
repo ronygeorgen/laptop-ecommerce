@@ -110,10 +110,10 @@
     <div class="row">
         {% if variations %}
         {% for variation in variations %}
-        <div class="col-md-3">
+        <div class="col-6 col-md-4">
             <div class="card card-product-grid">
                 {% if variation.images.exists %}
-                <a href=" {% url 'product_detail' variation.product.category.slug variation.product.slug variation.id %} " class="img-wrap"> <img src="{{ variation.images.first.image.url }}"> 
+                <a href=" {% url 'product_detail' variation.product.category.slug variation.product.slug variation.id %} " class="img-wrap"> <img src="{{ variation.images.first.image.url }}"class="img-fluid"> 
                 </a>
                 {% endif %}
                 <figcaption class="info-wrap">
