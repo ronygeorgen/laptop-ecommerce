@@ -110,7 +110,8 @@
     <div class="row">
         {% if variations %}
         {% for variation in variations %}
-        <div class="col-md-3">
+        
+        <div class="col-6 col-md-4">
             <div class="card card-product-grid">
                 {% if variation.variantID.images.exists %}
                 <a href="{% url 'product_detail' variation.variantID.product.category.slug variation.variantID.product.slug variation.variantID_id %} " class="img-wrap"> <img src="{{ variation.variantID.images.first.image.url }}"> 
@@ -136,8 +137,21 @@
                         {% endfor %}
                     </div>
                 </figcaption>
-                <a href="{% url 'product_detail' variation.variantID.product.category.slug variation.variantID.product.slug variation.variantID_id %}" class="btn btn-block btn-primary">View Details </a>
-                <a href="{% url 'remove_wishlist'  variation.variantID_id %}" class="btn btn-block btn-danger">Remove </a>
+                <form method="POST" action="{% url 'add_cart'  variant_id=variation.variantID_id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="product" value="{{ variation.product | capfirst }}">
+                    <input type="hidden" name="brand_name" value="{{ variation.variantID.brand_name | capfirst }}">
+                    <input type="hidden" name="color" value="{{ variation.variantID.color | capfirst }}">
+                    <input type="hidden" name="ram" value="{{ variation.variantID.ram | capfirst }}">
+                    <input type="hidden" name="storage" value="{{ variation.variantID.storage | capfirst }}">
+                    <input type="hidden" name="price" value="{{ variation.variantID.price | capfirst }}">
+                    <input type="hidden" name="stock" value="{{ variation.variantID.stock | capfirst }}">
+                    <input type="hidden" name="description" value="{{ variation.variantID.description | capfirst }}">
+                    <input type="hidden" name="is_active" value="{{ variation.variantID.is_active | capfirst }}">
+                    <button class="btn btn-block btn-primary" type="submit">Add to cart</button>
+                </form>
+                
+                <a href="{% url 'remove_wishlist'  variation.variantID.id %}" class="btn btn-block btn-danger">Remove </a>
             </div>
         </div> <!-- col.// -->
         {% endfor %}

@@ -120,7 +120,7 @@ class AddToWishlistView(View):
 class WishlistView(View):
     def get(self,request):
         try:
-            wishlist = WishList.objects.get(user=request.user.id)
+            wishlist = WishList.objects.get(user=request.user)
         except WishList.DoesNotExist:
             wishlist = WishList.objects.create(user=request.user)
         wishlist_item = WishListItems.objects.filter(wishlist=wishlist).prefetch_related('variantID__images')

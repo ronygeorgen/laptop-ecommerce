@@ -1,4 +1,4 @@
-from .models import Cart, CartItem
+from .models import Cart, CartItem, WishList, WishListItems
 from .views import _CartId
 def counter(request):
     cart_count = 0
@@ -17,3 +17,17 @@ def counter(request):
         except Cart.DoesNotExist:
             cart_count = 0
         return dict(cart_count=cart_count)
+
+def wishlist_counter(request):
+    wishlist_count = 0
+    wishlist_items = WishListItems.objects.none()
+    if 'admin' in request.path:
+        return {}
+    else:
+        if request.user.is_authenticated:
+
+            wishlist = WishList.objects.all().filter(user=request.user)
+            wishlist_items = WishListItems.objects.all().filter(wishlist=wishlist[:1])
+        
+        wishlist_count = wishlist_items.count()
+        return dict(wishlist_count=wishlist_count)

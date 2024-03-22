@@ -228,7 +228,7 @@
                             </thead>
                             <tbody>
                                 {% for order in orders %}
-                                <tr>
+                                <tr >
                                     <td>{{order.order.order_number}}</td>
                                     <td><b> {{order.order.full_name}} </b></td>
                                     <td> {{order.order.email}} </td>
@@ -252,6 +252,18 @@
                                 <td>
                                     <a href="{% url 'order_detail_admin' order.order.id %}" class="btn btn-xs">View details</a>
                                 </td>
+                                <td>
+                                {% if order.is_cancelled == False %}
+                                
+                                <form action="{% url 'order_cancel_approve' order.id %}" method="POST">
+                                  {% csrf_token %}
+                                  <button type="submit" class="btn btn-warning btn-sm p-1 text-white">Cancel Order</button>
+                                </form>
+                                
+                                {% else %}
+                                <p class="text-danger">Order Cancelled</p>
+                                </td>
+                                {% endif %}
                                 {% endfor %}
                                 
                             </tbody>

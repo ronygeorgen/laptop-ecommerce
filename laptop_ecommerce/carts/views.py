@@ -32,6 +32,7 @@ class AddCartView(View):
         if available_stock <= 0 :
             return HttpResponse('No more stock available')
         # If the user is authenticated
+        
         if current_user.is_authenticated:
             product_variation = self.get_variation(request, variant)
 
@@ -85,6 +86,11 @@ class AddCartView(View):
                 )
                 cart_item.variations.add(*product_variation)
                 cart_item.save()
+        try:
+            wishlist_item = WishListItems.objects.get(variantID=variant_id)
+            wishlist_item.delete()
+        except WishListItems.DoesNotExist:
+            pass
 
         return redirect('cart')
 

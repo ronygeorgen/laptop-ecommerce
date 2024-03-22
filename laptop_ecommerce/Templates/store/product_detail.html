@@ -11,7 +11,7 @@
                 <aside class="col-md-6">
                     <article class="gallery-wrap">
                         <div class="swiper-container">
-                            <div class="swiper-wrapper custom-swiper-container" id="swiperWrapper">
+                            <div class="swiper-wrapper custom-swiper-container product-img product-img-zoom" id="swiperWrapper">
                                 <!-- images display here -->
                             </div>
                             <!-- Add Pagination -->
@@ -348,9 +348,11 @@ function getProductDetails(variantId) {
     swiperWrapper.empty();
 
     images.forEach(function (image) {
-        swiperWrapper.append('<div class="swiper-slide"><img src="' + image.image_url_1 + '" alt="Image 1" class="img-fluid"></div>');
+        swiperWrapper.append('<div class="hover-img swiper-slide"><img src="' + image.image_url_1 + '" alt="Image 1" class="img-fluid"></div>');
         
     });
+
+    
     
 }
 
