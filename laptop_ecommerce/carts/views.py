@@ -160,7 +160,7 @@ class RemoveCartItemView(View):
         product = get_object_or_404(MyProducts, id=product_id)
         if request.user.is_authenticated:
             cart_item = CartItem.objects.get(product=product, user=request.user, id=cart_item_id)
-            cart = Cart.objects.get(cart_id= cart_id_instance.get(request))
+            # cart = Cart.objects.get(cart_id= cart_id_instance.get(request))
         else:
             cart = Cart.objects.get(cart_id= cart_id_instance.get(request))
             cart_item = CartItem.objects.get(product=product, cart=cart, id=cart_item_id)
