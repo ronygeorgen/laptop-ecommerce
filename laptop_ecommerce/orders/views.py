@@ -315,15 +315,12 @@ class PlaceOrderView(View):
             total += cart_item.variations.first().price * cart_item.quantity
 
         tax = Decimal("0.02") * total
-        try:
-            cart_inst = Cart.objects.get(cart_id=cart_id_instance.get(request))
-            if cart_inst.coupon is not None:
-                discount = cart_inst.coupon.discount_rate
-                grand_total = (total + tax) - discount
-            else:
-                grand_total = total + tax
-        except Cart.DoesNotExist:
-            pass
+        cart_inst = Cart.objects.get(cart_id=cart_id_instance.get(request))
+        if cart_inst.coupon is not None:
+            discount = cart_inst.coupon.discount_rate
+            grand_total = (total + tax) - discount
+        else:
+            grand_total = total + tax
         if grand_total < 0:
             grand_total = 0
         grand_total, applied_offer = apply_offers(cart_items, grand_total)
