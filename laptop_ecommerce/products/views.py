@@ -154,7 +154,7 @@ class VariationsListView(View):
             "list_variations_not_deleted" : list_variations_not_deleted,
             "list_variations_deleted" : list_variations_deleted,
         }
-        return render(request,'admin_templates\\evara-backend\\variations-product-list.html', context)
+        return render(request,'admin_templates/evara-backend/variations-product-list.html', context)
 
 @method_decorator(user_passes_test(is_staff), name='dispatch')
 class VariationsListEditView(View):
