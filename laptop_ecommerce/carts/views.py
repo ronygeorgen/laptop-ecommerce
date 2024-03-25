@@ -165,7 +165,7 @@ class RemoveCartItemView(View):
             cart = Cart.objects.get(cart_id= cart_id_instance.get(request))
             cart_item = CartItem.objects.get(product=product, cart=cart, id=cart_item_id)
         cart_item.delete()
-        cart.delete()
+        # cart.delete()
         return redirect('cart')
 
 class CartView(View):
