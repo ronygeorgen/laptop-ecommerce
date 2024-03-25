@@ -155,19 +155,20 @@ class LoginView(View):
                     except:
                         pass
                     auth_login(request, user_details)
+                    return redirect("home")
                     # messages.success(request, 'You are now logged in')
-                    url = request.META.get("HTTP_REFERER")
-                    try:
-                        query = requests.utils.urlparse(url).query
-                        # next=/cart/checkout/  -> like this the link will come.
-                        params = dict(x.split("=") for x in query.split("&"))
-                        # above dict comprehension will split into {'next' : '/cart/checkout/}
-                        if "next" in params:
-                            nextPage = params["next"]
-                            return redirect(nextPage)
+                    # url = request.META.get("HTTP_REFERER")
+                    # try:
+                    #     query = requests.utils.urlparse(url).query
+                    #     # next=/cart/checkout/  -> like this the link will come.
+                    #     params = dict(x.split("=") for x in query.split("&"))
+                    #     # above dict comprehension will split into {'next' : '/cart/checkout/}
+                    #     if "next" in params:
+                    #         nextPage = params["next"]
+                    #         return redirect(nextPage)
 
-                    except:
-                        return redirect("home")
+                    # except:
+                    #     return redirect("home")
 
                 else:
                     messages.error(request, "Invalid login credentials")
