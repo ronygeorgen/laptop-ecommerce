@@ -18,7 +18,7 @@ def is_staff(user):
 
 @method_decorator(user_passes_test(is_staff), name='dispatch')
 class ProductView(View):
-    templates = 'admin_templates\evara-backend\page-form-product-2.html'
+    templates = 'admin_templates/evara-backend/page-form-product-2.html'
     def get(self,request):
         category=Category.objects.filter(is_deleted=False)
         context={
@@ -62,7 +62,7 @@ class ProductEdit(View):
             "list_products_not_deleted" : list_products_not_deleted,
             "list_products_deleted" : list_products_deleted,
         }
-        return render(request, 'admin_templates\evara-backend\page-product-list.html', context)
+        return render(request, 'admin_templates/evara-backend/page-product-list.html', context)
 
 @method_decorator(user_passes_test(is_staff), name='dispatch')
 class ProductEditView(View):
@@ -78,7 +78,7 @@ class ProductEditView(View):
             'deleted_id':deleted_id,
         }
 
-        return render(request, 'admin_templates\evara-backend\page-form-product-2.html', context)
+        return render(request, 'admin_templates/evara-backend/page-form-product-2.html', context)
     def post(self, request, pk):
         product_to_be_edited = MyProducts.objects.get(pk=pk)
         product_name = request.POST.get('product_title')
