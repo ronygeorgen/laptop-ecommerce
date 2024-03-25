@@ -13,6 +13,7 @@ from django.contrib import messages
 from decimal import Decimal
 from offer_management.models import CategoryOffer, ProductOffer
 from .utils import apply_offers
+from django.urls import reverse
 # Create your views here.
 
 class _CartId(View):
@@ -21,11 +22,32 @@ class _CartId(View):
         if not cart:
             cart = request.session.create()
         return cart
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class AddCartView(View):
-    
+    login_url = 'login'
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect(reverse('login') + '?next=' + reverse('home'))
+        return redirect('home')
     # below post method for adding product and its variation to database
     def post(self, request, variant_id):
+        if not request.user.is_authenticated:
+            return redirect(reverse('login') + '?next=' + request.META.get('HTTP_REFERER', reverse('home')))
+            
+
+        if 'next' in request.GET:
+            # User is redirected from the login page
+            next_url = request.GET.get('next')
+            if next_url.startswith('/cart/add_cart/'):
+                # Extract the variant_id from the URL
+                variant_id = next_url.split('/')[-1]
+            else:
+                # Handle other cases if needed
+                pass
+
+        if variant_id is None:
+            # Handle the case when variant_id is not provided
+            return redirect('home')
         current_user = request.user
         variant = Variations.objects.get(id=variant_id)
         available_stock = variant.stock
@@ -167,7 +189,7 @@ class RemoveCartItemView(View):
         cart_item.delete()
         cart.delete()
         return redirect('cart')
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class CartView(View):
     def get(self, request):
         total = 0
@@ -181,7 +203,7 @@ class CartView(View):
             grand_total = 0
             if request.user.is_authenticated:
                 cart_items = CartItem.objects.filter(user=request.user, is_active=True)
-                cart = Cart.objects.get(cart_id=cart_id_instance.get(request))
+                # cart = Cart.objects.get(cart_id=cart_id_instance.get(request))
             else:
                 cart = Cart.objects.get(cart_id=cart_id_instance.get(request))
                 cart_items = CartItem.objects.filter(cart=cart, is_active=True)
