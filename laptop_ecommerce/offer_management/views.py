@@ -100,8 +100,7 @@ class CategoryEditView(View):
                 category_to_be_edited.category = category_instance
 
             category_to_be_edited.discount_rate = form.cleaned_data["discount_rate"]
-            value = category_to_be_edited.is_active
-            # Check if 'is_active' is in the cleaned_data
+            
             if category_to_be_edited.is_active == False:
                 category_to_be_edited.is_active = True
 

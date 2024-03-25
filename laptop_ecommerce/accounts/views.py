@@ -279,7 +279,7 @@ class UserDashboardView(View):
     def get(self, request):
         try:
             userprofile = get_object_or_404(UserProfile, user=request.user)
-            wallet = get_object_or_404(Wallet, user=request.user)
+            wallet, _ = Wallet.objects.get_or_create(user=request.user)
         except Exception as e:
             return HttpResponse(e)
         orders = OrderProduct.objects.order_by("-created_at").filter(
