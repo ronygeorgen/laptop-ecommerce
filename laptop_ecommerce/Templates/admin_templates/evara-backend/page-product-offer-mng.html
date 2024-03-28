@@ -301,7 +301,7 @@
                                             <th>ID</th>
                                             <th>Name</th>
                                             <th>Expiry Date</th>
-                                            <th>category</th>
+                                            <th>Product</th>
                                             <th>Discount Rate</th>
                                             <th>is_active</th>
                                             <th class="text-end">Action</th>
@@ -314,7 +314,7 @@
                                             <td> {{ product.id }} </td>
                                             <td><b> {{ product.offer_name }} </b></td>
                                             <td> {{ product.expire_date }} </td>
-                                            <td> {{ product.category }} </td>
+                                            <td> {{ product.products.product_name }} </td>
                                             <td> {{ product.discount_rate }} </td>
                                             <td> <span class="badge rounded-pill alert-success" >Active</span> </td>
                                             <td class="text-end">
