@@ -34,7 +34,8 @@ class Addresses(models.Model):
     state = models.CharField(max_length=50)
     city = models.CharField(max_length=50)
     is_default = models.BooleanField(default=False)
-    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 class Order(models.Model):
     STATUS = (
         ('New', 'New'),
@@ -45,6 +46,7 @@ class Order(models.Model):
         ('Awaiting payment', 'Awaiting payment'),
         ('Confirmed', 'Confirmed'),
         ('Shipped', 'Shipped'),
+        ('Returned', 'Returned'),
     )
     user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
     address = models.ForeignKey(Addresses, on_delete=models.SET_NULL, null=True)
@@ -98,6 +100,7 @@ class OrderProduct(models.Model):
     product_price = models.FloatField()
     ordered = models.BooleanField(default=False)
     requestcancel = models.CharField(max_length=30, choices=STATUS, default='No')
+    requestreturn = models.CharField(max_length=30, choices=STATUS, default='No')
     is_cancelled = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

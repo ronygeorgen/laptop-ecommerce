@@ -327,11 +327,14 @@ class MyOrdersDetailedView(View):
         subtotal = 0
         for i in orders:
             subtotal += i.product_price * i.quantity
+        grand_total = subtotal + tax
+        
         context = {
             "orders": orders,
             "for_address": for_address,
             "tax": tax,
             "subtotal": subtotal,
+            "grand_total":grand_total
         }
         return render(request, "accounts/my_orders_detailed_view.html", context)
 
@@ -340,6 +343,14 @@ class UserOrderCancelView(View):
     def post(self, request, pk):
         cancel = OrderProduct.objects.filter(pk=pk).first()
         cancel.requestcancel = "Yes"
+        cancel.save()
+
+        return redirect("my_orders")
+    
+class UserOrderReturnView(View):
+    def post(self, request, pk):
+        cancel = OrderProduct.objects.filter(pk=pk).first()
+        cancel.requestreturn = "Yes"
         cancel.save()
 
         return redirect("my_orders")

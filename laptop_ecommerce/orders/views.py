@@ -19,7 +19,7 @@ class CashOnDeliveryView(View):
     def post(self, request, order_number):
         current_user = request.user
         order = Order.objects.get(
-            user=current_user, is_ordered=False, order_number=order_number
+            user=current_user, order_number=order_number
         )
         payment_method = "cod"
         payment = Payment(
@@ -109,7 +109,7 @@ class WalletPayment(View):
     def post(self, request, order_number):
         current_user = request.user
         order = Order.objects.get(
-            user=current_user, is_ordered=False, order_number=order_number
+            user=current_user, order_number=order_number
         )
 
         wallet = Wallet.objects.get(user=request.user)
@@ -205,12 +205,17 @@ class WalletPayment(View):
 
 class PaymentsView(View):
     def post(self, request):
+        
         try:
             body = json.loads(request.body)
+            
             # Store transaction detail inside Payment model
             order = Order.objects.get(
-                user=request.user, is_ordered=False, order_number=body["orderID"]
+                user=request.user, order_number=body["orderID"]
             )
+            print("Hi I am below the order = order  of paymentsView")
+            order_number=body["orderID"]
+            print("hii this is from paymentview", order_number)
 
             # check payment method
             payment_method = body["payment_method"]
@@ -367,7 +372,7 @@ class PlaceOrderView(View):
                 "address_type": address_type,
                 "first_name": data.first_name,
                 "last_name": data.last_name,
-                "phone": data.email,
+                "phone": data.phone,
                 "email": data.email,
                 "address_line_1": data.address_line_1,
                 "address_line_2": data.address_line_2,
@@ -398,6 +403,61 @@ class PlaceOrderView(View):
             "applied_offer": applied_offer,
         }
         return render(request, "orders/payments.html", context)
+    
+class PlaceOrderAddressChooseView(View):
+    def get(self, request, pk ,total=0, quantity=0,):
+        pass
+
+    def post(self, request, pk, total=0, quantity=0):
+        applied_offer = None
+        current_user = request.user
+        cart_items = CartItem.objects.filter(user=current_user)
+        cart_count = cart_items.count()
+        try:
+            wallet = Wallet.objects.get(user=request.user)
+        except Wallet.DoesNotExist:
+            wallet = Wallet.objects.create(user=request.user)
+        wallet_balance = wallet.balance
+        if cart_count <= 0:
+            return redirect("store")
+        grand_total = 0
+        tax = 0
+        discount = 0
+        cart_id_instance = _CartId()
+        for cart_item in cart_items:
+            total += cart_item.variations.first().price * cart_item.quantity
+
+        tax = Decimal("0.02") * total
+        cart_inst = Cart.objects.get(cart_id=cart_id_instance.get(request))
+        if cart_inst.coupon is not None:
+            discount = cart_inst.coupon.discount_rate
+            grand_total = (total + tax) - discount
+        else:
+            grand_total = total + tax
+        if grand_total < 0:
+            grand_total = 0
+        grand_total, applied_offer = apply_offers(cart_items, grand_total)
+        
+        
+        address = Addresses.objects.get(user=current_user, pk=pk)
+        order = address.order_set.first()
+        if order:
+            order_number = order.order_number
+        else:
+            order_number = None
+        print("this is from placeorderAddressView, order number = ",order_number)
+        context = {
+            "address":address,
+            "order_number":order_number,
+            "cart_items": cart_items,
+            "total": total,
+            "tax": tax,
+            "discount": discount,
+            "grand_total": grand_total,
+            "wallet_balance": wallet_balance,
+            "applied_offer": applied_offer,
+        }
+        return render(request, "orders/payments.html", context)
 
 
 class OrderCompleteView(View):
@@ -414,6 +474,7 @@ class OrderCompleteView(View):
             # check if it's a paypal transaction
             if transID:
                 payment = Payment.objects.get(payment_id=transID)
+            grand_total = subtotal + order.tax
             context = {
                 "order": order,
                 "ordered_products": ordered_products,
@@ -421,6 +482,7 @@ class OrderCompleteView(View):
                 "transID": payment.payment_id,
                 "payment": payment,
                 "subtotal": subtotal,
+                "grand_total":grand_total,
             }
             return render(request, "orders/order_complete.html", context)
         except (Payment.DoesNotExist, Order.DoesNotExist):

@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="section-content padding-y bg">
+    <div class="container">
+    
+    <!-- ============================ COMPONENT 1 ================================= -->
+    
+
+    <div class="row">
+        <aside class="col-lg-6">
+            <h4 class="card-title mb-4">Choose Billing Address</h4>
+                {% if home_address or office_address %}
+                    {% for home in home_address %}
+                    <form method="post" action="{% url 'place_order_address_choose' home.id %}">
+                        {% csrf_token %}
+                        <div class="card">
+                            <div class="card-body" onclick="toggleRadioAndDeliverButton(this)">
+                                <h6>
+                                    <input type="radio" name="selected_address" value="{{ home.id }}" {% if forloop.first %}checked{% endif %} class="address-radio">
+                                    {{ home.first_name }} {{ home.last_name }} <span><small><i>{{ home.address_type }}</i></small></span>
+                                </h6>
+                                <p class="card-text mb-0">{{ home.address_line_1 }}, {{ home.address_line_2 }}, {{ home.city }}, {{ home.state }}, {{ home.country }}, <strong class="card-text mb-0">PIN:{{ home.pincode }}</strong></p>
+                                <p class="card-text mb-0">{{ home.email }}</p>
+                                <p class="card-text mb-0">{{ home.phone }}</p>
+                                <button type="submit" name="submit" class="btn btn-primary btn-block deliver-btn" {% if not forloop.first %}style="display: none;"{% endif %}>Deliver here</button>
+                            </div>
+                        </div>
+                    </form>
+                    {% endfor %}
+                    {% for office in office_address %}
+                    <form method="post" action="{% url 'place_order_address_choose' office.id %}">
+                        {% csrf_token %}
+                        <div class="card">
+                            <div class="card-body" onclick="toggleRadioAndDeliverButton(this)">
+                                <h6>
+                                    <input type="radio" name="selected_address" value="{{ office.id }}" class="address-radio">
+                                    {{ office.first_name }} {{ office.last_name }} <span><small><i>{{ office.address_type }}</i></small></span>
+                                </h6>
+                                <p class="card-text mb-0">{{ office.address_line_1 }}, {{ office.address_line_2 }}, {{ office.city }}, {{ office.state }}, {{ office.country }}, <strong class="card-text mb-0">PIN:{{ office.pincode }}</strong></p>
+                                <p class="card-text mb-0">{{ office.email }}</p>
+                                <p class="card-text mb-0">{{ office.phone }}</p>
+                                <button type="submit" name="submit" class="btn btn-primary btn-block deliver-btn" style="display: none;">Deliver here</button>
+                            </div>
+                        </div>
+                    </form>
+                    {% endfor %}
+                {% endif %}
+                <div class="card">
+                    <div class="card-body">
+                        <h6><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                          </svg><a href="{% url 'checkout' %}">Add address</a></h6>
+                    </div>
+                </div>
+        </aside> <!-- col.// -->
+        <aside class="col-lg-6">
+    
+            <div class="card">
+                <div class="card-body">
+                <table class="table table-borderless table-shopping-cart">
+                    <thead class="text-muted">
+                    <tr class="small text-uppercase">
+                      <th scope="col">Product</th>
+                      <th scope="col" width="120">Quantity</th>
+                      <th scope="col" width="120">Price</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for cart_item in cart_items %}
+                    <tr>
+                        <td>
+                            <figure class="itemside align-items-center">
+                                <div class="aside"><img src="{{ cart_item.variations.first.images.first.image.url }}" class="img-sm" style="width: 100%;"></div>
+                                <figcaption class="info">
+                                    <a href="" class="title text-dark">{{ cart_item.product.product_name }}</a>
+                                    <p class="text-muted small">
+                                        {% if cart_item.variations.all %}
+                                            {% for item in cart_item.variations.all %}
+                                                Color  : {{ item.color | capfirst }} <br>
+                                                Ram    : {{ item.ram | capfirst }} <br>
+                                                Storage: {{ item.storage | capfirst }} <br>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </p>
+                                </figcaption>
+                            </figure>
+                        </td>
+                        <td> 
+                            <!-- col.// -->
+                                <label for="">{{ cart_item.quantity }}</label>
+                        </td>
+                        <td> 
+                            <div class="price-wrap"> 
+                                {% if cart_item.variations.all %}
+                                    {% with selected_variation=cart_item.variations.first %}
+                                        <small class="text-muted">₹{{ selected_variation.price }} each</small>
+                                    {% endwith %}
+                                {% endif %}
+                            </div> <!-- price-wrap .// -->
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+                
+                <a href="{% url 'store-product-view' %}" class="btn btn-light btn-block">Continue Shopping</a>
+            </form>
+            </div> <!-- card-body.// -->
+            </div> <!-- card.// -->
+    
+    </aside> <!-- col.// -->
+    
+    
+    </div> <!-- row.// -->
+    <!-- ============================ COMPONENT 1 END .// ================================= -->
+
+    </div> <!-- container .//  -->
+    </section>
+
+    <!-- Add this script at the end of your HTML file -->
+    <script>
+        function toggleRadioAndDeliverButton(cardBody) {
+            var addressRadio = cardBody.querySelector('.address-radio');
+            var deliverButtons = document.querySelectorAll('.deliver-btn');
+
+            // Uncheck all radio buttons
+            var radios = document.querySelectorAll('.address-radio');
+            radios.forEach(function(radio) {
+                radio.checked = false;
+            });
+
+            // Hide all "Deliver here" buttons
+            deliverButtons.forEach(function(button) {
+                button.style.display = 'none';
+            });
+
+            // Check the clicked radio button and show its "Deliver here" button
+            addressRadio.checked = true;
+            var deliverButton = cardBody.querySelector('.deliver-btn');
+            deliverButton.style.display = 'block';
+        }
+    </script>
+
+{% endblock %}

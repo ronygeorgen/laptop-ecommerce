@@ -187,10 +187,12 @@ class OrderList(View):
     def get(self, request):
         orders = OrderProduct.objects.filter(ordered=True).order_by("-created_at")
         cancel_requests = [order for order in orders if order.requestcancel == "Yes"]
+        cancel_requests_return = [order for order in orders if order.requestreturn == "Yes"]
 
         context = {
             "orders": orders,
             "cancel_requests": cancel_requests,
+            "cancel_requests_return":cancel_requests_return,
         }
         return render(
             request, "admin_templates/evara-backend/page-orders-1.html", context
@@ -241,6 +243,52 @@ class OrderCancelApprove(View):
             # order.payment.status = 'Cancelled'
             order.save()
             order.order.status = 'Cancelled'
+            order.order.save()
+            for variation in order.variations.all():
+                variation.stock += 1
+                variation.save()
+
+        except OrderProduct.DoesNotExist:
+            pass
+
+        user_instance = order.user
+        try:
+            payment = Payment.objects.filter(
+                user=user_instance,
+                payment_id=order.order.order_number,
+                payment_method="cod",
+            ).first()
+
+            if not payment:
+                try:
+                    wallet = Wallet.objects.get(user=user_instance)
+                    wallet.balance += Decimal(order.product_price)
+                    wallet.save()
+                except Wallet.DoesNotExist:
+                    wallet = Wallet(
+                        user=user_instance,
+                        balance=order.product_price,
+                    )
+                    wallet.save()
+        except Payment.DoesNotExist:
+            pass
+
+        return redirect("order_list")
+    
+@method_decorator(user_passes_test(is_staff), name='dispatch')
+class OrderReturnApprove(View):
+    def post(self, request, pk):
+        try:
+            order = OrderProduct.objects.get(pk=pk)
+            # order.ordered='False'
+            # order.quantity -= 1
+            order.requestreturn = "No"
+            # order.is_cancelled = True
+            # order.order.status = 'Cancelled'
+            # order.order.is_ordered = False
+            # order.payment.status = 'Cancelled'
+            order.save()
+            order.order.status = 'Returned'
             order.order.save()
             for variation in order.variations.all():
                 variation.stock += 1

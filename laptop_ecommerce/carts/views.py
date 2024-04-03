@@ -14,6 +14,7 @@ from decimal import Decimal
 from offer_management.models import CategoryOffer, ProductOffer
 from .utils import apply_offers
 from django.urls import reverse
+from orders.models import Addresses
 # Create your views here.
 
 class _CartId(View):
@@ -323,5 +324,45 @@ class CheckoutView(View):
             'tax' : tax,
             'grand_total': grand_total,
         }
-        return render(request, 'store/checkout.html', context)
+        return render(request, 'store/checkout_add_address.html', context)
+
+class ChooseAddressView(View):
+    def get(self,request, total=0, quantity=0, cart_items=None):
+        home_address = None
+        office_address = None
+        try:
+            tax = 0
+            grand_total = 0
+            if request.user.is_authenticated:
+                cart_items = CartItem.objects.filter(user=request.user, is_active=True)
+            else:
+                cart_id_instance = _CartId()
+                cart = Cart.objects.get(cart_id=cart_id_instance.get(request))
+                cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+            for cart_item in cart_items:
+                total += (cart_item.variations.first().price * cart_item.quantity)
+                quantity += cart_item.quantity
+            tax = (2 * total)/100
+            grand_total = total + tax
+            try:
+                home_address = Addresses.objects.filter(user=request.user, address_type='Home').order_by('-updated_at')[:3]
+            except Addresses.DoesNotExist:
+                pass
+            try:
+                office_address = Addresses.objects.filter(user=request.user, address_type='Office').order_by('-updated_at')[:3]
+            except Addresses.DoesNotExist:
+                pass
+        except ObjectDoesNotExist:
+            pass
+
+        context = {
+            'total': total,
+            'quantity': quantity,
+            'cart_items': cart_items,
+            'tax' : tax,
+            'grand_total': grand_total,
+            'home_address':home_address,
+            'office_address':office_address,
+        }
+        return render(request, 'store/checkout_choose_address.html', context)
  

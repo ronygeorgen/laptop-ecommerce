@@ -26,10 +26,10 @@
                                 <div class="invoice-from">
                                     <ul class="list-unstyled text-right">
                                         <li><strong>Invoiced To</strong></li>
-                                        <li>{{ order.full_name }}</li>
-                                        <li>{{ order.full_address }}</li>
-                                        <li>{{ order.city }}, {{ order.state }}</li>
-                                        <li>{{ order.country }}</li>
+                                        <li>{{ order.address.first_name }} {{ order.address.last_name }}</li>
+                                        <li>{{ order.address.address_line_1 }} {{ order.address.address_line_2 }}</li>
+                                        <li>{{ order.address.city }}, {{ order.address.state }}</li>
+                                        <li>{{ order.address.country }}</li>
                                     </ul>
                                 </div>
                             </div>
@@ -84,7 +84,7 @@
                                                 
                                                 <tr>
                                                     <th colspan="2" class="text-right">Grand Total:</th>
-                                                    <th class="text-center">₹{{ order.order_total }} INR</th>
+                                                    <th class="text-center">₹{{ grand_total  }} INR</th>
                                                 </tr>
                                             </tfoot>
                                         </table>

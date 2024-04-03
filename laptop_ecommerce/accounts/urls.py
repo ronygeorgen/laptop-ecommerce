@@ -19,4 +19,5 @@ urlpatterns = [
     path('userdashboard/user_changePassword/', ChangePasswordView.as_view(), name='userprofile_changePassword'),
     path('userdashboard/my_orders_detailed_view/<int:order_id>/<int:pk>/', MyOrdersDetailedView.as_view(), name='my_orders_detailed_view'),
     path('userdashboard/user_order_cancel_view/<pk>/', UserOrderCancelView.as_view(), name='user_order_cancel_view'),
+    path('userdashboard/user_order_return_view/<pk>/', UserOrderReturnView.as_view(), name='user_order_return_view'),
 ]

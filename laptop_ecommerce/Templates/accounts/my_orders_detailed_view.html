@@ -14,10 +14,10 @@
                 <div>
                   {% for address in for_address %}
                   <p>Order ID : {{ address.order.order_number }} </p>
-                  <p>Billing Name: {{ address.order.full_name }}</p>
+                  <p>Billing Name: {{ address.order.address.first_name }} {{ address.order.address.last_name }}</p>
                   <p>Subtotal: {{subtotal}} </p>
                   <p>Tax : {{tax}} </p>
-                  <p>Order Total : ₹{{ address.order.order_total }}</p>
+                  <p>Order Total : ₹{{ grand_total }}</p>
                   {% endfor %}
                 </div>
             </header>
@@ -39,7 +39,15 @@
                                 <td class="text-center" scope="row">{{order.product.product_name}}</td>
                                 <td class="text-center" scope="row">₹{{order.product_price}}</td>
                                 <td class="text-center" scope="row">{{order.order.created_at}}</td>
-                                {% if order.is_cancelled == False %}
+                               
+                                {% if order.order.status == 'Delivered' %}
+                                <form action="{% url 'user_order_return_view' order.id %}" method="POST">
+                                  {% csrf_token %}
+                                <td class="text-center" scope="row"><button type="submit" class="btn btn-danger">Return</button></td>
+                                </form>
+                                {% elif order.order.status == 'Returned' %}
+                                <td><p class="text-danger">Product Returned</p></td>
+                                {% elif order.is_cancelled == False %}
                                 <form action="{% url 'user_order_cancel_view' order.id %}" method="POST">
                                   {% csrf_token %}
                                 <td class="text-center" scope="row"><button type="submit" class="btn btn-warning">Cancel</button></td>

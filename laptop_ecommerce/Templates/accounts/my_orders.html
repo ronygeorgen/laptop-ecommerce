@@ -30,13 +30,13 @@
                                         {% ifchanged order.order.order_number %}
                                             <tr>
                                                 <th class="text-center" scope="row"> {{order.order.order_number}} </th>
-                                                <td class="text-center" scope="row">{{order.order.full_name}}</td>
+                                                <td class="text-center" scope="row">{{order.order.address.first_name}} {{order.order.address.last_name}}</td>
                                                 <td class="text-center" scope="row">
                                                     {% for item in orders|dictsort:'order.order_number' %}
                                                         {% if item.order.order_number == order.order.order_number %}
                                                             {{ item.product.product_name }} - ({{ item.quantity }}) <br>
                                                         {% endif %}
-                                                    {% endfor %}
+                                                    {% endfor %} 
                                                 </td>
                                                 <td class="text-center" scope="row">{{ order.total_quantity }}</td>
                                                 <td class="text-center" scope="row">₹{{ order.order.order_total }}</td>
