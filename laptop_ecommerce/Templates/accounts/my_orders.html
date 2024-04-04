@@ -20,7 +20,6 @@
                                         <th class="text-center" scope="col">Billing Name</th>
                                         <th class="text-center" scope="col">Order Items</th>
                                         <th class="text-center" scope="col">Total Quantity</th>
-                                        <th class="text-center" scope="col">Order Total</th>
                                         <th class="text-center" scope="col">Date</th>
                                         <th class="text-center" scope="col">Action</th>
                                     </tr>
@@ -39,7 +38,6 @@
                                                     {% endfor %} 
                                                 </td>
                                                 <td class="text-center" scope="row">{{ order.total_quantity }}</td>
-                                                <td class="text-center" scope="row">₹{{ order.order.order_total }}</td>
                                                 <td class="text-center" scope="row">{{ order.order.created_at }}</td>
                                                 <td class="text-center" scope="row"><a href="{% url 'my_orders_detailed_view' order_id=order.order.order_number pk=order.id %}" class="btn btn-primary">View Details</a></td>
                                              
