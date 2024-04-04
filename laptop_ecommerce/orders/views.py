@@ -439,15 +439,45 @@ class PlaceOrderAddressChooseView(View):
         grand_total, applied_offer = apply_offers(cart_items, grand_total)
         
         
-        address = Addresses.objects.get(user=current_user, pk=pk)
-        order = address.order_set.first()
-        if order:
-            order_number = order.order_number
-        else:
-            order_number = None
-        print("this is from placeorderAddressView, order number = ",order_number)
+        # address = Addresses.objects.get(user=current_user, pk=pk)
+        # order = address.order_set.first()
+        # if order:
+        #     order_number = order.order_number
+        # else:
+        #     order_number = None
+        data = Order()
+        data.user = current_user
+        data.first_name = request.POST.get("first_name")
+        data.last_name = request.POST.get("last_name")
+        data.phone = request.POST.get("phone")
+        data.email = request.POST.get("email")
+        data.address_line_1 = request.POST.get("address_line_1")
+        data.address_line_2 = request.POST.get("address_line_2")
+        data.pincode = request.POST.get("pincode")
+        data.country = request.POST.get("country")
+        data.state = request.POST.get("state")
+        data.city = request.POST.get("city")
+        # data.order_note = request.POST.get("order_note")
+        data.order_total = grand_total
+        data.tax = tax
+        data.ip = request.META.get("REMOTE_ADDR")
+        data.save()
+
+        # Generate order number
+        yr = int(datetime.date.today().strftime("%Y"))
+        dt = int(datetime.date.today().strftime("%d"))
+        mt = int(datetime.date.today().strftime("%m"))
+        d = datetime.date(yr, mt, dt)
+        current_date = d.strftime("%y%m%d")
+        order_number = current_date + str(data.id)
+        data.order_number = order_number
+        data.save()
+        order = Order.objects.get(
+            user=current_user, is_ordered=False, order_number=order_number
+        )
         context = {
-            "address":address,
+            # "address":address,
+            "order":order,
             "order_number":order_number,
             "cart_items": cart_items,
             "total": total,
@@ -465,7 +495,7 @@ class OrderCompleteView(View):
         order_number = request.GET.get("order_number")
         transID = request.GET.get("payment_id")
         try:
-            order = Order.objects.get(order_number=order_number, is_ordered=True)
+            order = Order.objects.get(order_number=order_number)
             ordered_products = OrderProduct.objects.filter(order_id=order.id)
             subtotal = 0
             for i in ordered_products:

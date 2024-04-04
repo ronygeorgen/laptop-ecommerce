@@ -30,7 +30,7 @@
                                         {% ifchanged order.order.order_number %}
                                             <tr>
                                                 <th class="text-center" scope="row"> {{order.order.order_number}} </th>
-                                                <td class="text-center" scope="row">{{order.order.address.first_name}} {{order.order.address.last_name}}</td>
+                                                <td class="text-center" scope="row">{{order.order.first_name}} {{order.order.address.last_name}}</td>
                                                 <td class="text-center" scope="row">
                                                     {% for item in orders|dictsort:'order.order_number' %}
                                                         {% if item.order.order_number == order.order.order_number %}

@@ -14,7 +14,7 @@
                 <div>
                   {% for address in for_address %}
                   <p>Order ID : {{ address.order.order_number }} </p>
-                  <p>Billing Name: {{ address.order.address.first_name }} {{ address.order.address.last_name }}</p>
+                  <p>Billing Name: {{ address.order.first_name }} {{ address.order.last_name }}</p>
                   <p>Subtotal: {{subtotal}} </p>
                   <p>Tax : {{tax}} </p>
                   <p>Order Total : ₹{{ grand_total }}</p>

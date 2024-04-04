@@ -25,6 +25,16 @@
                                 <p class="card-text mb-0">{{ home.address_line_1 }}, {{ home.address_line_2 }}, {{ home.city }}, {{ home.state }}, {{ home.country }}, <strong class="card-text mb-0">PIN:{{ home.pincode }}</strong></p>
                                 <p class="card-text mb-0">{{ home.email }}</p>
                                 <p class="card-text mb-0">{{ home.phone }}</p>
+                                <input type="hidden" name="first_name" value="{{ home.first_name }}">
+                                <input type="hidden" name="last_name" value="{{ home.last_name }}">
+                                <input type="hidden" name="email" value="{{ home.email }}">
+                                <input type="hidden" name="phone" value="{{ home.phone }}">
+                                <input type="hidden" name="address_line_1" value="{{ home.address_line_1 }}">
+                                <input type="hidden" name="address_line_2" value="{{ home.address_line_2 }}">
+                                <input type="hidden" name="pincode" value="{{ home.pincode }}">
+                                <input type="hidden" name="city" value="{{ home.city }}">
+                                <input type="hidden" name="state" value="{{ home.state }}">
+                                <input type="hidden" name="country" value="{{ home.country }}">
                                 <button type="submit" name="submit" class="btn btn-primary btn-block deliver-btn" {% if not forloop.first %}style="display: none;"{% endif %}>Deliver here</button>
                             </div>
                         </div>
