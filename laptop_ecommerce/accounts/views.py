@@ -294,7 +294,7 @@ class UserDashboardView(View):
         }
         return render(request, "accounts/userdashboard.html", context)
 
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class MyOrdersView(View):
     def get(self, request):
         orders = OrderProduct.objects.filter(user=request.user, ordered=True).order_by(
@@ -313,7 +313,7 @@ class MyOrdersView(View):
         }
         return render(request, "accounts/my_orders.html", context)
 
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class MyOrdersDetailedView(View):
     def get(self, request, order_id, pk):
         orders = OrderProduct.objects.filter(
@@ -338,7 +338,7 @@ class MyOrdersDetailedView(View):
         }
         return render(request, "accounts/my_orders_detailed_view.html", context)
 
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class UserOrderCancelView(View):
     def post(self, request, pk):
         cancel = OrderProduct.objects.filter(pk=pk).first()
@@ -346,7 +346,8 @@ class UserOrderCancelView(View):
         cancel.save()
 
         return redirect("my_orders")
-    
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class UserOrderReturnView(View):
     def post(self, request, pk):
         cancel = OrderProduct.objects.filter(pk=pk).first()
@@ -355,7 +356,7 @@ class UserOrderReturnView(View):
 
         return redirect("my_orders")
 
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class EditProfileView(View):
     def get(self, request):
         try:
@@ -390,7 +391,7 @@ class EditProfileView(View):
             }
         return render(request, "accounts/edit_profile.html", context)
 
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class ChangePasswordView(View):
     def get(self, request):
         return render(request, "accounts/userprofile_change_password.html")

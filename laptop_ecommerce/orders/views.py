@@ -12,9 +12,12 @@ from decimal import Decimal
 from django.template.loader import render_to_string
 from carts.views import _CartId
 from carts.utils import apply_offers
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 
 # Create your views here.
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class CashOnDeliveryView(View):
     def post(self, request, order_number):
         current_user = request.user
@@ -104,7 +107,7 @@ class CashOnDeliveryView(View):
         except (Payment.DoesNotExist, Order.DoesNotExist):
             return redirect("home")
 
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class WalletPayment(View):
     def post(self, request, order_number):
         current_user = request.user
@@ -202,7 +205,7 @@ class WalletPayment(View):
         except (Payment.DoesNotExist, Order.DoesNotExist):
             return redirect("home")
 
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class PaymentsView(View):
     def post(self, request):
         
@@ -295,7 +298,7 @@ class PaymentsView(View):
         except Exception as e:
             return JsonResponse({"error": str(e)})
 
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class PlaceOrderView(View):
     def get(self, request, total=0, quantity=0):
         pass
@@ -403,7 +406,8 @@ class PlaceOrderView(View):
             "applied_offer": applied_offer,
         }
         return render(request, "orders/payments.html", context)
-    
+
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class PlaceOrderAddressChooseView(View):
     def get(self, request, pk ,total=0, quantity=0,):
         pass
@@ -490,7 +494,7 @@ class PlaceOrderAddressChooseView(View):
         return render(request, "orders/payments.html", context)
     
 
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class OrderCompleteView(View):
     def get(self, request):
         order_number = request.GET.get("order_number")

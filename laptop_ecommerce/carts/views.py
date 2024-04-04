@@ -155,6 +155,8 @@ class AddCartView(View):
             cart = Cart.objects.create(cart_id=cart_id_instance.get(request))
         cart.save()
         return cart
+    
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class RemoveCartView(View):
     def get(self, request, product_id, cart_item_id):
         cart_id_instance = _CartId()
@@ -176,7 +178,7 @@ class RemoveCartView(View):
         except:
             pass
         return redirect('cart')
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class RemoveCartItemView(View):
     def get(self, request, product_id, cart_item_id):
         cart_id_instance = _CartId() 
@@ -190,6 +192,7 @@ class RemoveCartItemView(View):
         cart_item.delete()
         cart.delete()
         return redirect('cart')
+    
 @method_decorator(login_required(login_url='login'), name='dispatch')
 class CartView(View):
     def get(self, request):
@@ -325,7 +328,7 @@ class CheckoutView(View):
             'grand_total': grand_total,
         }
         return render(request, 'store/checkout_add_address.html', context)
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class ChooseAddressView(View):
     def get(self,request, total=0, quantity=0, cart_items=None):
         home_address = None

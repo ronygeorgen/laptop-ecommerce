@@ -139,7 +139,8 @@ class WishlistView(View):
             'product_offer':product_offer,
         }
         return render(request, 'store/wishlist.html',context)
-
+    
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class RemoveWishlistView(View):
     def get(self, request, variation_id):
         variation = Variations.objects.get(id=variation_id)
@@ -163,7 +164,8 @@ class RemoveWishlistView(View):
             'product_offer':product_offer,
         }
         return render(request, 'store/wishlist.html',context)
-
+    
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class GetVariantDetailsView(View):
     def get(self, request):
         variant_id = request.GET.get('variant_id')
@@ -188,7 +190,7 @@ class GetVariantDetailsView(View):
         else:
             return JsonResponse({'error': 'Invalid or missing variant_id'}, status=400)
 
-
+@method_decorator(login_required(login_url='login'), name='dispatch')
 class GetSecondVariant(View):
     def get(self, request):
         color = request.GET.get('color')
