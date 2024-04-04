@@ -30,7 +30,7 @@ class Variations(models.Model):
     color               = models.CharField(max_length=100, blank=True)
     ram                 = models.CharField(max_length=100, blank=True)
     storage             = models.CharField(max_length=100, blank=True)
-    price               = models.IntegerField(default=0)
+    price               = models.IntegerField(default=1000)
     stock               = models.IntegerField(default=0)
     description         = models.TextField(max_length=500)
     is_active           = models.BooleanField(default=True)
@@ -42,8 +42,8 @@ class Variations(models.Model):
     
     def save(self, *args, **kwargs):
 
-        if self.price < 0:
-            self.price = 0
+        if self.price < 1000:
+            self.price = 1000
 
         if self.stock < 0:
             self.stock = 0

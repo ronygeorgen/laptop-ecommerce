@@ -488,6 +488,7 @@ class PlaceOrderAddressChooseView(View):
             "applied_offer": applied_offer,
         }
         return render(request, "orders/payments.html", context)
+    
 
 
 class OrderCompleteView(View):
