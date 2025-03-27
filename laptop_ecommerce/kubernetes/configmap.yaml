@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: laptop-ecommerce-config
+data:
+  DEBUG: "True"
+  DB_NAME: "laptop_ecom"
+  DB_USER: "postgres"
+  PORT: "5432"
+  DB_HOST: "host.docker.internal"  # Assuming you'll have a separate PostgreSQL service
+  ALLOWED_HOSTS: "*"
+  SECRET_KEY: "django-insecure-_)o&!3$4g(q#p77x05mjyq_(1r_*6bx70zp$)73i(2p6%af2oq"
+  PASSWORD: "Rony@2001"
+  EMAIL_HOST_USER: "incognitomarian422@gmail.com"
+  EMAIL_HOST_PASSWORD: "vgspdacksmxnmjvr"

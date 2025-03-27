@@ -1,0 +1,23 @@
+apiVersion : apps/v1
+kind : Deployment
+metadata :
+  name : laptop-ecommerce
+spec :
+  replicas : 1
+  selector :
+    matchLabels :
+      app : laptop-ecommerce
+  template :
+    metadata :
+      labels :
+        app : laptop-ecommerce
+    spec :
+      containers :
+      - name : laptop-ecommerce-container
+        image : ronygeorgen/laptop-ecommerce
+        envFrom:
+        - configMapRef:
+            name: laptop-ecommerce-config
+        ports :
+          - containerPort : 8000
+        imagePullPolicy : Always
