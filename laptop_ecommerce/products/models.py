@@ -56,7 +56,7 @@ class Variations(models.Model):
 
 class Image(models.Model):
     variation = models.ForeignKey(Variations, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='static/variations')    
+    image = models.ImageField(upload_to='variations')    
     
     def __str__(self):
         return f"Image for {self.variation.product.product_name} -{self.variation.brand_name} - {self.variation.color} - {self.variation.ram} - {self.variation.storage}"
